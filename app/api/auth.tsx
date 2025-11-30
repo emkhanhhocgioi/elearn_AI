@@ -2,11 +2,11 @@ import axios  from "axios";
 
 
 
-const api_url = "http://localhost:3001"
+const api_url = "http://localhost:4000"
 
 export const studentlogin = async (email: string, password: string) => {
   try {
-    const response = await axios.post(`${api_url}/api/students/login`, {
+    const response = await axios.post(`${api_url}/api/auth/student/login`, {
       email,
       password
     });
@@ -19,7 +19,7 @@ export const studentlogin = async (email: string, password: string) => {
 
 export const teacherLogin  = async (email: string , password: string) => {
     try {
-    const response = await axios.post(`${api_url}/api/teachers/login`, {
+    const response = await axios.post(`${api_url}/api/auth/teacher/login`, {
       email,
       password
     });

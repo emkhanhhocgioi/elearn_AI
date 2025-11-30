@@ -2,7 +2,9 @@
 import { useState } from 'react';
 import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
 import { studentlogin } from '@/app/api/auth';
+import { useRouter } from 'next/navigation';
 export default function LoginForm() {
+  const router = useRouter(); 
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     email: '',
@@ -13,7 +15,12 @@ export default function LoginForm() {
     console.log('Login attempt:', formData);
     try {
       const response = await studentlogin(formData.email, formData.password);
-      console.log('Login successful:', response);
+      if(response){
+        console.log('Login successful:', response);
+        const token = response.token;
+        localStorage.setItem('studentToken', token);
+        router.push('/student/dashboard');
+      }
     } catch (error) {
       console.log('Login failed:', error);
     }};
