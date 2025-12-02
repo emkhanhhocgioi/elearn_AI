@@ -1,7 +1,10 @@
 'use client';
-import { Bell, Search, MoreVertical, Users, BookOpen, FileText, BarChart3, Settings, LogOut } from 'lucide-react';
-import { useState, lazy, Suspense } from 'react';
-
+import { Bell, Search, MoreVertical, Users, BookOpen, FileText, BarChart3, Settings, LogOut, Activity } from 'lucide-react';
+import { useState, lazy, Suspense, useEffect } from 'react';
+import { getAllStudent } from '../api/student';
+import { checServiceHeath } from '../api/admin';  
+import { getAllClasses } from '../api/class';
+import { getAllTeachers } from '../api/teacher';
 const UsersTab = lazy(() => import('../components/UsersTab'));
 const ClassesTab = lazy(() => import('../components/ClassesTab'));
 const TeachersTab = lazy(() => import('../components/TeachersTab'));
@@ -15,13 +18,66 @@ const TabLoader = () => (
 
 export default function AdminDashboard() {
   const [currentPage, setCurrentPage] = useState('dashboard');
+  const [serviceStatus, setServiceStatus] = useState<any>(null);
+  const [isCheckingHealth, setIsCheckingHealth] = useState(false);
+  const [totalStudents, setTotalStudents] = useState(0);
+  const [totalClasses, setTotalClasses] = useState(0);
+  const [totalTeachers, setTotalTeachers] = useState(0);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        // Gọi API lấy danh sách students
+        const studentsResponse = await getAllStudent();
+        console.log('Students Response:', studentsResponse);
+        const studentCount = Array.isArray(studentsResponse.students) ? studentsResponse.students.length : 0;
+        setTotalStudents(studentCount);
+        console.log('Total Students:', studentCount);
+
+        // Gọi API lấy danh sách classes
+        const classesResponse = await getAllClasses();
+        console.log('Classes Response:', classesResponse);
+        const classCount = Array.isArray(classesResponse.data.data) ? classesResponse.data.data.length : 0;
+        setTotalClasses(classCount);
+        console.log('Total Classes:', classCount);
+
+        // Gọi API lấy danh sách teachers
+        const teachersResponse = await getAllTeachers();
+        console.log('Teachers Response:', teachersResponse);
+        const teacherCount = Array.isArray(teachersResponse) ? teachersResponse.length : 0;
+        setTotalTeachers(teacherCount);
+        console.log('Total Teachers:', teacherCount);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const handleCheckHealth = async () => {
+    setIsCheckingHealth(true);
+    try {
+      const response = await checServiceHeath();
+      if (response.status === 200) {
+        setServiceStatus(response.data);
+      }
+    } catch (error) {
+      console.error('Error checking service health:', error);
+      setServiceStatus(null);
+    } finally {
+      setIsCheckingHealth(false);
+    }
+  };
 
   const stats = [
-    { label: "Total Users", value: "2,547", icon: Users, color: "blue" },
-    { label: "Total Classes", value: "156", icon: BookOpen, color: "purple" },
-    { label: "Total Teachers", value: "87", icon: FileText, color: "green" },
+    { label: "Total Users", value: totalStudents.toString(), icon: Users, color: "blue" },
+    { label: "Total Classes", value: totalClasses.toString(), icon: BookOpen, color: "purple" },
+    { label: "Total Teachers", value: totalTeachers.toString(), icon: FileText, color: "green" },
     { label: "System Health", value: "98%", icon: BarChart3, color: "orange" }
   ];
+
+ 
 
   return (
     <div className="flex min-h-screen bg-gray-50">
@@ -56,7 +112,7 @@ export default function AdminDashboard() {
                 }`}
               >
                 <Users className="w-5 h-5" />
-                <span className="font-medium">Users</span>
+                <span className="font-medium">Students</span>
               </li>
               <li 
                 onClick={() => setCurrentPage('classes')}
@@ -174,20 +230,40 @@ export default function AdminDashboard() {
                 </div>
 
                 <div className="bg-white rounded-xl p-6 shadow-sm">
-                  <h3 className="text-lg font-bold text-gray-900 mb-4">System Status</h3>
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-lg font-bold text-gray-900">System Status</h3>
+                    <button
+                      onClick={handleCheckHealth}
+                      disabled={isCheckingHealth}
+                      className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed text-sm"
+                    >
+                      <Activity className="w-4 h-4" />
+                      {isCheckingHealth ? 'Đang kiểm tra...' : 'Kiểm tra'}
+                    </button>
+                  </div>
                   <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-gray-600">API Server</span>
-                      <span className="w-3 h-3 bg-green-500 rounded-full"></span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-gray-600">Database</span>
-                      <span className="w-3 h-3 bg-green-500 rounded-full"></span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-gray-600">Cache Server</span>
-                      <span className="w-3 h-3 bg-green-500 rounded-full"></span>
-                    </div>
+                    {serviceStatus ? (
+                      <>
+                        <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg">
+                          <span className="text-sm font-medium text-gray-700">Learning Service</span>
+                          <div className="flex items-center gap-2">
+                            <span className="text-xs text-green-700">Đang hoạt động</span>
+                            <span className="w-3 h-3 bg-green-500 rounded-full"></span>
+                          </div>
+                        </div>
+                        <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg">
+                          <span className="text-sm font-medium text-gray-700">Authentication Service</span>
+                          <div className="flex items-center gap-2">
+                            <span className="text-xs text-green-700">Đang hoạt động</span>
+                            <span className="w-3 h-3 bg-green-500 rounded-full"></span>
+                          </div>
+                        </div>
+                      </>
+                    ) : (
+                      <div className="text-center py-4 text-gray-500 text-sm">
+                        Nhấn nút "Kiểm tra" để xem trạng thái hệ thống
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>

@@ -18,9 +18,9 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { studentlogin } from '@/app/api/auth';
-
-export default function StudentLoginPage() {
+import axios from 'axios';
+import { adminLogin } from '@/app/api/auth';
+export default function AdminLoginPage() {
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
   const [email, setEmail] = useState('');
@@ -89,13 +89,14 @@ export default function StudentLoginPage() {
     setLoadingLogin(true);
     
     try {
-      const response = await studentlogin(email, password);
-      if (response) {
-        console.log('Login successful:', response);
-        const token = response.token;
-        localStorage.setItem('studentToken', token);
-        router.push('/student/dashboard');
-      }
+      // Simulated API call - Replace with actual admin login API
+        const response = await adminLogin(email, password);
+        console.log('Admin login successful:', response);
+      // On success, store token and redirect
+        
+      localStorage.setItem('adminToken', response.token);
+      localStorage.setItem('adminName', response.admin.name);
+      router.push('/admin/dashboard');
     } catch (error) {
       console.error('Login failed:', error);
       setLoginError(true);
@@ -111,7 +112,7 @@ export default function StudentLoginPage() {
     setForgotSent(false);
 
     try {
-      // Simulated API call - Replace with actual forgot password API
+      // Simulated API call
       await new Promise(resolve => setTimeout(resolve, 1500));
       setForgotSent(true);
       setTimeout(() => {
@@ -138,14 +139,14 @@ export default function StudentLoginPage() {
       {/* School Logo at top left */}
       <div className="absolute top-4 left-4 z-20 flex items-center bg-white/80 backdrop-blur-sm rounded-full px-4 py-2 shadow-lg transition-all duration-300 hover:scale-105">
         <Image
-          src="/schoolimg.jpg"
+          src="https://www.bing.com/th/id/OIP.r4JwfITtHQW0PmuLMIvJQAHaFg?w=243&h=211&c=8&rs=1&qlt=90&o=6&dpr=1.1&pid=3.1&rm=2"
           alt="School Logo"
           width={80}
           height={80}
           className="h-10 w-10 md:h-12 md:w-12 object-cover rounded-full mr-3 shadow-sm"
         />
         <span className="text-lg md:text-xl font-bold text-[#0694FE] hidden sm:block">
-          FPT University
+            Hệ thống Quản lý Giáo dục
         </span>
       </div>
 
@@ -158,7 +159,7 @@ export default function StudentLoginPage() {
         {/* Left - Image and text - Hidden on mobile */}
         <div className="hidden lg:flex w-1/2 h-full relative flex-col justify-end">
           <Image
-            src="/authbgimg.avif"
+            src="https://www.bing.com/th/id/OIP.r4JwfITtHQW0PmuLMIvJQAHaFg?w=243&h=211&c=8&rs=1&qlt=90&o=6&dpr=1.1&pid=3.1&rm=2"
             alt="Môi trường học thuật"
             fill
             className="absolute inset-0 w-full h-full object-cover"
@@ -167,12 +168,12 @@ export default function StudentLoginPage() {
           <div className="relative z-10 p-8 pt-20 h-full flex flex-col justify-end">
             <div className="transform transition-all duration-700 hover:translate-y-[-4px]">
               <h1 className="text-[2.8vw] min-text-2xl font-bold text-white mb-4 leading-tight drop-shadow-lg">
-                Trải nghiệm học tập
+                Quản trị hệ thống
                 <br />
-                <span className="text-[#0694FE]">Tốt nhất</span>
+                <span className="text-[#0694FE]">Hiệu quả</span>
               </h1>
               <p className="text-lg text-white/90 max-w-[85%] mb-6 drop-shadow leading-relaxed">
-                Truy cập hàng ngàn tài nguyên học tập và công cụ hỗ trợ hợp tác giúp nâng cao hành trình học tập của bạn.
+                Truy cập bảng điều khiển quản trị để quản lý toàn bộ hệ thống giáo dục một cách chuyên nghiệp.
               </p>
               <div className="flex items-center space-x-4 text-white/80">
                 <div className="flex items-center space-x-2">
@@ -191,9 +192,9 @@ export default function StudentLoginPage() {
         {/* Mobile Header */}
         <div className="lg:hidden w-full bg-gradient-to-r from-[#0694FE] to-[#1E293B] p-6 pt-16">
           <div className="text-center text-white">
-            <h1 className="text-2xl font-bold mb-2">Chào mừng trở lại</h1>
+            <h1 className="text-2xl font-bold mb-2">Quản trị viên</h1>
             <p className="text-white/90 text-sm">
-              Đăng nhập để tiếp tục học tập
+              Đăng nhập để quản lý hệ thống
             </p>
           </div>
         </div>
@@ -204,17 +205,17 @@ export default function StudentLoginPage() {
             {/* Profile image */}
             <div className="relative mb-6 lg:mb-8 group">
               <Image
-                src="/schoolimg.jpg"
+                src="https://www.bing.com/th/id/OIP.r4JwfITtHQW0PmuLMIvJQAHaFg?w=243&h=211&c=8&rs=1&qlt=90&o=6&dpr=1.1&pid=3.1&rm=2"
                 width={120}
                 height={120}
-                alt="Student Avatar"
+                alt="Admin Avatar"
                 className="h-16 w-16 lg:h-[6vw] lg:w-[6vw] lg:min-h-[64px] lg:min-w-[64px] lg:max-h-[96px] lg:max-w-[96px] object-cover rounded-full shadow-xl ring-4 ring-[#0694FE]/20 transition-all duration-300 group-hover:shadow-2xl group-hover:ring-[#0694FE]/30"
               />
               <div className="absolute inset-0 rounded-full bg-[#0694FE]/10 group-hover:bg-[#0694FE]/20 transition-all duration-300" />
             </div>
 
             <h2 className="text-xl lg:text-[2.2vw] lg:min-text-xl font-bold text-[#0694FE] mb-6 lg:mb-8 hidden lg:block">
-              Chào mừng trở lại
+              Đăng nhập quản trị
             </h2>
 
             <form
@@ -337,24 +338,10 @@ export default function StudentLoginPage() {
                 </div>
                 <div className="relative flex justify-center text-sm">
                   <span className="px-4 bg-[#F1F1E6] text-gray-500 font-medium">
-                    Mới sử dụng nền tảng?
+                    Hệ thống quản lý giáo dục
                   </span>
                 </div>
               </div>
-            </div>
-
-            {/* Register link */}
-            <div className="text-center w-full">
-              <span className="text-gray-600 text-sm lg:text-base">
-                Chưa có tài khoản?{" "}
-              </span>
-              <button
-                type="button"
-                onClick={() => router.push("/register")}
-                className="text-[#0694FE] hover:text-[#1E293B] font-semibold transition-colors duration-200 hover:underline text-sm lg:text-base"
-              >
-                Tạo tài khoản
-              </button>
             </div>
           </div>
         </div>

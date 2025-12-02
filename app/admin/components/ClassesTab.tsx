@@ -1,5 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { Plus, Search, Trash2, Edit, Users, BookOpen } from 'lucide-react';
 import { Button } from "@/components/ui/button"
 import {
@@ -12,8 +13,15 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { createClass, getAllClasses, deleteClass } from '@/app/admin/api/class';
+import { getAllTeachers, Teacher } from '@/app/admin/api/teacher';
 import EnrollStudent from './EnrollStudent';
-import CreateStudentAccounts from './CreateStudentAccounts';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 
 interface Class {
   _id: string;
@@ -60,7 +68,9 @@ const generateSchoolYears = () => {
 const schoolYears = generateSchoolYears();
 
 export default function ClassesTab() {
+  const router = useRouter();
   const [classes, setClasses] = useState<Class[]>([]);
+  const [teachers, setTeachers] = useState<Teacher[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
   const [isOpen, setIsOpen] = useState(false);
@@ -68,8 +78,8 @@ export default function ClassesTab() {
   const [selectedClass, setSelectedClass] = useState<Class | null>(null);
   const [formData, setFormData] = useState({
     classCode: '',
-    classSubject: '',
-    classYear: ''
+    classYear: '',
+    teacher_id: ''
   });
   const [isLoading, setIsLoading] = useState(false);
   const [fetchLoading, setFetchLoading] = useState(true);
@@ -77,6 +87,7 @@ export default function ClassesTab() {
 
   useEffect(() => {
     fetchClasses();
+    fetchTeachers();
   }, []);
 
   const fetchClasses = async () => {
@@ -95,6 +106,17 @@ export default function ClassesTab() {
     }
   };
 
+  const fetchTeachers = async () => {
+    try {
+      const teachersData = await getAllTeachers();
+      console.log('Teachers Response:', teachersData);
+      setTeachers(teachersData);
+    } catch (error) {
+      console.error('Error fetching teachers:', error);
+      setTeachers([]);
+    }
+  };
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({
@@ -109,25 +131,25 @@ export default function ClassesTab() {
       return;
     }
 
-    if (!formData.classSubject) {
-      alert('Vui lòng chọn môn học');
+    if (!formData.classYear) {
+      alert('Vui lòng chọn năm học');
       return;
     }
 
-    if (!formData.classYear) {
-      alert('Vui lòng chọn năm học');
+    if (!formData.teacher_id) {
+      alert('Vui lòng chọn giáo viên');
       return;
     }
 
     setIsLoading(true);
     try {
       const classYearRange = `${formData.classYear}-${parseInt(formData.classYear) + 4}`;
-      const result = await createClass(formData.classCode, formData.classSubject, classYearRange);
+      const result = await createClass(formData.classCode, formData.teacher_id, classYearRange);
       alert('Tạo lớp học thành công!');
       setFormData({
         classCode: '',
-        classSubject: '',
-        classYear: ''
+        classYear: '',
+        teacher_id: ''
       });
       setIsOpen(false);
       // Refresh classes list
@@ -164,7 +186,7 @@ export default function ClassesTab() {
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-2xl font-bold text-gray-900">Classes Management</h2>
         <div className="flex gap-2">
-          <CreateStudentAccounts onSuccess={() => fetchClasses()} />
+   
           <Dialog open={isOpen} onOpenChange={setIsOpen}>
             <DialogTrigger asChild>
               <Button className="bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-blue-700">
@@ -195,25 +217,6 @@ export default function ClassesTab() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <label htmlFor="classSubject" className="text-sm font-medium text-gray-900">
-                    Môn Học
-                  </label>
-                  <select
-                    id="classSubject"
-                    name="classSubject"
-                    value={formData.classSubject}
-                    onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  >
-                    <option value="">-- Chọn môn học --</option>
-                    {subjects.map((subject) => (
-                      <option key={subject} value={subject}>
-                        {subject}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div className="space-y-2">
                   <label htmlFor="classYear" className="text-sm font-medium text-gray-900">
                     Năm Học
                   </label>
@@ -231,6 +234,26 @@ export default function ClassesTab() {
                       </option>
                     ))}
                   </select>
+                </div>
+                <div className="space-y-2">
+                  <label htmlFor="teacher_id" className="text-sm font-medium text-gray-900">
+                    Giáo Viên
+                  </label>
+                  <Select
+                    value={formData.teacher_id}
+                    onValueChange={(value) => setFormData(prev => ({ ...prev, teacher_id: value }))}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="-- Chọn giáo viên --" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {teachers.map((teacher) => (
+                        <SelectItem key={teacher._id} value={teacher._id}>
+                          {teacher.name} - {teacher.subject}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
               <DialogFooter className="gap-2">
@@ -327,29 +350,29 @@ export default function ClassesTab() {
                   const matchesStatus = filterStatus === 'all' || (cls.status || 'active') === filterStatus;
                   return matchesSearch && matchesStatus;
                 }).map((cls) => (
-                  <tr key={cls._id} className="hover:bg-gray-50 transition-colors">
-                    <td className="px-6 py-4">
+                  <tr key={cls._id} className="hover:bg-gray-50 transition-colors cursor-pointer">
+                    <td className="px-6 py-4" onClick={() => router.push(`/admin/class/${cls._id}`)}>
                       <p className="text-sm font-medium text-gray-900">{cls.class_code}</p>
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-6 py-4" onClick={() => router.push(`/admin/class/${cls._id}`)}>
                       <p className="text-sm text-gray-600">{cls.class_subject}</p>
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-6 py-4" onClick={() => router.push(`/admin/class/${cls._id}`)}>
                       <p className="text-sm text-gray-600">{cls.teacher_name || cls.class_teacher || '-'}</p>
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-6 py-4" onClick={() => router.push(`/admin/class/${cls._id}`)}>
                       <p className="text-sm text-gray-600">{cls.class_year}</p>
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-6 py-4" onClick={() => router.push(`/admin/class/${cls._id}`)}>
                       <div className="flex items-center gap-1">
                         <Users className="w-4 h-4 text-gray-400" />
                         <span className="text-sm font-medium text-gray-900">{cls.class_student_count}</span>
                       </div>
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-6 py-4" onClick={() => router.push(`/admin/class/${cls._id}`)}>
                       <p className="text-sm font-medium text-gray-900">{cls.class_avarage_grade.toFixed(1)}</p>
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-6 py-4" onClick={() => router.push(`/admin/class/${cls._id}`)}>
                       <span className={`text-xs px-3 py-1 rounded-full font-medium ${
                         (cls.status || 'active') === 'active' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700'
                       }`}>
@@ -359,7 +382,8 @@ export default function ClassesTab() {
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-2">
                         <button 
-                          onClick={() => {
+                          onClick={(e) => {
+                            e.stopPropagation();
                             setSelectedClass(cls);
                             setIsEnrollDialogOpen(true);
                           }}
@@ -369,7 +393,10 @@ export default function ClassesTab() {
                           <Users className="w-4 h-4" />
                         </button>
                         <button 
-                          onClick={() => handleDeleteClass(cls._id)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDeleteClass(cls._id);
+                          }}
                           disabled={deleteLoading === cls._id}
                           className="p-2 hover:bg-red-100 rounded-lg text-red-600 transition-colors"
                           title="Xóa lớp"

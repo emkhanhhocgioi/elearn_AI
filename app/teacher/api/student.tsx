@@ -46,4 +46,4 @@ export const enrollStudentToClass = async (studentID: String, classID: String) =
         throw error;
     }           
 
-}   
+}  

@@ -55,7 +55,7 @@ export default function TeacherDashboard() {
                 }`}
               >
                 <Users className="w-5 h-5" />
-                <span className="font-medium">Classes</span>
+                <span className="font-medium">Your Class  </span>
               </li>
               <li 
                 onClick={() => setCurrentPage('tests')}

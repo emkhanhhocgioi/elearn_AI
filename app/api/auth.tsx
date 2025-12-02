@@ -30,4 +30,17 @@ export const teacherLogin  = async (email: string , password: string) => {
   }
 }
 
+export const adminLogin  = async (email: string , password: string) => {
+    try {
+    const response = await axios.post(`${api_url}/api/auth/admin/login`, {
+      email,  
+      password
+    });
+    return response.data;
+  } 
+  catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
 

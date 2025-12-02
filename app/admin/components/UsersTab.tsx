@@ -1,43 +1,42 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation';
 import { Plus, Search, Trash2, Edit, Filter } from 'lucide-react';
-
+import { getAllStudent } from '../api/student';
 interface User {
   _id: string;
-  user_email: string;
-  user_role: 'student' | 'teacher' | 'admin';
-  user_fullname: string;
-  user_status: 'active' | 'inactive';
-  created_at: string;
+
+  // New API fields
+  name?: string;
+  email?: string;
+  password?: string;
+  className?: string;
+  class?: string;
+  grade?: string;
+  academic_performance?: string;
+  conduct?: string;
+  subjects?: {
+    math: number;
+    literature: number;
+    english: number;
+    physics: number;
+    chemistry: number;
+    biology: number;
+    history: number;
+    geography: number;
+  };
+  averageScore?: number;
+  createdAt?: string;
+  updatedAt?: string;
+  __v?: number;
+
+  
 }
 
+
 export default function UsersTab() {
-  const [users, setUsers] = useState<User[]>([
-    {
-      _id: '1',
-      user_email: 'student1@email.com',
-      user_role: 'student',
-      user_fullname: 'Nguyễn Văn A',
-      user_status: 'active',
-      created_at: '2024-01-15'
-    },
-    {
-      _id: '2',
-      user_email: 'teacher1@email.com',
-      user_role: 'teacher',
-      user_fullname: 'Trần Thị B',
-      user_status: 'active',
-      created_at: '2024-01-10'
-    },
-    {
-      _id: '3',
-      user_email: 'student2@email.com',
-      user_role: 'student',
-      user_fullname: 'Lê Văn C',
-      user_status: 'inactive',
-      created_at: '2024-01-20'
-    }
-  ]);
+  const router = useRouter();
+  const [users, setUsers] = useState<User[]>([]);
 
   const [searchTerm, setSearchTerm] = useState('');
   const [filterRole, setFilterRole] = useState('all');
@@ -45,13 +44,21 @@ export default function UsersTab() {
 
   const filteredUsers = users.filter(user => {
     const matchesSearch = 
-      user.user_email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.user_fullname.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesRole = filterRole === 'all' || user.user_role === filterRole;
-    const matchesStatus = filterStatus === 'all' || user.user_status === filterStatus;
+      (user.email?.toLowerCase().includes(searchTerm.toLowerCase()) || false) ||
+      (user.name?.toLowerCase().includes(searchTerm.toLowerCase()) || false);
+    const matchesRole = filterRole === 'all' || filterRole === 'student'; // All current data are students
+    const matchesStatus = filterStatus === 'all'; // No status field in new data
     return matchesSearch && matchesRole && matchesStatus;
   });
-
+  const getStudentData = async () => {
+    try {
+      const data = await getAllStudent();
+      console.log(data.students);
+      setUsers(data.students);
+    } catch (error) {
+      console.error('Failed to fetch student data:', error);
+    }
+  };
   const getRoleColor = (role: string) => {
     switch(role) {
       case 'admin': return 'bg-red-100 text-red-700';
@@ -61,18 +68,16 @@ export default function UsersTab() {
     }
   };
 
-  const getStatusColor = (status: string) => {
-    return status === 'active' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700';
-  };
 
+  
+   useEffect(() => {
+    getStudentData();
+  }, []);
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-2xl font-bold text-gray-900">User Management</h2>
-        <button className="bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-blue-700 transition-colors">
-          <Plus className="w-4 h-4" />
-          Add New User
-        </button>
+        
       </div>
 
       {/* Filters */}
@@ -118,12 +123,12 @@ export default function UsersTab() {
           <table className="w-full">
             <thead className="bg-gray-50 border-b border-gray-200">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">User</th>
+                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Student</th>
                 <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Email</th>
                 <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Role</th>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Status</th>
+                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Performance</th>
                 <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Joined</th>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Actions</th>
+                
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
@@ -135,34 +140,41 @@ export default function UsersTab() {
                 </tr>
               ) : (
                 filteredUsers.map((user) => (
-                  <tr key={user._id} className="hover:bg-gray-50 transition-colors">
+                  <tr 
+                    key={user._id} 
+                    className="hover:bg-gray-50 transition-colors cursor-pointer"
+                    onClick={() => router.push(`/admin/student/${user._id}`)}
+                  >
                     <td className="px-6 py-4">
-                      <p className="text-sm font-medium text-gray-900">{user.user_fullname}</p>
+                      <div>
+                        <p className="text-sm font-medium text-gray-900">{user.name || 'N/A'}</p>
+                        <p className="text-xs text-gray-500">Class: {user.className || 'N/A'}</p>
+                      </div>
                     </td>
                     <td className="px-6 py-4">
-                      <p className="text-sm text-gray-600">{user.user_email}</p>
+                      <p className="text-sm text-gray-600">{user.email || 'N/A'}</p>
                     </td>
                     <td className="px-6 py-4">
-                      <span className={`text-xs px-3 py-1 rounded-full font-medium ${getRoleColor(user.user_role)}`}>
-                        {user.user_role.charAt(0).toUpperCase() + user.user_role.slice(1)}
+                      <span className={`text-xs px-3 py-1 rounded-full font-medium ${getRoleColor('student')}`}>
+                        Student
                       </span>
                     </td>
                     <td className="px-6 py-4">
-                      <span className={`text-xs px-3 py-1 rounded-full font-medium ${getStatusColor(user.user_status)}`}>
-                        {user.user_status.charAt(0).toUpperCase() + user.user_status.slice(1)}
-                      </span>
+                      <div>
+                        <span className={`text-xs px-3 py-1 rounded-full font-medium ${user.academic_performance === 'Tốt' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700'}`}>
+                          {user.academic_performance || 'N/A'}
+                        </span>
+                        <p className="text-xs text-gray-500 mt-1">Conduct: {user.conduct || 'N/A'}</p>
+                      </div>
                     </td>
                     <td className="px-6 py-4">
-                      <p className="text-sm text-gray-600">{user.created_at}</p>
+                      <p className="text-sm text-gray-600">
+                        {user.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'N/A'}
+                      </p>
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-2">
-                        <button className="p-2 hover:bg-blue-100 rounded-lg text-blue-600 transition-colors">
-                          <Edit className="w-4 h-4" />
-                        </button>
-                        <button className="p-2 hover:bg-red-100 rounded-lg text-red-600 transition-colors">
-                          <Trash2 className="w-4 h-4" />
-                        </button>
+                       
                       </div>
                     </td>
                   </tr>
