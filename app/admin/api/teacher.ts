@@ -31,7 +31,7 @@ export const getTeacherById  = async (teacherId: string) => {
   try {
     const token = localStorage.getItem('adminToken');
     if (!token) throw new Error('Token not found');
-    const response = await axios.get(`${BASE_URL}/api/teacher/${teacherId}`, {
+    const response = await axios.get(`${BASE_URL}/api/admin/teacher/${teacherId}`, {
       headers: {
         'Authorization': `Bearer ${token}`,
         "Content-Type": "application/json",
@@ -43,18 +43,19 @@ export const getTeacherById  = async (teacherId: string) => {
   }
 }
 
-export const getAllTeachers = async (): Promise<Teacher[]> => {
+export const getAllTeachers = async ()  => {
   try {
     const token = localStorage.getItem('adminToken');
     if (!token) throw new Error('Token not found');
-    const response = await axios.get(`${BASE_URL}/api/teacher/all`, {
+    const response = await axios.get(`${BASE_URL}/api/admin/teachers`, {
       headers: {
         'Authorization': `Bearer ${token}`,
         "Content-Type": "application/json",
       },
     });
     // Response structure: { message, count, teachers: [...] }
-    return response.data.teachers || [];
+    console.log("Teachers fetched:", response.data.data);
+    return response.data.data.teachers || [];
   } catch (error) {
     console.error("Error fetching teachers:", error);
     throw error;
@@ -65,7 +66,7 @@ export const createTeacher = async (teacherData: CreateTeacherDTO) => {
   try {
     const token = localStorage.getItem('adminToken');
     if (!token) throw new Error('Token not found');
-    const response = await axios.post(`${BASE_URL}/api/admin/teacher/add`, teacherData, {
+    const response = await axios.post(`${BASE_URL}/api/admin/teachers/create`, teacherData, {
       headers: {
         'Authorization': `Bearer ${token}`,
         "Content-Type": "application/json",

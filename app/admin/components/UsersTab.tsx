@@ -12,6 +12,11 @@ interface User {
   password?: string;
   className?: string;
   class?: string;
+  classid?: {
+    _id: string;
+    class_code: string;
+    teacherid: string;
+  };
   grade?: string;
   academic_performance?: string;
   conduct?: string;
@@ -148,7 +153,7 @@ export default function UsersTab() {
                     <td className="px-6 py-4">
                       <div>
                         <p className="text-sm font-medium text-gray-900">{user.name || 'N/A'}</p>
-                        <p className="text-xs text-gray-500">Class: {user.className || 'N/A'}</p>
+                        <p className="text-xs text-gray-500">Class: {user.classid?.class_code || 'N/A'}</p>
                       </div>
                     </td>
                     <td className="px-6 py-4">

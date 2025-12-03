@@ -30,7 +30,12 @@ interface Class {
   class_year: string;
   class_student_count: number;
   class_avarage_grade: number;
-  class_teacher: string;
+  studentCount: number;
+  class_teacher: {
+    _id: string;
+    name: string;
+    isClassTeacher: boolean;
+  };
   teacher_name?: string;
   status?: 'active' | 'inactive';
   created_at?: string;
@@ -109,7 +114,7 @@ export default function ClassesTab() {
   const fetchTeachers = async () => {
     try {
       const teachersData = await getAllTeachers();
-      console.log('Teachers Response:', teachersData);
+ 
       setTeachers(teachersData);
     } catch (error) {
       console.error('Error fetching teachers:', error);
@@ -247,9 +252,9 @@ export default function ClassesTab() {
                       <SelectValue placeholder="-- Chọn giáo viên --" />
                     </SelectTrigger>
                     <SelectContent>
-                      {teachers.map((teacher) => (
+                     {teachers.map((teacher) => (
                         <SelectItem key={teacher._id} value={teacher._id}>
-                          {teacher.name} - {teacher.subject}
+                          {teacher.name}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -332,7 +337,7 @@ export default function ClassesTab() {
                 const matchesSearch = 
                   cls.class_code.toLowerCase().includes(searchTerm.toLowerCase()) ||
                   cls.class_subject.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                  (cls.teacher_name || cls.class_teacher || '').toLowerCase().includes(searchTerm.toLowerCase());
+                  (cls.teacher_name || (cls.class_teacher?.name || '') || '').toLowerCase().includes(searchTerm.toLowerCase());
                 const matchesStatus = filterStatus === 'all' || (cls.status || 'active') === filterStatus;
                 return matchesSearch && matchesStatus;
               }).length === 0 ? (
@@ -346,7 +351,7 @@ export default function ClassesTab() {
                   const matchesSearch = 
                     cls.class_code.toLowerCase().includes(searchTerm.toLowerCase()) ||
                     cls.class_subject.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                    (cls.teacher_name || cls.class_teacher || '').toLowerCase().includes(searchTerm.toLowerCase());
+                    (cls.teacher_name || (cls.class_teacher?.name || '') || '').toLowerCase().includes(searchTerm.toLowerCase());
                   const matchesStatus = filterStatus === 'all' || (cls.status || 'active') === filterStatus;
                   return matchesSearch && matchesStatus;
                 }).map((cls) => (
@@ -358,7 +363,7 @@ export default function ClassesTab() {
                       <p className="text-sm text-gray-600">{cls.class_subject}</p>
                     </td>
                     <td className="px-6 py-4" onClick={() => router.push(`/admin/class/${cls._id}`)}>
-                      <p className="text-sm text-gray-600">{cls.teacher_name || cls.class_teacher || '-'}</p>
+                      <p className="text-sm text-gray-600">{cls.teacher_name || (cls.class_teacher?.name || '-')}</p>
                     </td>
                     <td className="px-6 py-4" onClick={() => router.push(`/admin/class/${cls._id}`)}>
                       <p className="text-sm text-gray-600">{cls.class_year}</p>
@@ -366,7 +371,7 @@ export default function ClassesTab() {
                     <td className="px-6 py-4" onClick={() => router.push(`/admin/class/${cls._id}`)}>
                       <div className="flex items-center gap-1">
                         <Users className="w-4 h-4 text-gray-400" />
-                        <span className="text-sm font-medium text-gray-900">{cls.class_student_count}</span>
+                        <span className="text-sm font-medium text-gray-900">{cls.studentCount}</span>
                       </div>
                     </td>
                     <td className="px-6 py-4" onClick={() => router.push(`/admin/class/${cls._id}`)}>

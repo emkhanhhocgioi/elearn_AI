@@ -23,9 +23,10 @@ interface ClassData {
   _id: string;
   class_code: string;
   class_year?: string;
-  teacher_id?: {
-    name?: string;
-  };
+  class_teacher?: {
+    _id: string;
+    name: string;
+  }
 }
 
 export default function EditStudentPage() {
@@ -96,8 +97,8 @@ export default function EditStudentPage() {
   const fetchClasses = async () => {
     try {
       const response = await getAllClasses();
-      console.log('Fetched classes:', response.data.data);  
-      setClasses(response.data.data || []);
+      console.log('Fetched classes:', response.data);  
+      setClasses(response.data || []);
     } catch (error) {
       console.error('Error fetching classes:', error);
     }
@@ -333,7 +334,7 @@ export default function EditStudentPage() {
             <div className="flex gap-2">
               <input
                 type="text"
-                value={selectedClass ? `${selectedClass.class_code} - ${selectedClass.class_year || ''} - ${selectedClass.teacher_id?.name || 'Chưa có giáo viên'}` : ''}
+                value={selectedClass ? `${selectedClass.class_code} - ${selectedClass.class_year || ''} - ${selectedClass.class_teacher?.name || 'Chưa có giáo viên'}` : ''}
                 readOnly
                 className={`flex-1 px-4 py-2 border rounded-lg bg-gray-50 text-gray-700 ${
                   errors.classid ? 'border-red-500' : 'border-gray-300'
@@ -531,7 +532,7 @@ export default function EditStudentPage() {
                             {classItem.class_year || 'N/A'}
                           </td>
                           <td className="px-4 py-3 text-sm text-gray-700">
-                            {classItem.teacher_id?.name || 'Chưa có giáo viên'}
+                            {classItem.class_teacher?.name || 'Chưa có giáo viên'}
                           </td>
                           <td className="px-4 py-3">
                             <Button

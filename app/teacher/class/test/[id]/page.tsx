@@ -2,8 +2,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { ArrowLeft, Plus, Edit, Trash2, X, Save } from 'lucide-react';
-import { addQuestion, getTestQuestions, deleteQuestion, updateQuestion } from '@/app/api/question';
-import { getTestDetailById } from '@/app/api/test';
+import { getTestDetailById, addQuestionToTest, deleteQuestionFromTest, UpdateQuestion } from '@/app/teacher/api/test';
 
 interface Question {
   _id: string;
@@ -67,16 +66,13 @@ export default function TestDetailPage() {
   const fetchTestData = async () => {
     try {
       setLoading(true);
-      const [testRes, questionsRes] = await Promise.all([
-        getTestDetailById(testId),
-        getTestQuestions(testId),
-      ]);
-
-      if (testRes?.data?.data) {
-        setTestDetail(testRes.data.data);
+      const testRes = await getTestDetailById(testId);
+      
+      if (testRes?.test) {
+        setTestDetail(testRes.test);
       }
-      if (questionsRes?.data?.data) {
-        setQuestions(questionsRes.data.data);
+      if (testRes?.questions) {
+        setQuestions(testRes.questions);
       }
       setError('');
     } catch (err) {
@@ -146,27 +142,28 @@ export default function TestDetailPage() {
 
       if (editingQuestion) {
         // Update existing question
-        await updateQuestion(
+        await UpdateQuestion(
           editingQuestion._id,
+          formData.difficult,
+          formData.question,
+          formData.questionType,
+          parseInt(formData.grade),
+          formData.solution,
+          formData.metadata,
+          formData.options.filter(opt => opt.trim() !== '')
+        );
+        setSuccess('Question updated successfully!');
+      } else {
+        // Add new question using addQuestionToTest
+        await addQuestionToTest(
           testId,
           formData.difficult,
           formData.question,
           formData.questionType,
           parseInt(formData.grade),
           formData.solution,
-          formData.metadata
-        );
-        setSuccess('Question updated successfully!');
-      } else {
-        // Add new question
-        await addQuestion(
-          testId,
-          formData.difficult,
-          formData.question,
-          formData.questionType,
-          formData.grade,
-          formData.solution,
-          formData.metadata
+          formData.metadata,
+          formData.options.filter(opt => opt.trim() !== '')
         );
         setSuccess('Question added successfully!');
       }
@@ -203,7 +200,7 @@ export default function TestDetailPage() {
     if (confirm('Are you sure you want to delete this question?')) {
       try {
         setLoading(true);
-        await deleteQuestion([questionId]);
+        await deleteQuestionFromTest(questionId);
         setSuccess('Question deleted successfully!');
         setTimeout(() => {
           setSuccess('');
@@ -251,12 +248,7 @@ export default function TestDetailPage() {
                 {testDetail?.testtitle || 'Test'}
               </h1>
               <div className="mt-4 space-y-2">
-                <p className="text-gray-600">
-                  <strong>Giáo viên:</strong> {testDetail?.teacherID?.name || 'N/A'}
-                </p>
-                <p className="text-gray-600">
-                  <strong>Lớp học:</strong> {testDetail?.classID?.class_code || 'N/A'}
-                </p>
+              
                 <p className="text-gray-600">
                   <strong>Số học sinh:</strong> {testDetail?.participants || 0}
                 </p>

@@ -1,12 +1,23 @@
 import axios from "axios"; 
 
 const api_url = "http://localhost:4000"
-
+export interface StudentData {
+  name: string;
+  classid: string;
+  DOB: string;
+  avatar: string;
+  email: string;
+  password: string;
+  parentContact: string;
+  academic_performance?: 'Tốt' | 'Khá' | 'Trung bình' | 'Yếu';
+  conduct?: 'Tốt' | 'Khá' | 'Trung bình' | 'Yếu';
+  averageScore?: number;
+}
 export const createClass = async (classCode: String,teacher_id:String , class_year: String) => {
     try {
         const token = localStorage.getItem('adminToken');
         if (!token) throw new Error('Token not found');
-        const res = await axios.post(`${api_url}/api/admin/class/create`, {
+        const res = await axios.post(`${api_url}/api/admin/classes/create`, {
             class_code: classCode,
             class_year: class_year,
             teacher_id: teacher_id,
@@ -28,14 +39,14 @@ export const getClassById = async (classId: string) => {
     try {
         const token = localStorage.getItem('adminToken');
         if (!token) throw new Error('Token not found');
-        const res = await axios.get(`${api_url}/api/class/${classId}`, {
+        const res = await axios.get(`${api_url}/api/admin/class/${classId}`, {
             headers: {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
             }
         });
-        console.log("Class data:", res.data);
-        return res.data;
+        console.log("Class data:", res.data.class);
+        return res.data.class;
     } catch (error) {
         console.error("Error fetching class by ID:", error);
         throw error;
@@ -46,18 +57,42 @@ export const getAllClasses = async () => {
     try {
         const token = localStorage.getItem('adminToken');
         
-        const res = await axios.get(`${api_url}/api/class/all`, {
+        const res = await axios.get(`${api_url}/api/admin/classes`, {
             headers: {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
             }
         });
+        console.log("All classes data:", res.data);
         return res.data;
     } catch (error) {
         console.error("Error fetching classes:", error);
         throw error;
     }
 }
+
+
+export const createMutilpleStudentAccount = async (students: StudentData[], classid: string) => {
+    try {
+        const token = localStorage.getItem('adminToken');
+        if (!token) throw new Error('Token not found');
+        const res = await axios.post(
+            `${api_url}/api/admin/class/add-students/${classid}`,
+            { classid, students },
+            {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            }
+        );
+        return res.data;
+    } catch (error) {
+        console.error('Error creating multiple student accounts:', error);
+        throw error;
+    }
+}
+
 
 export const EnrollStudentToClass = async (studentId: string, classId: string) => {
     try {
@@ -98,7 +133,7 @@ export const deleteClass = async (classId: string) => {
 export const updateClass = async (
     classId: string, 
     classCode?: string, 
-    teacherId?: string, 
+    class_teacher?: string, 
     classYear?: string, 
     averageGrade?: number
 ) => {
@@ -108,7 +143,7 @@ export const updateClass = async (
         
         const updateData: any = {};
         if (classCode !== undefined) updateData.class_code = classCode;
-        if (teacherId !== undefined) updateData.teacher_id = teacherId;
+        if (class_teacher !== undefined) updateData.class_teacher = class_teacher;
         if (classYear !== undefined) updateData.class_year = classYear;
         if (averageGrade !== undefined) updateData.class_avarage_grade = averageGrade;
         
@@ -124,7 +159,23 @@ export const updateClass = async (
         throw error;
     }
 }
-
+export const getClassSubjectTeachers = async (classId: string) => {
+    try {
+        const token = localStorage.getItem('adminToken');
+        if (!token) throw new Error('Token not found'); 
+        const res = await axios.get(`${api_url}/api/admin/class/${classId}/subject-teachers`, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+        console.log("Class subject teachers data:", res.data);  
+        return res.data;
+    } catch (error) {
+        console.error("Error fetching class subject teachers:", error);
+        throw error;
+    }   
+}
 export const updateSubjectTeacher = async (
     classId: string,
     subjectField: string,
@@ -135,7 +186,7 @@ export const updateSubjectTeacher = async (
         if (!token) throw new Error('Token not found');
         
         const res = await axios.put(
-            `${api_url}/api/class/${classId}/subject-teacher`,
+            `${api_url}/api/admin/class/subject-teacher/${classId}`,
             {
                 subjectField,
                 teacherId

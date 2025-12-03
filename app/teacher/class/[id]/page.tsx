@@ -3,11 +3,13 @@ import { useParams, useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { ArrowLeft, Plus, Edit2, Trash2, Clock, Users, Calendar, FileText, BarChart3 } from 'lucide-react';
 import {getClassTeacherTest} from '../../api/test';
-
+import { useSearchParams } from 'next/navigation';
 export default function ClassDetailPage() {
   const params = useParams();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const classId = params.id as string;
+  const subject = searchParams.get('subject') || '';
 
   const [classInfo, setClassInfo] = useState({
     class_code: 'A-2025-2029',
@@ -49,12 +51,13 @@ export default function ClassDetailPage() {
   ]);
 
   useEffect(() => {
+    console.log("subject param:", subject);
     async function fetchTests() {
       try {
         const response = await getClassTeacherTest(classId);
-        console.log('Fetched tests:', response);
-        if (response.success && response.data?.success) {
-          setTests(response.data.data || []);
+        console.log('Fetched tests:', response.tests);
+        if (response?.tests) {
+          setTests(response.tests || []);
         } else {
           console.error('Failed to fetch tests:', response.data?.message || 'Unknown error');
           setTests([]);
@@ -86,7 +89,7 @@ export default function ClassDetailPage() {
               </div>
             </div>
             <button 
-              onClick={() => router.push(`/teacher/class/${classId}/add-test`)}
+              onClick={() => router.push(`/teacher/class/${classId}/add-test/?subject=${subject}`)}
               className="bg-gradient-to-r from-purple-600 to-purple-700 text-white px-5 py-2.5 rounded-lg flex items-center gap-2 hover:from-purple-700 hover:to-purple-800 transition shadow-md hover:shadow-lg"
             >
               <Plus className="w-5 h-5" />

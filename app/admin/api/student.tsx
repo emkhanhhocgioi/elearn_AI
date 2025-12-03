@@ -6,13 +6,13 @@ export const getAllStudent = async () => {
     try {
         const token = localStorage.getItem('adminToken');
         if (!token) throw new Error('Token not found');
-        const res = await axios.get(`${api_url}/api/admin/student/all`, {
+        const res = await axios.get(`${api_url}/api/admin/students`, {
             headers: {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
             }
         });
-        console.log(res.data)
+        console.log(res)
         return res.data;    
     } catch (error) {
         console.error('Error fetching students:', error);
@@ -24,7 +24,7 @@ export const getStudentById = async (StudentID: string) => {
     try {
         const token = localStorage.getItem('adminToken');
         if (!token) throw new Error('Token not found');
-        const res = await axios.get(`${api_url}/api/admin/student/${StudentID}`, {
+        const res = await axios.get(`${api_url}/api/admin/students/${StudentID}`, {
             headers: {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
@@ -61,13 +61,13 @@ export const getStudentByClass = async (classid: string ) => {
     try {
         const token = localStorage.getItem('adminToken');
         if (!token) throw new Error('Token not found');
-        const res = await axios.get(`${api_url}/api/student/class/${classid}`, {
+        const res = await axios.get(`${api_url}/api/admin/students/class/${classid}`, {
             headers: {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
             }
         });
-        console.log(res.data) 
+        console.log(res) 
         return res.data;
     } catch (error) {
         console.error('Error fetching students by class:', error);

@@ -25,34 +25,34 @@ export default function AdminDashboard() {
   const [totalTeachers, setTotalTeachers] = useState(0);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        // Gọi API lấy danh sách students
-        const studentsResponse = await getAllStudent();
-        console.log('Students Response:', studentsResponse);
-        const studentCount = Array.isArray(studentsResponse.students) ? studentsResponse.students.length : 0;
-        setTotalStudents(studentCount);
-        console.log('Total Students:', studentCount);
+    // const fetchData = async () => {
+    //   try {
+    //     // Gọi API lấy danh sách students
+    //     const studentsResponse = await getAllStudent();
+    //     console.log('Students Response:', studentsResponse);
+    //     const studentCount = Array.isArray(studentsResponse.students) ? studentsResponse.students.length : 0;
+    //     setTotalStudents(studentCount);
+    //     console.log('Total Students:', studentCount);
 
-        // Gọi API lấy danh sách classes
-        const classesResponse = await getAllClasses();
-        console.log('Classes Response:', classesResponse);
-        const classCount = Array.isArray(classesResponse.data.data) ? classesResponse.data.data.length : 0;
-        setTotalClasses(classCount);
-        console.log('Total Classes:', classCount);
+    //     // Gọi API lấy danh sách classes
+    //     const classesResponse = await getAllClasses();
+    //     console.log('Classes Response:', classesResponse);
+    //     const classCount = Array.isArray(classesResponse.data.data) ? classesResponse.data.data.length : 0;
+    //     setTotalClasses(classCount);
+    //     console.log('Total Classes:', classCount);
 
-        // Gọi API lấy danh sách teachers
-        const teachersResponse = await getAllTeachers();
-        console.log('Teachers Response:', teachersResponse);
-        const teacherCount = Array.isArray(teachersResponse) ? teachersResponse.length : 0;
-        setTotalTeachers(teacherCount);
-        console.log('Total Teachers:', teacherCount);
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      }
-    };
+    //     // Gọi API lấy danh sách teachers
+    //     const teachersResponse = await getAllTeachers();
+    //     console.log('Teachers Response:', teachersResponse);
+    //     const teacherCount = Array.isArray(teachersResponse) ? teachersResponse.length : 0;
+    //     setTotalTeachers(teacherCount);
+    //     console.log('Total Teachers:', teacherCount);
+    //   } catch (error) {
+    //     console.error('Error fetching data:', error);
+    //   }
+    // };
 
-    fetchData();
+    // fetchData();
   }, []);
 
   const handleCheckHealth = async () => {

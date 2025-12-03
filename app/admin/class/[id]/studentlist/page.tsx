@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/table";
 import { getStudentByClass } from '@/app/admin/api/student';
 
+
 interface Student {
   _id: string;
   name: string;
@@ -62,21 +63,35 @@ export default function StudentListPage() {
     try {
       setIsLoading(true);
       const response = await getStudentByClass(classId);
-      console.log('Students data:', response);
-      
-      if (response && response.data && response.data.data && Array.isArray(response.data.data)) {
-        setStudents(response.data.data);
-        setFilteredStudents(response.data.data);
-      } else if (response && response.data && Array.isArray(response.data)) {
-        setStudents(response.data);
-        setFilteredStudents(response.data);
-      } else if (response && Array.isArray(response)) {
-        setStudents(response);
-        setFilteredStudents(response);
-      } else {
-        setStudents([]);
-        setFilteredStudents([]);
-      }
+      console.log('Students data:', response.students);
+
+      // Extract the array of enrollments from response
+      let enrollments = Array.isArray(response.students)
+        ? response.students   
+        : Array.isArray(response?.data)
+        ? response.data
+        : Array.isArray(response?.students)
+        ? response.students
+        : [];
+
+      // Map the nested structure to flat student objects
+      const studentsData = enrollments.map((enrollment: any) => ({
+        _id: enrollment.studentID._id,
+        name: enrollment.studentID.name,
+        email: enrollment.studentID.email,
+        DOB: enrollment.studentID.DOB,
+        parentContact: enrollment.studentID.parentContact,
+        avatar: enrollment.studentID.avatar,
+        academic_performance: enrollment.studentID.academic_performance,
+        conduct: enrollment.studentID.conduct,
+        averageScore: enrollment.studentID.averageScore,
+        timeJoin: enrollment.timeJoin,
+        enrollmentId: enrollment._id,
+        classid: enrollment.classID,
+      }));
+
+      setStudents(studentsData);
+      setFilteredStudents(studentsData);
     } catch (error) {
       console.error('Error fetching students:', error);
       setStudents([]);

@@ -30,7 +30,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { createMutilpleStudentAccount, StudentData } from '../../../api/admin';
+import { createMutilpleStudentAccount, StudentData } from '../../../api/class';
 
 export default function AddStudentPage() {
   const params = useParams();

@@ -3,17 +3,19 @@ import { useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { ArrowLeft, Plus, FileText, Calendar, Users, BookOpen } from 'lucide-react';
 import { createTest } from '../../../api/test';
-
+import { useSearchParams } from 'next/navigation';
 export default function AddTestPage() {
   const params = useParams();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const classId = params.id as string;
+  const subject = searchParams.get('subject') || '';
 
   const [formData, setFormData] = useState({
     testtitle: '',
     participants: 0,
     closedDate: '',
-    subject: ''
+    subject: subject
   });
 
   const [loading, setLoading] = useState(false);
@@ -108,6 +110,7 @@ export default function AddTestPage() {
                 name="subject"
                 value={formData.subject}
                 onChange={handleChange}
+                disabled={true}
                 required
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
                 placeholder="e.g., Mathematics, Physics, Chemistry"

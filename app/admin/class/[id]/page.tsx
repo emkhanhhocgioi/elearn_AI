@@ -15,20 +15,22 @@ interface SubjectTeacher {
 }
 
 interface SubjectTeachers {
-  mathTeacherId: string | SubjectTeacher;
-  literatureTeacherId: string | SubjectTeacher;
-  englishTeacherId: string | SubjectTeacher;
-  physicsTeacherId: string | SubjectTeacher;
-  chemistryTeacherId: string | SubjectTeacher;
-  biologyTeacherId: string | SubjectTeacher;
-  historyTeacherId: string | SubjectTeacher;
-  geographyTeacherId: string | SubjectTeacher;
-  civicEducationTeacherId: string | SubjectTeacher;
-  technologyTeacherId: string | SubjectTeacher;
-  informaticsTeacherId: string | SubjectTeacher;
-  physicalEducationTeacherId: string | SubjectTeacher;
-  musicTeacherId: string | SubjectTeacher;
-  artTeacherId: string | SubjectTeacher;
+  _id?: string;
+  classid?: string;
+  toan: SubjectTeacher | null;
+  ngu_van: SubjectTeacher | null;
+  tieng_anh: SubjectTeacher | null;
+  vat_ly: SubjectTeacher | null;
+  hoa_hoc: SubjectTeacher | null;
+  sinh_hoc: SubjectTeacher | null;
+  lich_su: SubjectTeacher | null;
+  dia_ly: SubjectTeacher | null;
+  giao_duc_cong_dan: SubjectTeacher | null;
+  cong_nghe: SubjectTeacher | null;
+  tin_hoc: SubjectTeacher | null;
+  the_duc: SubjectTeacher | null;
+  am_nhac: SubjectTeacher | null;
+  my_thuat: SubjectTeacher | null;
 }
 
 interface ClassDetail {
@@ -42,7 +44,7 @@ interface ClassDetail {
   teacher_name?: string;
   status?: 'active' | 'inactive';
   created_at?: string;
-  subject_teacher?: SubjectTeachers;
+  subjectTeacher?: SubjectTeachers;
 }
 
 export default function ClassDetailPage() {
@@ -67,7 +69,7 @@ export default function ClassDetailPage() {
       const response = await getClassById(classId);
       
       // Map API response to ClassDetail interface
-      const apiData = response.data.data;
+      const apiData = response;
       setClassData({
         _id: apiData._id,
         class_code: apiData.class_code,
@@ -75,11 +77,11 @@ export default function ClassDetailPage() {
         class_year: apiData.class_year,
         class_student_count: apiData.class_student_count,
         class_avarage_grade: apiData.class_avarage_grade,
-        class_teacher: apiData.class_teacher._id,
-        teacher_name: apiData.class_teacher.name,
+        class_teacher: apiData.class_teacher?._id,
+        teacher_name: apiData.class_teacher?.name,
         status: 'active',
         created_at: apiData.created_at,
-        subject_teacher: apiData.subject_teacher
+        subjectTeacher: apiData.subjectTeacher
       });
     } catch (error) {
       console.error('Error fetching class details:', error);
@@ -120,22 +122,31 @@ export default function ClassDetailPage() {
 
   const getSubjectDisplayName = (key: string): string => {
     const subjectNames: { [key: string]: string } = {
-      mathTeacherId: 'Toán',
-      literatureTeacherId: 'Ngữ văn',
-      englishTeacherId: 'Tiếng Anh',
-      physicsTeacherId: 'Vật lý',
-      chemistryTeacherId: 'Hóa học',
-      biologyTeacherId: 'Sinh học',
-      historyTeacherId: 'Lịch sử',
-      geographyTeacherId: 'Địa lý',
-      civicEducationTeacherId: 'Giáo dục công dân',
-      technologyTeacherId: 'Công nghệ',
-      informaticsTeacherId: 'Tin học',
-      physicalEducationTeacherId: 'Thể dục',
-      musicTeacherId: 'Âm nhạc',
-      artTeacherId: 'Mỹ thuật'
+      toan: 'Toán',
+      ngu_van: 'Ngữ văn',
+      tieng_anh: 'Tiếng Anh',
+      vat_ly: 'Vật lý',
+      hoa_hoc: 'Hóa học',
+      sinh_hoc: 'Sinh học',
+      lich_su: 'Lịch sử',
+      dia_ly: 'Địa lý',
+      giao_duc_cong_dan: 'Giáo dục công dân',
+      cong_nghe: 'Công nghệ',
+      tin_hoc: 'Tin học',
+      the_duc: 'Thể dục',
+      am_nhac: 'Âm nhạc',
+      my_thuat: 'Mỹ thuật'
     };
     return subjectNames[key] || key;
+  };
+
+  const getFilteredTeachers = () => {
+    if (!selectedSubject) return teachers;
+    
+    const subjectDisplayName = getSubjectDisplayName(selectedSubject);
+    return teachers.filter(teacher => 
+      teacher.subject?.toLowerCase() === subjectDisplayName.toLowerCase()
+    );
   };
 
   if (isLoading) {
@@ -220,10 +231,10 @@ export default function ClassDetailPage() {
 
         <div className="bg-white rounded-xl p-6 shadow-sm">
           <div className="flex items-center justify-between mb-2">
-            <h3 className="text-sm font-medium text-gray-500">Giáo viên</h3>
+            <h3 className="text-sm font-medium text-gray-500">Giáo viên chủ nhiệm</h3>
             <Users className="w-5 h-5 text-purple-600" />
           </div>
-          <p className="text-lg font-semibold text-gray-900">{classData.teacher_name || 'Chưa có'}</p>
+          <p className="text-lg font-semibold text-gray-900">{classData.teacher_name || 'Hiện tại chưa có giáo viên chủ nhiệm'}</p>
         </div>
 
         <div className="bg-white rounded-xl p-6 shadow-sm">
@@ -319,8 +330,8 @@ export default function ClassDetailPage() {
             <p className="text-base font-semibold text-gray-900">{classData.class_year}</p>
           </div>
           <div className="border-b pb-3">
-            <p className="text-sm text-gray-500 mb-1">Giáo viên phụ trách</p>
-            <p className="text-base font-semibold text-gray-900">{classData.teacher_name || 'Chưa có'}</p>
+            <p className="text-sm text-gray-500 mb-1">Giáo viên chủ nhiệm</p>
+            <p className="text-base font-semibold text-gray-900">{classData.teacher_name || 'Hiện tại chưa có giáo viên chủ nhiệm'}</p>
           </div>
           <div className="border-b pb-3">
             <p className="text-sm text-gray-500 mb-1">Tổng số học sinh</p>
@@ -336,7 +347,7 @@ export default function ClassDetailPage() {
       </div>
 
       {/* Subject Teachers Table */}
-      {classData.subject_teacher && (
+      {classData.subjectTeacher && (
         <div className="bg-white rounded-xl p-6 shadow-sm">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-xl font-bold text-gray-900">Giáo viên bộ môn</h2>
@@ -353,33 +364,35 @@ export default function ClassDetailPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {Object.entries(classData.subject_teacher).map(([key, value], index) => {
-                  const teacherInfo = typeof value === 'string' ? null : value;
-                  const teacherName = teacherInfo?.name || 'Chưa thêm giáo viên';
-                  
-                  return (
-                    <TableRow key={key}>
-                      <TableCell className="font-medium">{index + 1}</TableCell>
-                      <TableCell>{getSubjectDisplayName(key)}</TableCell>
-                      <TableCell>
-                        <span className={teacherInfo ? 'text-gray-900 font-medium' : 'text-gray-400 italic'}>
-                          {teacherName}
-                        </span>
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => handleChangeTeacher(key)}
-                          className="hover:bg-blue-50 hover:text-blue-600 hover:border-blue-600"
-                        >
-                          <UserCog className="w-4 h-4 mr-1" />
-                          Thay đổi
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  );
-                })}
+                {Object.entries(classData.subjectTeacher)
+                  .filter(([key]) => key !== '_id' && key !== 'classid' && key !== '__v')
+                  .map(([key, value], index) => {
+                    const teacherInfo = value;
+                    const teacherName = teacherInfo?.name || 'Chưa thêm giáo viên';
+                    
+                    return (
+                      <TableRow key={key}>
+                        <TableCell className="font-medium">{index + 1}</TableCell>
+                        <TableCell>{getSubjectDisplayName(key)}</TableCell>
+                        <TableCell>
+                          <span className={teacherInfo ? 'text-gray-900 font-medium' : 'text-gray-400 italic'}>
+                            {teacherName}
+                          </span>
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => handleChangeTeacher(key)}
+                            className="hover:bg-blue-50 hover:text-blue-600 hover:border-blue-600"
+                          >
+                            <UserCog className="w-4 h-4 mr-1" />
+                            Thay đổi
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
               </TableBody>
             </Table>
           </div>
@@ -413,14 +426,14 @@ export default function ClassDetailPage() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {teachers.length === 0 ? (
+                  {getFilteredTeachers().length === 0 ? (
                     <TableRow>
                       <TableCell colSpan={5} className="text-center py-8 text-gray-500">
-                        Không có giáo viên nào
+                        Không có giáo viên nào phù hợp với môn {getSubjectDisplayName(selectedSubject)}
                       </TableCell>
                     </TableRow>
                   ) : (
-                    teachers.map((teacher) => (
+                    getFilteredTeachers().map((teacher) => (
                       <TableRow key={teacher._id}>
                         <TableCell className="font-medium">{teacher.name}</TableCell>
                         <TableCell>{teacher.subject}</TableCell>

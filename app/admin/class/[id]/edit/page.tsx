@@ -36,11 +36,11 @@ export default function EditClassPage() {
         getAllTeachers()
       ]);
       
-      const classData = classResponse.data.data;
+      const classData = classResponse;
       setFormData({
         class_code: classData.class_code,
         class_year: classData.class_year,
-        teacher_id: classData.class_teacher._id,
+        teacher_id: classData.class_teacher?._id || '',
         class_avarage_grade: classData.class_avarage_grade
       });
       
@@ -56,7 +56,7 @@ export default function EditClassPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!formData.class_code || !formData.class_year || !formData.teacher_id) {
+    if (!formData.class_code || !formData.class_year) {
       alert('Vui lòng điền đầy đủ thông tin');
       return;
     }
@@ -66,7 +66,7 @@ export default function EditClassPage() {
       await updateClass(
         classId,
         formData.class_code,
-        formData.teacher_id,
+        formData.teacher_id ,
         formData.class_year,
         formData.class_avarage_grade
       );
@@ -151,16 +151,15 @@ export default function EditClassPage() {
             {/* Teacher */}
             <div>
               <Label htmlFor="teacher_id" className="text-base font-semibold text-gray-900">
-                Giáo viên chủ nhiệm <span className="text-red-500">*</span>
+                Giáo viên chủ nhiệm
               </Label>
               <select
                 id="teacher_id"
                 value={formData.teacher_id}
                 onChange={(e) => setFormData({ ...formData, teacher_id: e.target.value })}
                 className="mt-2 w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                required
               >
-                <option value="">-- Chọn giáo viên --</option>
+                <option value="">-- Hiện tại chưa có giáo viên chủ nhiệm --</option>
                 {teachers.map((teacher) => (
                   <option key={teacher._id} value={teacher._id}>
                     {teacher.name} - {teacher.phoneNumber}

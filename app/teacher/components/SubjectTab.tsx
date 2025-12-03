@@ -2,10 +2,10 @@
 import { Plus, Edit, Clock, X, ChevronLeft, BarChart3, FileText } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { getSubjectClass } from '@/app/teacher/api/class';
+import { getTeacherClasses, getSubjectClass } from '@/app/teacher/api/class';
 import { createTest, getClassTeacherTest } from '@/app/api/test';
 
-export default function TestsTab() {
+export default function SubjectTab() {
   const router = useRouter();
   const [showDialog, setShowDialog] = useState(false);
   const [classes, setClasses] = useState<any[]>([]);
@@ -25,7 +25,7 @@ export default function TestsTab() {
   
   const fetchTeacherTests = async () => {
     try {
-      const response = await getClassTeacherTest( );
+      const response = await getClassTeacherTest();
       if (response?.data?.data) {
         setTests(response.data.data);
       }
@@ -38,13 +38,9 @@ export default function TestsTab() {
   const fetchSubjectClasses = async () => {
     try {
       const response = await getSubjectClass();
-      console.log('Subject Classes Response:', response.data);
-      if (response?.data) {
-        // Map the full class objects
-        setClasses(response.data);
-        // Extract just the IDs for filtering
-        const classIds = response.data.map((classItem: any) => classItem.classId);
-        setSubjectClassIds(classIds);
+      console.log('Subject Classes Response:', response);
+      if (response?.data?.data) {
+        setSubjectClassIds(response.data.data);
       }
     } catch (err) {
       console.error('Error fetching subject classes:', err);
@@ -57,7 +53,32 @@ export default function TestsTab() {
     fetchTeacherTests();
   }, []);
 
+  useEffect(() => {
+    if (showDialog && classes.length === 0) {
+      fetchClasses();
+    }
+  }, [showDialog]);
 
+  const fetchClasses = async () => {
+    try {
+      setLoading(true);
+      const data = await getTeacherClasses();
+      const allClasses = data.data.data || [];
+      
+      // Filter classes to show only those the teacher is teaching (subject classes)
+      const filteredClasses = allClasses.filter((classItem: any) => 
+        subjectClassIds.includes(classItem._id)
+      );
+      
+      setClasses(filteredClasses);
+      setError('');
+    } catch (err) {
+      setError('Failed to load classes');
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleSelectClass = (classItem: any) => {
     setSelectedClass(classItem);
@@ -65,7 +86,7 @@ export default function TestsTab() {
       testtitle: '',
       participants: '',
       closedDate: '',
-      subject: ''
+      subject: classItem.class_subject || ''
     });
   };
 
@@ -85,10 +106,10 @@ export default function TestsTab() {
       return;
     }
 
-      try {
+    try {
       setLoading(true);
       await createTest(
-        selectedClass.classId,
+        selectedClass._id,
         formData.testtitle,
         parseInt(formData.participants),
         formData.closedDate,
@@ -165,28 +186,31 @@ export default function TestsTab() {
                     </div>
                   )}
 
-                  {classes.length > 0 ? (
+                  {loading ? (
+                    <div className="flex justify-center py-12">
+                      <div className="animate-spin rounded-full h-10 w-10 border-4 border-purple-200 border-t-purple-600"></div>
+                    </div>
+                  ) : classes.length > 0 ? (
                     <div className="space-y-3">
                       {classes.map((classItem) => (
                         <button
-                          key={classItem.classId}
+                          key={classItem._id}
                           onClick={() => handleSelectClass(classItem)}
                           className="w-full text-left p-4 border border-gray-200 rounded-lg hover:bg-purple-50 hover:border-purple-300 transition group hover:shadow-md"
                         >
                           <p className="font-semibold text-gray-900 group-hover:text-purple-600">
-                            {classItem.class_code || 'Unnamed Class'}
+                            {classItem.class_name || classItem.class_code || 'Unnamed Class'}
                           </p>
-                          {classItem.class_year && (
-                            <p className="text-sm text-gray-600 mt-1">📅 Year: {classItem.class_year}</p>
+                          {classItem.class_subject && (
+                            <p className="text-sm text-purple-600 mt-1 font-medium">📚 {classItem.class_subject}</p>
                           )}
-                          {classItem.subjects && classItem.subjects.length > 0 && (
-                            <div className="flex flex-wrap gap-1 mt-2">
-                              {classItem.subjects.map((subject: string, idx: number) => (
-                                <span key={idx} className="text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded">
-                                  {subject}
-                                </span>
-                              ))}
-                            </div>
+                          {classItem.description && (
+                            <p className="text-sm text-gray-600 mt-1">{classItem.description}</p>
+                          )}
+                          {classItem.student_count && (
+                            <p className="text-xs text-gray-500 mt-1">
+                              👥 {classItem.student_count} students
+                            </p>
                           )}
                         </button>
                       ))}
@@ -212,7 +236,7 @@ export default function TestsTab() {
                       <div>
                         <h3 className="text-2xl font-bold text-gray-900">Create Test</h3>
                         <p className="text-sm text-gray-600 mt-1">
-                          {selectedClass.class_code || 'Selected Class'}
+                          {selectedClass.class_name || selectedClass.class_code || 'Selected Class'}
                         </p>
                       </div>
                     </div>
@@ -307,69 +331,91 @@ export default function TestsTab() {
           </div>
         )}
 
-        {/* Class Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {classes.length > 0 ? (
-            classes.map((classItem) => (
-              <div
-                key={classItem.classId}
-                onClick={() => router.push(`/teacher/class/${classItem.classId}?subject=${classItem.subjects[0] || ''}`)}
-                className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-all cursor-pointer group"
-              >
-                <div className="bg-gradient-to-br from-purple-500 to-purple-700 h-32 flex items-center justify-center relative">
-                  <div className="text-white text-center">
-                    <h3 className="text-2xl font-bold mb-1">{classItem.class_code}</h3>
-                    <p className="text-purple-100 text-sm">{classItem.class_year}</p>
-                  </div>
-                  <div className="absolute top-3 right-3 bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full">
-                    <span className="text-white text-xs font-semibold">Active</span>
-                  </div>
-                </div>
-                <div className="p-6">
-                  <div className="space-y-3">
-                    {classItem.subjects && classItem.subjects.length > 0 && (
-                      <div className="mb-3">
-                        <p className="text-xs text-gray-500 mb-2">Teaching Subjects:</p>
-                        <div className="flex flex-wrap gap-1">
-                          {classItem.subjects.map((subject: string, idx: number) => (
-                            <span key={idx} className="text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded font-medium">
-                              {subject}
-                            </span>
-                          ))}
+        <div className="bg-white rounded-2xl overflow-hidden shadow-lg">
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead className="bg-gradient-to-r from-purple-50 to-purple-100 border-b-2 border-purple-200">
+                <tr>
+                  <th className="px-6 py-4 text-left text-xs font-bold text-purple-900 uppercase tracking-wider">Test Title</th>
+                  <th className="px-6 py-4 text-left text-xs font-bold text-purple-900 uppercase tracking-wider">Class</th>
+                  <th className="px-6 py-4 text-left text-xs font-bold text-purple-900 uppercase tracking-wider">Questions</th>
+                  <th className="px-6 py-4 text-left text-xs font-bold text-purple-900 uppercase tracking-wider">Submissions</th>
+                  <th className="px-6 py-4 text-left text-xs font-bold text-purple-900 uppercase tracking-wider">Avg Score</th>
+                  <th className="px-6 py-4 text-left text-xs font-bold text-purple-900 uppercase tracking-wider">Due Date</th>
+                  <th className="px-6 py-4 text-left text-xs font-bold text-purple-900 uppercase tracking-wider">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-200">
+                {filteredTests && filteredTests.length > 0 ? (
+                  filteredTests.map((test: any) => (
+                    <tr key={test._id} className="hover:bg-purple-50/50 transition">
+                      <td className="px-6 py-4 cursor-pointer hover:text-purple-600 transition" onClick={() => router.push(`/teacher/test/${test._id}`)}>
+                        <p className="text-sm font-semibold text-gray-900">{test.testtitle}</p>
+                        <div className="flex items-center gap-2 text-xs text-gray-500 mt-2">
+                          <Clock className="w-3 h-3" />
+                          <span className={`px-3 py-1 rounded-full text-xs font-bold ${
+                            test.status === 'ongoing' ? 'bg-blue-100 text-blue-700' :
+                            test.status === 'closed' ? 'bg-red-100 text-red-700' :
+                            'bg-gray-100 text-gray-700'
+                          }`}>
+                            {test.status}
+                          </span>
                         </div>
-                      </div>
-                    )}
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-gray-500 flex items-center gap-2">
-                        <FileText className="w-4 h-4" />
-                        Total Tests
-                      </span>
-                      <span className="font-bold text-gray-900">
-                        {filteredTests.filter((test: any) => test.classID === classItem.classId).length}
-                      </span>
-                    </div>
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-gray-500 flex items-center gap-2">
-                        <Clock className="w-4 h-4" />
-                        Active Tests
-                      </span>
-                      <span className="font-bold text-green-600">
-                        {filteredTests.filter((test: any) => test.classID === classItem.classId && test.status === 'ongoing').length}
-                      </span>
-                    </div>
-                  </div>
-                  <button className="mt-4 w-full bg-purple-50 text-purple-600 py-2 rounded-lg text-sm font-semibold hover:bg-purple-100 transition group-hover:bg-purple-100">
-                    View Class Details →
-                  </button>
-                </div>
-              </div>
-            ))
-          ) : (
-            <div className="col-span-full text-center py-12">
-              <p className="text-gray-500 text-lg">No classes available</p>
-              <p className="text-gray-400 text-sm mt-2">You are not assigned to any subject classes yet</p>
-            </div>
-          )}
+                      </td>
+                      <td className="px-6 py-4">
+                        <p className="text-sm font-medium text-gray-900">{test.classID}</p>
+                      </td>
+                      <td className="px-6 py-4">
+                        <span className="inline-flex items-center gap-1 text-sm text-gray-600">
+                          <FileText className="w-4 h-4 text-gray-400" />
+                          -
+                        </span>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-3">
+                          <span className="text-sm font-bold text-gray-900">0/{test.participants}</span>
+                          <div className="w-20 bg-gray-200 rounded-full h-2">
+                            <div
+                              className="bg-gradient-to-r from-purple-600 to-purple-400 h-2 rounded-full transition-all"
+                              style={{ width: '0%' }}
+                            ></div>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <span className={`text-sm font-bold ${parseInt(test.avg_score) > 0 ? 'text-purple-600' : 'text-gray-400'}`}>
+                          {parseInt(test.avg_score) > 0 ? `${test.avg_score}%` : 'N/A'}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4">
+                        <p className="text-sm text-gray-600">
+                          {new Date(test.closeDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                        </p>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-2">
+                          <button className="bg-gradient-to-r from-green-100 to-green-50 text-green-600 text-xs px-3 py-2 rounded-lg hover:from-green-200 hover:to-green-100 transition font-semibold flex items-center gap-1 hover:shadow-md">
+                            <BarChart3 className="w-3 h-3" />
+                            Grade
+                          </button>
+                          <button onClick={() => router.push(`/teacher/test/${test._id}`)} className="p-2 hover:bg-gray-200 rounded-lg transition text-gray-600 hover:text-purple-600">
+                            <Edit className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan={7} className="px-6 py-12 text-center">
+                      <p className="text-gray-500 text-lg">No tests created yet</p>
+                      <p className="text-gray-400 text-sm mt-2">Create a test for your subject classes</p>
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>

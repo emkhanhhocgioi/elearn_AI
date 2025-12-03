@@ -10,7 +10,11 @@ interface StudentDetail {
   name: string;
   email: string;
   password?: string;
-  class: string;
+  classid:{
+    _id: string;
+    class_code: string;
+    teacherid: string;
+  };
   grade: string;
   academic_performance: string;
   conduct: string;
@@ -151,7 +155,7 @@ export default function StudentDetailPage() {
                 <div className="flex items-center gap-4 text-gray-600">
                   <div className="flex items-center gap-2">
                     <GraduationCap className="w-5 h-5" />
-                    <span className="text-lg">Lớp {studentData.class}</span>
+                    <span className="text-lg">Lớp {studentData.classid.class_code}</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <BookOpen className="w-5 h-5" />
@@ -209,7 +213,7 @@ export default function StudentDetailPage() {
             <h3 className="text-sm font-medium text-gray-500">Lớp học</h3>
             <GraduationCap className="w-5 h-5 text-orange-600" />
           </div>
-          <p className="text-lg font-semibold text-gray-900">{studentData.class}</p>
+          <p className="text-lg font-semibold text-gray-900">{studentData.classid.class_code}</p>
           <p className="text-sm text-gray-500 mt-1">Khối {studentData.grade}</p>
         </div>
       </div>
@@ -288,7 +292,7 @@ export default function StudentDetailPage() {
           </div>
           <div className="border-b pb-3">
             <p className="text-sm text-gray-500 mb-1">Lớp</p>
-            <p className="text-base font-semibold text-gray-900">{studentData.class}</p>
+            <p className="text-base font-semibold text-gray-900">{studentData.classid.class_code}</p>
           </div>
           <div className="border-b pb-3">
             <p className="text-sm text-gray-500 mb-1">Khối</p>
