@@ -1,8 +1,8 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { ArrowLeft, Plus, Edit, Trash2, X, Save } from 'lucide-react';
-import { getTestDetailById, addQuestionToTest, deleteQuestionFromTest, UpdateQuestion } from '@/app/teacher/api/test';
+import { ArrowLeft, Plus, Edit, Trash2, X, Save, Settings, FileText } from 'lucide-react';
+import { getTestDetailById, addQuestionToTest, deleteQuestionFromTest, UpdateQuestion, editTestById } from '@/app/teacher/api/test';
 
 interface Question {
   _id: string;
@@ -44,6 +44,7 @@ export default function TestDetailPage() {
   const [questions, setQuestions] = useState<Question[]>([]);
   const [loading, setLoading] = useState(true);
   const [showAddDialog, setShowAddDialog] = useState(false);
+  const [showEditTestDialog, setShowEditTestDialog] = useState(false);
   const [editingQuestion, setEditingQuestion] = useState<Question | null>(null);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
@@ -56,6 +57,13 @@ export default function TestDetailPage() {
     solution: '',
     metadata: 'none',
     options: [''],
+  });
+
+  const [testFormData, setTestFormData] = useState({
+    testtitle: '',
+    classID: '',
+    test_time: '',
+    closeDate: '',
   });
 
   // Fetch test and questions on mount
@@ -221,6 +229,51 @@ export default function TestDetailPage() {
     setError('');
   };
 
+  const handleEditTest = () => {
+    if (testDetail) {
+      setTestFormData({
+        testtitle: testDetail.testtitle,
+        classID: testDetail.classID._id,
+        test_time: '',
+        closeDate: testDetail.closeDate.split('T')[0], // Format date for input
+      });
+      setShowEditTestDialog(true);
+    }
+  };
+
+  const handleTestFormChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setTestFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleUpdateTest = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      setLoading(true);
+      await editTestById(
+        testId,
+        testFormData.classID,
+        testFormData.testtitle,
+        Number(testFormData.test_time),
+        testFormData.closeDate
+      );
+      setSuccess('Test updated successfully!');
+      setTimeout(() => {
+        setShowEditTestDialog(false);
+        setSuccess('');
+        fetchTestData();
+      }, 1500);
+    } catch (err) {
+      setError('Failed to update test');
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   if (loading && !testDetail) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -272,16 +325,126 @@ export default function TestDetailPage() {
                 {testDetail?.status}
               </span>
             </div>
-            <button
-              onClick={() => setShowAddDialog(true)}
-              className="bg-purple-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-purple-700 transition"
-            >
-              <Plus className="w-4 h-4" />
-              Add Question
-            </button>
+           
+            <div className="flex gap-2">
+              <button
+                onClick={() => router.push(`/teacher/class/test/${testId}/submition`)}
+                className="bg-green-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-green-700 transition"
+              >
+                <FileText className="w-4 h-4" />
+                View Submissions
+              </button>
+              <button
+                onClick={handleEditTest}
+                className="bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-blue-700 transition"
+              >
+                <Settings className="w-4 h-4" />
+                Edit Test
+              </button>
+              <button
+                onClick={() => setShowAddDialog(true)}
+                className="bg-purple-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-purple-700 transition"
+              >
+                <Plus className="w-4 h-4" />
+                Add Question
+              </button>
+            </div>
           </div>
         </div>
       </div>
+
+      {/* Edit Test Dialog */}
+      {showEditTestDialog && (
+        <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center">
+          <div className="bg-white rounded-lg max-w-md w-full shadow-xl">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-xl font-bold text-gray-900">Edit Test Information</h3>
+                <button
+                  onClick={() => setShowEditTestDialog(false)}
+                  className="p-1 hover:bg-gray-100 rounded-lg transition"
+                >
+                  <X className="w-6 h-6 text-gray-500" />
+                </button>
+              </div>
+
+              {error && (
+                <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
+                  {error}
+                </div>
+              )}
+
+              {success && (
+                <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg text-green-700 text-sm">
+                  {success}
+                </div>
+              )}
+
+              <form onSubmit={handleUpdateTest} className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Test Title *
+                  </label>
+                  <input
+                    type="text"
+                    name="testtitle"
+                    value={testFormData.testtitle}
+                    onChange={handleTestFormChange}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Test Duration (minutes)
+                  </label>
+                  <input
+                    type="number"
+                    name="test_time"
+                    value={testFormData.test_time}
+                    onChange={handleTestFormChange}
+                    placeholder="Enter test duration"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Close Date *
+                  </label>
+                  <input
+                    type="date"
+                    name="closeDate"
+                    value={testFormData.closeDate}
+                    onChange={handleTestFormChange}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
+                    required
+                  />
+                </div>
+
+                <div className="flex gap-3 pt-4">
+                  <button
+                    type="button"
+                    onClick={() => setShowEditTestDialog(false)}
+                    className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition font-medium"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  >
+                    <Save className="w-4 h-4" />
+                    {loading ? 'Updating...' : 'Update Test'}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Add/Edit Dialog */}
       {showAddDialog && (
@@ -290,6 +453,7 @@ export default function TestDetailPage() {
             <div className="p-6">
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-xl font-bold text-gray-900">
+
                   {editingQuestion ? 'Edit Question' : 'Add New Question'}
                 </h3>
                 <button

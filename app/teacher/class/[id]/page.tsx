@@ -22,7 +22,7 @@ export default function ClassDetailPage() {
       _id: '1',
       testtitle: 'Midterm Exam - Mathematics',
       participants: 30,
-      submissions: 15,
+      submittedCount: 15,
       status: 'ongoing',
       closeDate: '2025-12-15T23:59:00',
       avg_score: 75,
@@ -32,7 +32,7 @@ export default function ClassDetailPage() {
       _id: '2',
       testtitle: 'Quiz - Algebra Basics',
       participants: 30,
-      submissions: 28,
+      submittedCount: 28,
       status: 'closed',
       closeDate: '2025-11-30T23:59:00',
       avg_score: 82,
@@ -42,7 +42,7 @@ export default function ClassDetailPage() {
       _id: '3',
       testtitle: 'Final Exam - Geometry',
       participants: 30,
-      submissions: 0,
+      submittedCount: 0,
       status: 'upcoming',
       closeDate: '2025-12-25T23:59:00',
       avg_score: 0,
@@ -133,7 +133,7 @@ export default function ClassDetailPage() {
               <div>
                 <p className="text-sm text-gray-500 mb-1">Avg Completion</p>
                 <p className="text-3xl font-bold text-blue-600">
-                  {Math.round((tests.reduce((acc, t) => acc + t.submissions, 0) / tests.reduce((acc, t) => acc + t.participants, 0)) * 100)}%
+                  {Math.round((tests.reduce((acc, t) => acc + t.submittedCount, 0) / tests.reduce((acc, t) => acc + t.participants, 0)) * 100)}%
                 </p>
               </div>
               <div className="p-3 bg-blue-100 rounded-lg">
@@ -206,11 +206,11 @@ export default function ClassDetailPage() {
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
-                          <span className="text-sm font-bold text-gray-900">{test.submissions}/{test.participants}</span>
+                          <span className="text-sm font-bold text-gray-900">{test.submittedCount}/{test.participants}</span>
                           <div className="w-20 bg-gray-200 rounded-full h-2">
                             <div
                               className="bg-gradient-to-r from-purple-600 to-purple-400 h-2 rounded-full transition-all"
-                              style={{ width: `${(test.submissions / test.participants) * 100}%` }}
+                              style={{ width: `${(test.submittedCount / test.participants) * 100}%` }}
                             ></div>
                           </div>
                         </div>

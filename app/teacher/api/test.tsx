@@ -1,4 +1,5 @@
 import axios from "axios"; 
+import test from "node:test";
 
 const api_url = "http://localhost:4000"
 
@@ -65,7 +66,36 @@ export const getTestDetailById = async (testID: String) => {
         console.error('Error fetching test by ID:', error);
     }   
 }
+export const editTestById = async (
+      testId: String,
+      classID: String ,
+      testtitle: String ,
+      test_time: Number,
+      closeDate: String,
+) => {
+    try {
+        const teacherToken = localStorage.getItem('teacherToken');
+        if (!teacherToken) {
+            throw new Error('Token not found in localStorage');
+        }   
+        const updateData = {
+            classID: classID,
+            testtitle: testtitle,
+            test_time: test_time,
+            closeDate: closeDate
+        };
+        const res = await axios.put(`${api_url}/api/teacher/tests/${testId}`, updateData, {
 
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${teacherToken}`
+            }
+        });
+        return res.data;
+    } catch (error) {
+        console.error('Error editing test by ID:', error);
+    }
+}
 export const deleteTestById = async (testID: String) => {
     try {
         const teacherToken = localStorage.getItem('teacherToken');  
@@ -174,5 +204,24 @@ export const UpdateQuestion = async (
     } catch (error) {
         console.error('Error updating question:', error);
         throw error;
+    }
+};
+
+export const getSubmittedAnswers = async (testId: string) => {
+    try {
+        const teacherToken = localStorage.getItem('teacherToken');
+        if (!teacherToken) {
+            throw new Error('Token not found in localStorage');
+        }
+        const res = await axios.get(`${api_url}/api/teacher/tests/${testId}/submitted-answers`, {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${teacherToken}`
+            }
+        });
+        console.log("Fetched submitted answers:", res.data);
+        return res.data;
+    } catch (error) {
+        console.error('Error fetching submitted answers:', error);
     }
 };

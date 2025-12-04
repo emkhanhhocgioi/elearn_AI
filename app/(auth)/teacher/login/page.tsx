@@ -19,9 +19,11 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { teacherLogin } from '@/app/api/auth';
+import { useWebSocket } from '@/app/context/WebSocketContext';
 
 export default function TeacherLoginPage() {
   const router = useRouter();
+  const { connect } = useWebSocket();
   const [mounted, setMounted] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -93,6 +95,10 @@ export default function TeacherLoginPage() {
       console.log('Login successful:', response);
       const token = response.token;
       localStorage.setItem('teacherToken', token);
+      
+      // Connect to WebSocket
+      connect('teacher', token);
+      
       router.push('/teacher/dashboard');
     } catch (error) {
       console.error('Login failed:', error);

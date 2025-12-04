@@ -19,9 +19,11 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { studentlogin } from '@/app/api/auth';
+import { useWebSocket } from '@/app/context/WebSocketContext';
 
 export default function StudentLoginPage() {
   const router = useRouter();
+  const { connect } = useWebSocket();
   const [mounted, setMounted] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -94,6 +96,10 @@ export default function StudentLoginPage() {
         console.log('Login successful:', response);
         const token = response.token;
         localStorage.setItem('studentToken', token);
+        
+        // Connect to WebSocket
+        connect('student', token);
+        
         router.push('/student/dashboard');
       }
     } catch (error) {
