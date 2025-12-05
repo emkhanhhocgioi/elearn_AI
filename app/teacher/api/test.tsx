@@ -2,7 +2,11 @@ import axios from "axios";
 import test from "node:test";
 
 const api_url = "http://localhost:4000"
-
+interface AnswerData {
+    questionID: string;
+    answer: string;
+    isCorrect: boolean;
+}
 export const createTest = async (classID: String , testtitle: String , 
     participants: Number, closedDate: String, subject: String ) =>{
         try {
@@ -122,24 +126,38 @@ export const addQuestionToTest = async (
     grade: number,
     solution: string,
     metadata: string,
-    options: string[]
+    options: string[],
+    file?: File | null
 ) => {
     try {
         const teacherToken = localStorage.getItem('teacherToken');
         if (!teacherToken) {
             throw new Error('Token not found in localStorage');
         }
-        const res = await axios.post(`${api_url}/api/teacher/tests/${testId}/questions`, {
-            difficult,
-            question,
-            questionType,
-            grade,
-            solution,
-            metadata,
-            options
-        }, {
+
+        const formData = new FormData();
+        formData.append('difficult', difficult);
+        formData.append('question', question);
+        formData.append('questionType', questionType);
+        formData.append('grade', grade.toString());
+        formData.append('solution', solution);
+        
+        // Only append metadata if no file is being uploaded
+        if (!file && metadata) {
+            formData.append('metadata', metadata);
+        }
+        
+        // Append options as JSON string
+        formData.append('options', JSON.stringify(options));
+        
+        // Append file if provided
+        if (file) {
+            formData.append('file', file);
+        }
+
+        const res = await axios.post(`${api_url}/api/teacher/tests/${testId}/questions`, formData, {
             headers: {
-                'Content-Type': 'application/json',
+                'Content-Type': 'multipart/form-data',
                 'Authorization': `Bearer ${teacherToken}`
             }
         });
@@ -178,24 +196,38 @@ export const UpdateQuestion = async (
     grade: number,
     solution: string,
     metadata: string,
-    options: string[]
+    options: string[],
+    file?: File | null
 ) => {
     try {
         const teacherToken = localStorage.getItem('teacherToken');
         if (!teacherToken) {
             throw new Error('Token not found in localStorage');
         }
-        const res = await axios.put(`${api_url}/api/teacher/tests/questions/${QuestionId}`, {
-            difficult,
-            question,
-            questionType,
-            grade,
-            solution,
-            metadata,
-            options
-        }, {
+
+        const formData = new FormData();
+        formData.append('difficult', difficult);
+        formData.append('question', question);
+        formData.append('questionType', questionType);
+        formData.append('grade', grade.toString());
+        formData.append('solution', solution);
+        
+        // Only append metadata if no file is being uploaded
+        if (!file && metadata) {
+            formData.append('metadata', metadata);
+        }
+        
+        // Append options as JSON string
+        formData.append('options', JSON.stringify(options));
+        
+        // Append file if provided
+        if (file) {
+            formData.append('file', file);
+        }
+
+        const res = await axios.put(`${api_url}/api/teacher/tests/questions/${QuestionId}`, formData, {
             headers: {
-                'Content-Type': 'application/json',
+                'Content-Type': 'multipart/form-data',
                 'Authorization': `Bearer ${teacherToken}`
             }
         });
@@ -223,5 +255,34 @@ export const getSubmittedAnswers = async (testId: string) => {
         return res.data;
     } catch (error) {
         console.error('Error fetching submitted answers:', error);
+    }
+};
+
+export const TeacherGradingAsnwer = async (
+    answerId: string,
+    grade: number,
+    teacherComments: string,
+    answerData: AnswerData[]
+) => {
+    try {   
+        const teacherToken = localStorage.getItem('teacherToken');
+        if (!teacherToken) {
+            throw new Error('Token not found in localStorage');
+        }   
+        const res = await axios.put(`${api_url}/api/teacher/tests/answers/${answerId}/grade`, {
+            teacherGrade:grade,
+            teacherComments,
+            answerData
+        }, {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${teacherToken}`
+            }
+        });
+        console.log("Answer graded successfully:", res.data);
+        return res.data;
+    } catch (error) {
+        console.error('Error grading answer:', error);
+        throw error;
     }
 };

@@ -14,7 +14,7 @@ export const getStudentClassTest = async () => {
                 'Authorization': `Bearer ${studentToken}`
             }
         });
-        console.log('Fetched student class tests:', res.data);
+        console.log('Fetched student class tests:', res.data);  
         return res.data;
     } catch (error) {   
         console.error('Error fetching student class tests:', error);
@@ -37,5 +37,24 @@ export const getTestQuestionsDetail = async (testId: string) => {
         return res.data;
     } catch (error) {
         console.error('Error fetching test questions detail:', error);
+    }
+};
+
+export const getTestGradingDetail = async (testId: string) => {
+    try {
+        const studentToken = localStorage.getItem('studentToken');
+        if (!studentToken) {
+            throw new Error('Token not found in localStorage');
+        }
+        const res = await axios.get(`${api_url}/api/student/test/grading/${testId}`, {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${studentToken}`
+            }
+        });
+        console.log('Fetched test grading detail:', res.data);
+        return res.data;
+    } catch (error) {
+        console.error('Error fetching test grading detail:', error);
     }
 };

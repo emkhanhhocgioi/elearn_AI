@@ -59,12 +59,42 @@ export default function TestDetailPage() {
     options: [''],
   });
 
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [filePreview, setFilePreview] = useState<string | null>(null);
+
   const [testFormData, setTestFormData] = useState({
     testtitle: '',
     classID: '',
     test_time: '',
     closeDate: '',
   });
+
+  // Check if file is an image
+  const isImageFile = (file: File) => {
+    return file.type.startsWith('image/');
+  };
+
+  // Handle file selection and preview
+  const handleFileSelect = (file: File | null) => {
+    setSelectedFile(file);
+    
+    if (file) {
+      setFormData(prev => ({ ...prev, metadata: '' }));
+      
+      // Create preview if it's an image
+      if (isImageFile(file)) {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setFilePreview(reader.result as string);
+        };
+        reader.readAsDataURL(file);
+      } else {
+        setFilePreview(null);
+      }
+    } else {
+      setFilePreview(null);
+    }
+  };
 
   // Fetch test and questions on mount
   useEffect(() => {
@@ -102,6 +132,8 @@ export default function TestDetailPage() {
       options: [''],
     });
     setEditingQuestion(null);
+    setSelectedFile(null);
+    setFilePreview(null);
   };
 
   const handleInputChange = (
@@ -158,7 +190,8 @@ export default function TestDetailPage() {
           parseInt(formData.grade),
           formData.solution,
           formData.metadata,
-          formData.options.filter(opt => opt.trim() !== '')
+          formData.options.filter(opt => opt.trim() !== ''),
+          selectedFile
         );
         setSuccess('Question updated successfully!');
       } else {
@@ -171,7 +204,8 @@ export default function TestDetailPage() {
           parseInt(formData.grade),
           formData.solution,
           formData.metadata,
-          formData.options.filter(opt => opt.trim() !== '')
+          formData.options.filter(opt => opt.trim() !== ''),
+          selectedFile
         );
         setSuccess('Question added successfully!');
       }
@@ -562,14 +596,77 @@ export default function TestDetailPage() {
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Metadata (Optional)
                   </label>
+                  {
+                    !selectedFile && (
+
+                      <p className="text-xs text-gray-500 mb-1">
+                        You can provide additional metadata like topic or chapter. If you upload an image, this field will be disabled.
+                      </p>
+                    ) 
+                  }
+                  
+                  {selectedFile && (
+                    <p className="text-xs text-gray-500 mt-1">
+                      Metadata input disabled when file is selected
+                    </p>
+                  )}
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Upload Image (Optional)
+                  </label>
                   <input
-                    type="text"
-                    name="metadata"
-                    value={formData.metadata}
-                    onChange={handleInputChange}
-                    placeholder="Additional metadata (e.g., topic, chapter)"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition"
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0] || null;
+                      handleFileSelect(file);
+                    }}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100"
                   />
+                  {selectedFile && (
+                    <div className="mt-4">
+                      <div className="flex items-center justify-between mb-2">
+                        <p className="text-sm font-medium text-gray-700">Selected: {selectedFile.name}</p>
+                        <button
+                          type="button"
+                          onClick={() => handleFileSelect(null)}
+                          className="text-xs text-red-600 hover:text-red-700 font-medium"
+                        >
+                          Remove
+                        </button>
+                      </div>
+                      
+                      {/* Image Preview */}
+                      {filePreview && isImageFile(selectedFile) && (
+                        <div className="mt-3 border border-gray-200 rounded-lg overflow-hidden">
+                          <img 
+                            src={filePreview} 
+                            alt="Preview" 
+                            className="w-full h-auto max-h-64 object-contain bg-gray-50"
+                          />
+                        </div>
+                      )}
+                      
+                      {/* File Info for non-image files */}
+                      {!isImageFile(selectedFile) && (
+                        <div className="mt-3 p-4 border border-gray-200 rounded-lg bg-gray-50">
+                          <div className="flex items-center gap-3">
+                            <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+                              <FileText className="w-6 h-6 text-purple-600" />
+                            </div>
+                            <div className="flex-1">
+                              <p className="text-sm font-medium text-gray-900">{selectedFile.name}</p>
+                              <p className="text-xs text-gray-500">
+                                {selectedFile.type || 'Unknown type'} • {(selectedFile.size / 1024).toFixed(2)} KB
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
 
                 {formData.questionType === 'choose_correct' && (

@@ -1,8 +1,8 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams, useRouter,useSearchParams } from 'next/navigation';
 import { Clock, Calendar, Users, BookOpen, ArrowLeft, CheckCircle, AlertCircle } from 'lucide-react';
-import { getTestQuestionsDetail } from '../../api/test';
+import { getTestQuestionsDetail,getTestGradingDetail } from '../../api/test';
 import { useWebSocket } from '@/app/context/WebSocketContext';
 import {
   Dialog,
@@ -46,6 +46,7 @@ interface SubmitAnswer {
 const TestDetailPage = () => {
   const params = useParams();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const testId = params.id as string;
 
    const { isConnected, lastMessage, sendMessage } = useWebSocket();
@@ -331,7 +332,14 @@ const TestDetailPage = () => {
                       <p className="text-gray-800">{question.question}</p>
                     </div>
                   </div>
-
+                  <div> 
+                    <img
+                      src={question.metadata}
+                      alt={`Hình ảnh câu ${index + 1}`}
+                      loading="lazy"
+                      className="w-full max-w-full h-auto max-h-64 object-contain rounded-md mb-4 mx-auto"
+                    />
+                    </div>
                   {question.questionType === 'essay' ? (
                     <textarea
                       value={answers.find(a => a.questionID === question._id)?.answer || ''}

@@ -177,24 +177,7 @@ export default function StudentDashboard() {
 
         <div className="p-4 lg:p-8">
           {/* Stats Cards */}
-          {currentPage === 'classes' && (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-              {stats.map((stat, idx) => {
-                const Icon = stat.icon;
-                return (
-                  <div key={idx} className="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
-                    <div className="flex items-center justify-between mb-4">
-                      <div className="w-12 h-12 rounded-lg bg-blue-50 flex items-center justify-center">
-                        <Icon className="w-6 h-6 text-blue-600" />
-                      </div>
-                    </div>
-                    <h3 className="text-2xl font-bold text-gray-900 mb-1">{stat.value}</h3>
-                    <p className="text-sm text-gray-500">{stat.label}</p>
-                  </div>
-                );
-              })}
-            </div>
-          )}
+         
 
           {/* Dynamic Tab Content */}
           <Suspense fallback={<TabLoader />}>

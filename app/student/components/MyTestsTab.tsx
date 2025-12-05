@@ -160,12 +160,29 @@ const MyTestsTab = () => {
                       </p>
                     </td>
                     <td className="px-6 py-4">
-                      <button 
+                      {
+                        test.isSubmited === false  && (
+                           <button 
                         onClick={() => router.push(`/student/test/${test.id}`)}
                         className="bg-blue-100 text-blue-600 text-xs px-3 py-1.5 rounded-full hover:bg-blue-200"
-                      >
-                        {test.isSubmited ? 'Xem kết quả' : 'Làm bài'}
+                      > 
+                        Làm bài
                       </button>
+                        ) 
+                      }
+                      {
+                        test.isSubmited === true  && (
+                           <button 
+                        onClick={() => router.push(`/student/test/grading/${test.id}`)}
+                        className="bg-green-100 text-green-600 text-xs px-3 py-1.5 rounded-full hover:bg-green-200"
+                      > 
+                        Xem kết quả
+                      </button>
+                        ) 
+                      }
+
+
+                     
                     </td>
                   </tr>
                 ))

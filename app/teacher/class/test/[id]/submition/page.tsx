@@ -1,8 +1,8 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { ArrowLeft, FileText, Calendar, Clock, CheckCircle, XCircle, User } from 'lucide-react';
-import { getSubmittedAnswers } from '@/app/teacher/api/test';
+import { ArrowLeft, FileText, Calendar, Clock, CheckCircle, XCircle, User, X } from 'lucide-react';
+import { getSubmittedAnswers, TeacherGradingAsnwer } from '@/app/teacher/api/test';
 
 interface Question {
   questionID: {
@@ -64,6 +64,8 @@ export default function SubmissionPage() {
   const [selectedSubmission, setSelectedSubmission] = useState<SubmittedAnswer | null>(null);
   const [teacherComments, setTeacherComments] = useState('');
   const [isSavingComments, setIsSavingComments] = useState(false);
+  const [teacherGrade, setTeacherGrade] = useState<number>(0);
+  const [editedAnswers, setEditedAnswers] = useState<Question[]>([]);
 
   useEffect(() => {
     fetchSubmissions();
@@ -91,32 +93,63 @@ export default function SubmissionPage() {
     return totalQuestions > 0 ? ((correctAnswers / totalQuestions) * 100).toFixed(1) : '0';
   };
 
+  const handleAnswerCorrectChange = (answerId: string, isCorrect: boolean) => {
+    setEditedAnswers(prev => 
+      prev.map(answer => 
+        answer._id === answerId 
+          ? { ...answer, isCorrect } 
+          : answer
+      )
+    );
+  };
+
   const handleSaveComments = async () => {
     if (!selectedSubmission) return;
 
     try {
       setIsSavingComments(true);
-      // TODO: Implement API call to update teacher comments
-      // await updateTeacherComments(selectedSubmission._id, teacherComments);
+      
+      // Prepare answer data for grading
+      const answerData = editedAnswers.map(answer => ({
+        questionID: answer.questionID._id,
+        answer: answer.answer,
+        isCorrect: answer.isCorrect
+      }));
+
+      console.log("Submitting grading data:", {
+        answerId: selectedSubmission._id,
+        teacherGrade,
+        teacherComments,
+        answerData
+      });
+
+      // Call the grading API
+      await TeacherGradingAsnwer(
+        selectedSubmission._id,
+        teacherGrade,
+        teacherComments,
+        answerData
+      );
       
       // Update local state
       setSubmissions(prev => 
         prev.map(sub => 
           sub._id === selectedSubmission._id 
-            ? { ...sub, teacherComments } 
+            ? { ...sub, teacherComments, answers: editedAnswers } 
             : sub
         )
       );
       
       setSelectedSubmission({
         ...selectedSubmission,
-        teacherComments
+        teacherComments,
+        answers: editedAnswers
       });
       
-      alert('Comments saved successfully!');
+      alert('Grading saved successfully!');
     } catch (err) {
-      console.error('Error saving comments:', err);
-      alert('Failed to save comments');
+      console.error('Error saving grading:', err);
+      alert('Failed to save grading');
     } finally {
       setIsSavingComments(false);
     }
@@ -212,6 +245,8 @@ export default function SubmissionPage() {
                   onClick={() => {
                     setSelectedSubmission(submission);
                     setTeacherComments(submission.teacherComments || '');
+                    setEditedAnswers(submission.answers);
+                    setTeacherGrade(parseFloat(score));
                   }}
                 >
                   <div className="flex items-center justify-between">
@@ -280,7 +315,7 @@ export default function SubmissionPage() {
       </div>
 
       {/* Submission Detail Modal */}
-      {selectedSubmission && (
+      {selectedSubmission && (  
         <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
           <div className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto shadow-xl">
             <div className="sticky top-0 bg-white border-b border-gray-200 p-6 z-10">
@@ -304,7 +339,7 @@ export default function SubmissionPage() {
                   onClick={() => setSelectedSubmission(null)}
                   className="p-2 hover:bg-gray-100 rounded-lg transition"
                 >
-                  <User
+                  <X
                    className="w-6 h-6 text-gray-500" />
                 </button>
               </div>
@@ -343,8 +378,10 @@ export default function SubmissionPage() {
                 Answers ({selectedSubmission.answers.length})
               </h3>
 
+            
+
               <div className="space-y-4">
-                {selectedSubmission.answers.map((answer, index) => (
+                {editedAnswers.map((answer, index) => (
                   <div
                     key={answer._id}
                     className={`p-4 rounded-lg border-2 ${
@@ -364,13 +401,20 @@ export default function SubmissionPage() {
                           <XCircle className="w-5 h-5 text-red-600" />
                         )}
                       </div>
-                      <span
-                        className={`text-sm font-medium ${
-                          answer.isCorrect ? 'text-green-600' : 'text-red-600'
+                      
+                      {/* Select dropdown to change correct/incorrect */}
+                      <select
+                        value={answer.isCorrect ? 'correct' : 'incorrect'}
+                        onChange={(e) => handleAnswerCorrectChange(answer._id, e.target.value === 'correct')}
+                        className={`px-3 py-1 rounded-lg border-2 font-medium text-sm focus:ring-2 focus:ring-purple-500 ${
+                          answer.isCorrect
+                            ? 'bg-green-50 border-green-300 text-green-700'
+                            : 'bg-red-50 border-red-300 text-red-700'
                         }`}
                       >
-                        {answer.isCorrect ? 'Correct' : 'Incorrect'}
-                      </span>
+                        <option value="correct">Correct</option>
+                        <option value="incorrect">Incorrect</option>
+                      </select>
                     </div>
 
                     <div className="mt-3 space-y-3">
@@ -391,7 +435,22 @@ export default function SubmissionPage() {
                   </div>
                 ))}
               </div>
-
+               {/* Teacher Grade Input */}
+              <div className="mb-6 bg-purple-50 p-4 rounded-lg">
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Điểm của học sinh (0-100)
+                </label>
+                <input
+                  type="number"
+                  min="0"
+                  max="100"
+                  step="0.1"
+                  value={teacherGrade}
+                  onChange={(e) => setTeacherGrade(parseFloat(e.target.value) || 0)}
+                  className="w-full p-3 border border-purple-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  placeholder="Nhập điểm..."
+                />
+              </div>
               {/* Teacher Comments Section */}
               <div className="mt-6">
                 <h4 className="font-semibold text-gray-900 mb-3">Teacher's Comments</h4>
@@ -414,11 +473,12 @@ export default function SubmissionPage() {
                         Saving...
                       </>
                     ) : (
-                      'Save Comments'
+                      'Save Grading'
                     )}
                   </button>
                 </div>
               </div>
+
             </div>
           </div>
         </div>
