@@ -155,7 +155,7 @@ export const addQuestionToTest = async (
             formData.append('file', file);
         }
 
-        const res = await axios.post(`${api_url}/api/teacher/tests/${testId}/questions`, formData, {
+        const res = await axios.post(`${api_url}/api/teacher/tests/${testId}/questions/single`, formData, {
             headers: {
                 'Content-Type': 'multipart/form-data',
                 'Authorization': `Bearer ${teacherToken}`
@@ -166,6 +166,76 @@ export const addQuestionToTest = async (
     } catch (error) {
         console.error('Error adding question to test:', error);
         throw error;
+    }
+};
+
+export const addQuestionsToTest = async (
+    testId: string,
+    questions: Array<{
+        difficult: string;
+        question: string;
+        questionType: string;
+        grade: number;
+        solution: string;
+        metadata?: string;
+        options?: string[];
+    }>,
+    files?: (File | null)[]
+) => {
+    try {
+        const teacherToken = localStorage.getItem('teacherToken');
+        if (!teacherToken) {
+            throw new Error('Token not found in localStorage');
+        }
+
+        const formData = new FormData();
+        
+        // Add questions as JSON
+        formData.append('questions', JSON.stringify(questions));
+        
+        // Add files with indexed field names
+        if (files) {
+            files.forEach((file, index) => {
+                if (file) {
+                    formData.append(`file_${index}`, file);
+                }
+            });
+        }
+
+        const res = await axios.post(`${api_url}/api/teacher/tests/${testId}/questions`, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+                'Authorization': `Bearer ${teacherToken}`
+            }
+        });
+        console.log("Questions added successfully:", res.data);
+        return res.data;
+    } catch (error) {
+        console.error('Error adding questions to test:', error);
+        throw error;
+    }
+};
+
+export const AI_Generate_Question_Answer = async (
+   prompt: string, 
+) => {
+    try {
+        const teacherToken = localStorage.getItem('teacherToken');  
+        if (!teacherToken) {
+            throw new Error('Token not found in localStorage');
+        }
+        const res = await axios.post(`${api_url}/api/teacher/tests/generate`, {
+            prompt: prompt
+        }, {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${teacherToken}`
+            }
+        });
+        console.log("AI Generated questions response:", res.data);
+        return res.data;
+    } catch (error) {
+        console.error('Error generating questions via AI:', error);
     }
 };
 

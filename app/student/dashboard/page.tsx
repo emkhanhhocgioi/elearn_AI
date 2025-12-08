@@ -53,8 +53,8 @@ export default function StudentDashboard() {
                   currentPage === 'classes' ? 'text-blue-600 bg-blue-50' : 'text-gray-700 hover:bg-gray-50'
                 }`}
               >
-                <BookOpen className="w-5 h-5" />
-                <span className="font-medium">My Classes</span>
+                <User className="w-5 h-5" />
+                <span className="font-medium">Personal</span>
               </li>
               <li 
                 onClick={() => setCurrentPage('tests')}
@@ -71,8 +71,8 @@ export default function StudentDashboard() {
                   currentPage === 'documents' ? 'text-blue-600 bg-blue-50' : 'text-gray-700 hover:bg-gray-50'
                 }`}
               >
-                <FileText className="w-5 h-5" />
-                <span className="font-medium">Document Repository</span>
+                <BookOpen className="w-5 h-5" />
+                <span className="font-medium">Your Lesson</span>
               </li>
               <li 
                 onClick={() => setCurrentPage('personal')}

@@ -1,54 +1,39 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { Download, FileText, BookOpen, Trash2 } from 'lucide-react';
-
+import {getStudentLessons} from '@/app/student/api/lesson';
 const DocumentsTab = () => {
   const [documents, setDocuments] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    // TODO: Fetch documents from API
-    const mockDocuments = [
-      {
-        id: 1,
-        title: "React Hook Advanced Guide",
-        class: "Frontend Development Batch 2024",
-        type: "PDF",
-        size: "2.4 MB",
-        uploadedDate: "2024-01-15",
-        uploader: "John Doe"
-      },
-      {
-        id: 2,
-        title: "Node.js Best Practices",
-        class: "Backend Development Advanced",
-        type: "PDF",
-        size: "3.1 MB",
-        uploadedDate: "2024-01-18",
-        uploader: "Jane Smith"
-      },
-      {
-        id: 3,
-        title: "Database Design Patterns",
-        class: "Full Stack Development",
-        type: "DOCX",
-        size: "1.8 MB",
-        uploadedDate: "2024-01-20",
-        uploader: "Mike Johnson"
-      },
-      {
-        id: 4,
-        title: "JavaScript Interview Questions",
-        class: "Frontend Development Batch 2024",
-        type: "PDF",
-        size: "1.2 MB",
-        uploadedDate: "2024-01-22",
-        uploader: "John Doe"
+  
+  const getLesson = async () => {
+    try {
+      const response = await getStudentLessons();
+      console.log("Lessons data:", response);
+      
+      if (response?.lessons) {
+        const mappedDocuments = response.lessons.map((lesson: any) => ({
+          id: lesson._id,
+          title: lesson.title,
+          class: lesson.subject,
+          type: "PDF",
+          size: "N/A",
+          uploadedDate: new Date(lesson.createDate).toISOString().split('T')[0],
+          uploader: lesson.teacherId,
+          downloadUrl: lesson.lessonMetadata
+        }));
+        
+        setDocuments(mappedDocuments);
       }
-    ];
-
-    setDocuments(mockDocuments);
-    setIsLoading(false);
+    } catch (error) {
+      console.error("Error fetching lessons:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  }
+  
+  useEffect(() => {
+    getLesson();
   }, []);
 
   const getFileIcon = (type: string) => {
@@ -58,8 +43,8 @@ const DocumentsTab = () => {
   return (
     <div>
       <div className="mb-6">
-        <h2 className="text-2xl font-bold text-gray-900">Document Repository</h2>
-        <p className="text-gray-600 mt-1">Access all study materials and documents from your classes</p>
+        <h2 className="text-2xl font-bold text-gray-900">Các bài học của bạn</h2>
+     
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
