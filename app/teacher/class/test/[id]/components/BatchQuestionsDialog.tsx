@@ -1,11 +1,12 @@
 'use client';
 import { useState } from 'react';
 import { X, Save, Plus, Trash2, Sparkles } from 'lucide-react';
-import { addQuestionsToTest, AI_Generate_Question_Answer } from '@/app/teacher/api/test';
+import { addQuestionsToTest, AI_Generate_Question_Answer, math_question_generation } from '@/app/teacher/api/test';
 
 interface BatchQuestion {
   question: string;
   questionType: string;
+  subjectQuestionType: string;
   difficult: string;
   grade: number;
   solution: string;
@@ -18,6 +19,7 @@ interface BatchQuestionsDialogProps {
   onClose: () => void;
   testId: string;
   onSuccess: () => void;
+  subject: string;
 }
 
 export default function BatchQuestionsDialog({
@@ -25,6 +27,7 @@ export default function BatchQuestionsDialog({
   onClose,
   testId,
   onSuccess,
+  subject,
 }: BatchQuestionsDialogProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -35,6 +38,7 @@ export default function BatchQuestionsDialog({
   const [batchQuestions, setBatchQuestions] = useState<BatchQuestion[]>([{
     question: '',
     questionType: 'essay',
+    subjectQuestionType: '',
     difficult: 'medium',
     grade: 1,
     solution: '',
@@ -115,6 +119,7 @@ export default function BatchQuestionsDialog({
     setBatchQuestions([...batchQuestions, {
       question: '',
       questionType: 'essay',
+      subjectQuestionType: '',
       difficult: 'medium',
       grade: 1,
       solution: '',
@@ -154,6 +159,7 @@ export default function BatchQuestionsDialog({
         setBatchQuestions([{
           question: '',
           questionType: 'essay',
+          subjectQuestionType: '',
           difficult: 'medium',
           grade: 1,
           solution: '',
@@ -183,15 +189,38 @@ export default function BatchQuestionsDialog({
     try {
       setAiGenerating(true);
       setError('');
-      const response = await AI_Generate_Question_Answer(aiPrompt);
       
-      if (response?.questions && Array.isArray(response.questions)) {
-        setBatchQuestions(response.questions);
-        // Reset file arrays to match number of questions
-        setBatchFiles(new Array(response.questions.length).fill(null));
-        setBatchFilePreviews(new Array(response.questions.length).fill(null));
-        setAiPrompt('');
-        setSuccess('AI generated questions successfully! Review and submit.');
+      const response = await AI_Generate_Question_Answer(aiPrompt, subject);
+      
+      if (response?.success) {
+        // Handle array of questions
+        if (response.result?.questions && Array.isArray(response.result.questions)) {
+          setBatchQuestions(response.result.questions);
+          setBatchFiles(new Array(response.result.questions.length).fill(null));
+          setBatchFilePreviews(new Array(response.result.questions.length).fill(null));
+          setAiPrompt('');
+          setSuccess('AI generated questions successfully! Review and submit.');
+        }
+        // Handle single question - convert to array
+        else if (response.result?.question) {
+          const singleQuestion = {
+            question: response.result.question || '',
+            questionType: 'essay',
+            subjectQuestionType: '',
+            difficult: response.result.difficulty || 'medium',
+            grade: 1,
+            solution: response.result.answer || '',
+            metadata: '',
+            options: [''],
+          };
+          setBatchQuestions([singleQuestion]);
+          setBatchFiles([null]);
+          setBatchFilePreviews([null]);
+          setAiPrompt('');
+          setSuccess('AI generated question successfully! Review and submit.');
+        } else {
+          setError('Failed to generate questions. Please try again.');
+        }
       } else {
         setError('Failed to generate questions. Please try again.');
       }
@@ -292,6 +321,17 @@ export default function BatchQuestionsDialog({
                             required
                           />
                         </div>
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Subject Question Type</label>
+                        <input
+                          type="text"
+                          value={q.subjectQuestionType}
+                          onChange={(e) => handleBatchQuestionChange(qIndex, 'subjectQuestionType', e.target.value)}
+                          placeholder="Ví dụ: Văn học Việt Nam, Đại số, Hóa học hữu cơ..."
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none"
+                        />
                       </div>
 
                       <div>

@@ -1,13 +1,14 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { X, Save, Plus, Trash2, Sparkles, FileText } from 'lucide-react';
-import { addQuestionToTest, UpdateQuestion, AI_Generate_Question_Answer } from '@/app/teacher/api/test';
+import { addQuestionToTest, UpdateQuestion, AI_Generate_Question_Answer , math_question_generation } from '@/app/teacher/api/test';
 
 interface Question {
   _id: string;
   testid: string;
   question: string;
   questionType: string;
+  subjectQuestionType: string;
   difficult: string;
   grade: number;
   solution: string;
@@ -22,6 +23,7 @@ interface AddQuestionDialogProps {
   testId: string;
   editingQuestion: Question | null;
   onSuccess: () => void;
+  subject: string;
 }
 
 export default function AddQuestionDialog({
@@ -30,6 +32,7 @@ export default function AddQuestionDialog({
   testId,
   editingQuestion,
   onSuccess,
+  subject,
 }: AddQuestionDialogProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -40,6 +43,7 @@ export default function AddQuestionDialog({
   const [formData, setFormData] = useState({
     question: editingQuestion?.question || '',
     questionType: editingQuestion?.questionType || 'essay',
+    subjectQuestionType: editingQuestion?.subjectQuestionType || '',
     difficult: editingQuestion?.difficult || 'medium',
     grade: editingQuestion?.grade.toString() || '1',
     solution: editingQuestion?.solution || '',
@@ -49,6 +53,39 @@ export default function AddQuestionDialog({
 
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [filePreview, setFilePreview] = useState<string | null>(null);
+
+  // Update form data when editingQuestion changes
+  useEffect(() => {
+    if (editingQuestion) {
+      setFormData({
+        question: editingQuestion.question || '',
+        questionType: editingQuestion.questionType || 'essay',
+        subjectQuestionType: editingQuestion.subjectQuestionType || '',
+        difficult: editingQuestion.difficult || 'medium',
+        grade: editingQuestion.grade.toString() || '1',
+        solution: editingQuestion.solution || '',
+        metadata: editingQuestion.metadata || '',
+        options: editingQuestion.options || [''],
+      });
+    } else {
+      // Reset form when adding new question
+      setFormData({
+        question: '',
+        questionType: 'essay',
+        subjectQuestionType: '',
+        difficult: 'medium',
+        grade: '1',
+        solution: '',
+        metadata: '',
+        options: [''],
+      });
+    }
+    // Reset file states
+    setSelectedFile(null);
+    setFilePreview(null);
+    setError('');
+    setSuccess('');
+  }, [editingQuestion, isOpen]);
 
   // Check if file is an image
   const isImageFile = (file: File) => {
@@ -128,6 +165,7 @@ export default function AddQuestionDialog({
           formData.difficult,
           formData.question,
           formData.questionType,
+          formData.subjectQuestionType,
           parseInt(formData.grade),
           formData.solution,
           formData.metadata,
@@ -142,6 +180,7 @@ export default function AddQuestionDialog({
           formData.difficult,
           formData.question,
           formData.questionType,
+          formData.subjectQuestionType,
           parseInt(formData.grade),
           formData.solution,
           formData.metadata,
@@ -174,13 +213,16 @@ export default function AddQuestionDialog({
     try {
       setAiGenerating(true);
       setError('');
-      const result = await AI_Generate_Question_Answer(aiPrompt);
       
-      if (result?.success && result?.response) {
-        const { question, answer, difficulty } = result.response;
+      const result = await AI_Generate_Question_Answer(aiPrompt, subject);
+      
+      if (result?.success && result?.result) {
+        console.log('AI Generation Result for map:', result);
+        const { question, answer, difficulty } = result.result;
         setFormData({
           question: question || '',
           questionType: 'essay',
+          subjectQuestionType: '',
           difficult: difficulty || 'medium',
           grade: '1',
           solution: answer || '',
@@ -262,9 +304,7 @@ export default function AddQuestionDialog({
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition"
                     >
                       <option value="essay">Essay</option>
-                      <option value="fill_blank">Fill in the Blank</option>
-                      <option value="true_false">True/False</option>
-                      <option value="math">Math Open Question</option>
+                      <option value="file_upload">File Upload</option>
                       <option value="choose_correct">Choose Correct</option>
                     </select>
                   </div>
@@ -284,6 +324,20 @@ export default function AddQuestionDialog({
                       <option value="hard">Hard</option>
                     </select>
                   </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Subject Question Type
+                  </label>
+                  <input
+                    type="text"
+                    name="subjectQuestionType"
+                    value={formData.subjectQuestionType}
+                    onChange={handleInputChange}
+                    placeholder="Ví dụ: Văn học Việt Nam, Đại số, Hóa học hữu cơ..."
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition"
+                  />
                 </div>
 
                 <div>

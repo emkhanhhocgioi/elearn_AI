@@ -1,7 +1,7 @@
 'use client';
 import { useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { ArrowLeft, Plus, FileText, Calendar, Users, BookOpen } from 'lucide-react';
+import { ArrowLeft, Plus, FileText, Calendar, Users, BookOpen, Clock } from 'lucide-react';
 import { createTest } from '../../../api/test';
 import { useSearchParams } from 'next/navigation';
 export default function AddTestPage() {
@@ -13,7 +13,7 @@ export default function AddTestPage() {
 
   const [formData, setFormData] = useState({
     testtitle: '',
-    participants: 0,
+    test_time: 0,
     closedDate: '',
     subject: subject
   });
@@ -30,7 +30,6 @@ export default function AddTestPage() {
       const response = await createTest(
         classId,
         formData.testtitle,
-        formData.participants,
         formData.closedDate,
         formData.subject
       );
@@ -52,7 +51,7 @@ export default function AddTestPage() {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
-      [name]: name === 'participants' ? parseInt(value) || 0 : value
+      [name]: value
     }));
   };
 
@@ -114,25 +113,6 @@ export default function AddTestPage() {
                 required
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
                 placeholder="e.g., Mathematics, Physics, Chemistry"
-              />
-            </div>
-
-            {/* Participants */}
-            <div>
-              <label htmlFor="participants" className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
-                <Users className="w-4 h-4 text-purple-600" />
-                Number of Participants
-              </label>
-              <input
-                type="number"
-                id="participants"
-                name="participants"
-                value={formData.participants}
-                onChange={handleChange}
-                required
-                min="1"
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
-                placeholder="e.g., 30"
               />
             </div>
 

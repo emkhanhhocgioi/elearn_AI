@@ -2,6 +2,8 @@ import axios  from "axios";
 
 
 
+
+
 const api_url = "http://localhost:4000"
 
 export const studentlogin = async (email: string, password: string) => {
@@ -44,3 +46,20 @@ export const adminLogin  = async (email: string , password: string) => {
   }
 }
 
+export const studentLogout = async () => { 
+    // Xóa token khỏi localStorage hoặc cookie
+    localStorage.removeItem('studentToken');
+   
+};
+export const teacherLogout = async () => { 
+    // Xóa token khỏi localStorage hoặc cookie
+    localStorage.removeItem('teacherToken');
+    // Thực hiện các hành động khác nếu cần thiết
+};
+
+export const adminLogout = async () => { 
+    // Xóa token khỏi localStorage hoặc cookie
+    localStorage.removeItem('adminToken');
+    // Thực hiện các hành động khác nếu cần thiết
+   
+};

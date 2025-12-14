@@ -1,7 +1,7 @@
 'use client';
 import { Bell, Search, MoreVertical, Users, BookOpen, FileText, Calendar, TrendingUp, Award } from 'lucide-react';
 import { useState, lazy, Suspense } from 'react';
-
+import { teacherLogout } from '@/app/api/auth';
 const LessonsTab = lazy(() => import('../components/LessonsTab'));
 const ClassesTab = lazy(() => import('../components/ClassesTab'));
 const TestsTab = lazy(() => import('../components/TestsTab'));
@@ -84,9 +84,16 @@ export default function TeacherDashboard() {
                 <div className="w-5 h-5">⚙️</div>
                 <span>Settings</span>
               </li>
-              <li className="flex items-center gap-3 px-4 py-2 text-red-600 hover:bg-red-50 rounded-lg cursor-pointer">
-                <div className="w-5 h-5">🚪</div>
-                <span>Logout</span>
+              <li>
+                <button
+                  type="button"
+                  onClick={() => { teacherLogout();  window.location.href = '/teacher/login'; }
+                  }
+                  className="w-full flex items-center gap-3 px-4 py-2 text-red-600 hover:bg-red-50 rounded-lg cursor-pointer text-left"
+                >
+                  <div className="w-5 h-5">🚪</div>
+                  <span>Logout</span>
+                </button>
               </li>
             </ul>
           </div>

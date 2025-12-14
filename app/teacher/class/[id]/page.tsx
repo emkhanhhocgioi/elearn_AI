@@ -2,9 +2,10 @@
 import { useParams, useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { ArrowLeft, Plus, Edit2, Trash2, Clock, Users, Calendar, FileText, BarChart3, BookOpen } from 'lucide-react';
-import {getClassTeacherTest} from '../../api/test';
+import {getClassTeacherTest,deleteTestById} from '../../api/test';
 import {getTeacherLessons, deleteLesson} from '../../api/lesson';
 import { useSearchParams } from 'next/navigation';
+import { get } from 'http';
 export default function ClassDetailPage() {
   const params = useParams();
   const router = useRouter();
@@ -54,7 +55,10 @@ export default function ClassDetailPage() {
       questions_count: 25
     }
   ]);
+   
 
+
+  
   useEffect(() => {
     console.log("subject param:", subject);
     async function fetchTests() {
@@ -282,9 +286,9 @@ export default function ClassDetailPage() {
                   <tr>
                     <th className="px-6 py-4 text-left text-xs font-bold text-purple-900 uppercase tracking-wider">Test Title</th>
                     <th className="px-6 py-4 text-left text-xs font-bold text-purple-900 uppercase tracking-wider">Status</th>
-                    <th className="px-6 py-4 text-left text-xs font-bold text-purple-900 uppercase tracking-wider">Questions</th>
+                  
                     <th className="px-6 py-4 text-left text-xs font-bold text-purple-900 uppercase tracking-wider">Submissions</th>
-                    <th className="px-6 py-4 text-left text-xs font-bold text-purple-900 uppercase tracking-wider">Avg Score</th>
+                
                     <th className="px-6 py-4 text-left text-xs font-bold text-purple-900 uppercase tracking-wider">Due Date</th>
                     <th className="px-6 py-4 text-left text-xs font-bold text-purple-900 uppercase tracking-wider">Actions</th>
                   </tr>
@@ -294,7 +298,7 @@ export default function ClassDetailPage() {
                     tests.map((test) => (
                       <tr 
                         key={test._id} 
-                        onClick={() => router.push(`/teacher/class/test/${test._id}`)}
+                        onClick={() => router.push(`/teacher/class/test/${test._id}/?subject=${subject}`)}
                         className="hover:bg-purple-50/50 transition cursor-pointer"
                       >
                         <td className="px-6 py-4">
@@ -313,9 +317,7 @@ export default function ClassDetailPage() {
                             {test.status}
                           </span>
                         </td>
-                        <td className="px-6 py-4">
-                          <span className="text-sm font-medium text-gray-900">{test.questions_count}</span>
-                        </td>
+                      
                         <td className="px-6 py-4">
                           <div className="flex items-center gap-3">
                             <span className="text-sm font-bold text-gray-900">{test.submittedCount}/{test.participants}</span>
@@ -327,11 +329,7 @@ export default function ClassDetailPage() {
                             </div>
                           </div>
                         </td>
-                        <td className="px-6 py-4">
-                          <span className={`text-sm font-bold ${test.avg_score > 0 ? 'text-purple-600' : 'text-gray-400'}`}>
-                            {test.avg_score > 0 ? `${test.avg_score}%` : 'N/A'}
-                          </span>
-                        </td>
+                     
                         <td className="px-6 py-4">
                           <div className="flex items-center gap-2 text-sm text-gray-600">
                             <Calendar className="w-4 h-4 text-gray-400" />
@@ -340,17 +338,19 @@ export default function ClassDetailPage() {
                         </td>
                         <td className="px-6 py-4">
                           <div className="flex items-center gap-2">
+                          
                             <button 
-                              onClick={(e) => {
-                                e.stopPropagation();
-                              }}
-                              className="p-2 hover:bg-purple-100 rounded-lg transition text-purple-600 hover:text-purple-700"
-                            >
-                              <Edit2 className="w-4 h-4" />
-                            </button>
-                            <button 
-                              onClick={(e) => {
-                                e.stopPropagation();
+                              onClick={async (e) => {
+                                 if (confirm('Are you sure you want to delete this lesson?')) {
+                                  try {
+                                    await deleteTestById(test._id);
+                                    setTests(tests.filter(t => t._id !== test._id));
+                                  } catch (error) {
+                                    console.error('Error deleting lesson:', error);
+                                    alert('Failed to delete lesson');
+                                  }
+                                }
+                                
                               }}
                               className="p-2 hover:bg-red-100 rounded-lg transition text-red-600 hover:text-red-700"
                             >

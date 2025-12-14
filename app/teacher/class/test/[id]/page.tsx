@@ -6,12 +6,15 @@ import { getTestDetailById, deleteQuestionFromTest } from '@/app/teacher/api/tes
 import AddQuestionDialog from './components/AddQuestionDialog';
 import BatchQuestionsDialog from './components/BatchQuestionsDialog';
 import EditTestDialog from './components/EditTestDialog';
+import { useSearchParams } from 'next/navigation';
+
 
 interface Question {
   _id: string;
   testid: string;
   question: string;
   questionType: string;
+  subjectQuestionType: string;
   difficult: string;
   grade: number;
   solution: string;
@@ -42,6 +45,10 @@ export default function TestDetailPage() {
   const params = useParams();
   const router = useRouter();
   const testId = params.id as string;
+  const searchParams = useSearchParams();
+  const subject = searchParams.get('subject') || '';
+
+
 
   const [testDetail, setTestDetail] = useState<TestDetail | null>(null);
   const [questions, setQuestions] = useState<Question[]>([]);
@@ -202,6 +209,7 @@ export default function TestDetailPage() {
         testId={testId}
         editingQuestion={editingQuestion}
         onSuccess={fetchTestData}
+        subject={subject}
       />
 
       <BatchQuestionsDialog
@@ -209,6 +217,7 @@ export default function TestDetailPage() {
         onClose={() => setShowBatchDialog(false)}
         testId={testId}
         onSuccess={fetchTestData}
+        subject={subject}
       />
 
       <EditTestDialog

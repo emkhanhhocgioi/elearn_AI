@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useRouter,useSearchParams } from 'next/navigation';
 import { Clock, Calendar, Users, BookOpen, ArrowLeft, CheckCircle, AlertCircle } from 'lucide-react';
-import { getTestQuestionsDetail,getTestGradingDetail } from '../../api/test';
+import { getTestQuestionsDetail,getTestGradingDetail,uploadTestAnswerFile,editTestAnswer,editTestAnswerFile } from '../../api/test';
 import { useWebSocket } from '@/app/context/WebSocketContext';
 import {
   Dialog,
@@ -56,7 +56,12 @@ const TestDetailPage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [showQuestions, setShowQuestions] = useState(false);
   const [answers, setAnswers] = useState<SubmitAnswer[]>([]);
-  const [showConfirmDialog, setShowConfirmDialog] = useState(false); 
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+  const [fileUploads, setFileUploads] = useState<{ [questionId: string]: File }>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [hasSubmitted, setHasSubmitted] = useState(false);
+  const [originalAnswers, setOriginalAnswers] = useState<SubmitAnswer[]>([]); 
 
 
   useEffect(() => {
@@ -68,6 +73,22 @@ const TestDetailPage = () => {
         setQuestions(response.questions);
         if (response.status === true) {
           setShowQuestions(true);
+          setHasSubmitted(true);
+          
+          // Fetch submitted answers if already submitted
+          try {
+            const gradingResponse = await getTestGradingDetail(testId);
+            if (gradingResponse && gradingResponse.answers) {
+              const submittedAnswers = gradingResponse.answers.map((ans: any) => ({
+                questionID: ans.questionID,
+                answer: ans.answer
+              }));
+              setAnswers(submittedAnswers);
+              setOriginalAnswers(submittedAnswers);
+            }
+          } catch (error) {
+            console.error('Error fetching submitted answers:', error);
+          }
         }
       } catch (error) {
         console.error('Error fetching test detail:', error);
@@ -106,7 +127,7 @@ const TestDetailPage = () => {
         router.push('/student');
       }
     }
-  }, [lastMessage, testId]);
+  }, [lastMessage, testId, test]);
 
   const handleAnswerChange = (questionID: string, answer: string) => {
     setAnswers(prev => {
@@ -123,6 +144,21 @@ const TestDetailPage = () => {
     });
   };
 
+  const handleFileChange = (questionID: string, file: File | null) => {
+    if (file) {
+      setFileUploads(prev => ({
+        ...prev,
+        [questionID]: file
+      }));
+    } else {
+      setFileUploads(prev => {
+        const updated = { ...prev };
+        delete updated[questionID];
+        return updated;
+      });
+    }
+  };
+
   const handleSubmitTest = () => {
     // Check if all questions have answers
     const unansweredCount = questions.length - answers.length;
@@ -136,14 +172,108 @@ const TestDetailPage = () => {
     submitAnswers();
   };
 
-  const submitAnswers = () => {
-    sendMessage({
-      type: 'submit_test',
-      testId,
-      answerData: answers,
-      token: localStorage.getItem('studentToken')
-    });
-    setShowConfirmDialog(false);
+  const submitAnswers = async () => {
+    setIsSubmitting(true);
+    try {
+      const token = localStorage.getItem('studentToken');
+      
+      // Upload files first and get URLs
+      const updatedAnswers = [...answers];
+      
+      for (const question of questions) {
+        if (question.questionType === 'file_upload' && fileUploads[question._id]) {
+          const formData = new FormData();
+          formData.append('file', fileUploads[question._id]);
+          formData.append('testId', testId);
+          formData.append('questionId', question._id);
+          
+          try {
+            const uploadResponse = await uploadTestAnswerFile(formData);
+            if (uploadResponse && uploadResponse.filePath) {
+              // Add or update answer with file URL
+              const existingIndex = updatedAnswers.findIndex(a => a.questionID === question._id);
+              if (existingIndex >= 0) {
+                updatedAnswers[existingIndex].answer = uploadResponse.filePath;
+              } else {
+                updatedAnswers.push({
+                  questionID: question._id,
+                  answer: uploadResponse.filePath
+                });
+              }
+            }
+          } catch (error) {
+            console.error('Error uploading file for question', question._id, error);
+            alert(`Lỗi khi tải file cho câu hỏi ${questions.indexOf(question) + 1}`);
+            setIsSubmitting(false);
+            return;
+          }
+        }
+      }
+      
+      // Submit all answers including file URLs
+      sendMessage({
+        type: 'submit_test',
+        testId,
+        answerData: updatedAnswers,
+        token: token
+      });
+      setShowConfirmDialog(false);
+    } catch (error) {
+      console.error('Error submitting test:', error);
+      alert('Có lỗi xảy ra khi nộp bài');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const saveEditedAnswers = async () => {
+    setIsSubmitting(true);
+    try {
+      // Find changed answers
+      for (const answer of answers) {
+        const original = originalAnswers.find(a => a.questionID === answer.questionID);
+        if (!original || original.answer !== answer.answer) {
+          const question = questions.find(q => q._id === answer.questionID);
+          
+          if (question?.questionType === 'file_upload' && fileUploads[answer.questionID]) {
+            // Upload new file
+            const formData = new FormData();
+            formData.append('file', fileUploads[answer.questionID]);
+            formData.append('testId', testId);
+            formData.append('questionId', answer.questionID);
+            
+            try {
+              await editTestAnswerFile(formData);
+            } catch (error) {
+              console.error('Error editing file answer:', error);
+              alert('Lỗi khi cập nhật file');
+              setIsSubmitting(false);
+              return;
+            }
+          } else {
+            // Update text answer
+            try {
+              await editTestAnswer(testId, answer.questionID, answer.answer);
+            } catch (error) {
+              console.error('Error editing answer:', error);
+              alert('Lỗi khi cập nhật câu trả lời');
+              setIsSubmitting(false);
+              return;
+            }
+          }
+        }
+      }
+      
+      alert('Đã lưu các thay đổi thành công!');
+      setIsEditMode(false);
+      setOriginalAnswers([...answers]);
+      setFileUploads({});
+    } catch (error) {
+      console.error('Error saving edited answers:', error);
+      alert('Có lỗi xảy ra khi lưu thay đổi');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const getDifficultyBadge = (difficulty: string) => {
@@ -316,6 +446,12 @@ const TestDetailPage = () => {
                   <BookOpen className="w-4 h-4" />
                   {questions.length} câu hỏi
                 </span>
+                {hasSubmitted && !isOverdue && (
+                  <span className="flex items-center gap-1 text-green-600 font-medium">
+                    <CheckCircle className="w-4 h-4" />
+                    Đã nộp bài - Có thể chỉnh sửa
+                  </span>
+                )}
               </div>
             </div>
 
@@ -346,7 +482,55 @@ const TestDetailPage = () => {
                       onChange={(e) => handleAnswerChange(question._id, e.target.value)}
                       placeholder="Nhập câu trả lời của bạn..."
                       className="w-full border rounded-lg p-3 min-h-[120px] focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      disabled={hasSubmitted && !isEditMode}
                     />
+                  ) : question.questionType === 'file_upload' ? (
+                    <div className="space-y-2">
+                      {hasSubmitted && !isEditMode && answers.find(a => a.questionID === question._id)?.answer ? (
+                        <div className="border rounded-lg p-4">
+                          <p className="text-sm text-gray-600 mb-2">File đã nộp:</p>
+                          <a 
+                            href={answers.find(a => a.questionID === question._id)?.answer} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="text-blue-600 hover:underline flex items-center gap-2"
+                          >
+                            <CheckCircle className="w-4 h-4" />
+                            Xem file đã nộp
+                          </a>
+                        </div>
+                      ) : (
+                        <label className="block">
+                          <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-blue-500 cursor-pointer transition-colors">
+                            <input
+                              type="file"
+                              accept="image/*,.pdf,.doc,.docx,.txt"
+                              onChange={(e) => handleFileChange(question._id, e.target.files?.[0] || null)}
+                              className="hidden"
+                              id={`file-${question._id}`}
+                              disabled={hasSubmitted && !isEditMode}
+                            />
+                            <label htmlFor={`file-${question._id}`} className="cursor-pointer">
+                              {fileUploads[question._id] ? (
+                                <div className="text-green-600">
+                                  <CheckCircle className="w-8 h-8 mx-auto mb-2" />
+                                  <p className="font-medium">{fileUploads[question._id].name}</p>
+                                  <p className="text-sm text-gray-500 mt-1">Nhấn để chọn file khác</p>
+                                </div>
+                              ) : (
+                                <div className="text-gray-500">
+                                  <svg className="w-8 h-8 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                                  </svg>
+                                  <p className="font-medium">{hasSubmitted && isEditMode ? 'Tải file mới lên' : 'Tải file lên'}</p>
+                                  <p className="text-sm mt-1">Chọn ảnh, PDF hoặc tài liệu</p>
+                                </div>
+                              )}
+                            </label>
+                          </div>
+                        </label>
+                      )}
+                    </div>
                   ) : (
                     <div className="space-y-2">
                       {question.options.map((option, optIndex) => (
@@ -361,6 +545,7 @@ const TestDetailPage = () => {
                             checked={answers.find(a => a.questionID === question._id)?.answer === option}
                             onChange={(e) => handleAnswerChange(question._id, e.target.value)}
                             className="w-4 h-4 text-blue-600"
+                            disabled={hasSubmitted && !isEditMode}
                           />
                           <span className="text-gray-800">{option}</span>
                         </label>
@@ -378,13 +563,69 @@ const TestDetailPage = () => {
               >
                 Quay lại
               </button>
-              <button
-                onClick={handleSubmitTest}
-                className="flex-1 py-3 px-6 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 flex items-center justify-center gap-2"
-              >
-                <CheckCircle className="w-5 h-5" />
-                Nộp bài
-              </button>
+              {hasSubmitted && !isOverdue ? (
+                <>
+                  {!isEditMode ? (
+                    <button
+                      onClick={() => setIsEditMode(true)}
+                      className="flex-1 py-3 px-6 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 flex items-center justify-center gap-2"
+                    >
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                      </svg>
+                      Chỉnh sửa đáp án
+                    </button>
+                  ) : (
+                    <>
+                      <button
+                        onClick={() => {
+                          setIsEditMode(false);
+                          setAnswers([...originalAnswers]);
+                          setFileUploads({});
+                        }}
+                        className="px-6 py-3 border border-red-300 rounded-lg font-semibold text-red-700 hover:bg-red-50"
+                      >
+                        Hủy
+                      </button>
+                      <button
+                        onClick={saveEditedAnswers}
+                        disabled={isSubmitting}
+                        className="flex-1 py-3 px-6 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 flex items-center justify-center gap-2 disabled:bg-gray-400 disabled:cursor-not-allowed"
+                      >
+                        {isSubmitting ? (
+                          <>
+                            <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                            Đang lưu...
+                          </>
+                        ) : (
+                          <>
+                            <CheckCircle className="w-5 h-5" />
+                            Lưu thay đổi
+                          </>
+                        )}
+                      </button>
+                    </>
+                  )}
+                </>
+              ) : (
+                <button
+                  onClick={handleSubmitTest}
+                  disabled={isSubmitting}
+                  className="flex-1 py-3 px-6 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 flex items-center justify-center gap-2 disabled:bg-gray-400 disabled:cursor-not-allowed"
+                >
+                  {isSubmitting ? (
+                    <>
+                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                      Đang nộp bài...
+                    </>
+                  ) : (
+                    <>
+                      <CheckCircle className="w-5 h-5" />
+                      Nộp bài
+                    </>
+                  )}
+                </button>
+              )}
             </div>
           </div>
         )}

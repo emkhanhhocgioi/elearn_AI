@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { X, Save } from 'lucide-react';
 import { editTestById } from '@/app/teacher/api/test';
 
@@ -39,11 +39,25 @@ export default function EditTestDialog({
   const [success, setSuccess] = useState('');
 
   const [testFormData, setTestFormData] = useState({
-    testtitle: testDetail?.testtitle || '',
-    classID: testDetail?.classID._id || '',
+    testtitle: '',
+    classID: '',
     test_time: '',
-    closeDate: testDetail?.closeDate ? testDetail.closeDate.split('T')[0] : '',
+    closeDate: '',
   });
+
+  // Update form data when testDetail changes or dialog opens
+  useEffect(() => {
+    if (testDetail && isOpen) {
+      setTestFormData({
+        testtitle: testDetail.testtitle || '',
+        classID: testDetail.classID._id || '',
+        test_time: '',
+        closeDate: testDetail.closeDate ? testDetail.closeDate.split('T')[0] : '',
+      });
+      setError('');
+      setSuccess('');
+    }
+  }, [testDetail, isOpen]);
 
   const handleTestFormChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -62,7 +76,6 @@ export default function EditTestDialog({
       setLoading(true);
       await editTestById(
         testDetail._id,
-        testFormData.classID,
         testFormData.testtitle,
         Number(testFormData.test_time),
         testFormData.closeDate
@@ -124,19 +137,7 @@ export default function EditTestDialog({
               />
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Test Duration (minutes)
-              </label>
-              <input
-                type="number"
-                name="test_time"
-                value={testFormData.test_time}
-                onChange={handleTestFormChange}
-                placeholder="Enter test duration"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
-              />
-            </div>
+            
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">

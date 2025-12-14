@@ -1,5 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { 
   Target, 
   TrendingUp, 
@@ -16,7 +17,8 @@ import {
   Settings,
   Lightbulb
 } from 'lucide-react';
-import { generateTeacherComment } from '@/app/student/api/personal';
+import { generateTeacherComment,AI_suggest_on_recentTest } from '@/app/student/api/personal';
+import { usePractice } from '@/app/student/context/PracticeContext';
 import { Button } from '@/components/ui/button';
 interface LearningPath {
   id: number;
@@ -46,14 +48,31 @@ interface SuggestedQuestion {
 }
 
 interface AIResponse {
-  question: string | null;
-  answer: string | null;
-  difficulty: string | null;
-  exercise_question: string;
-  improve_suggestion: string;
+  question_answer: string | null;
+  difficulty_level: string | null;
+  result: {
+    exercise_question: string;
+    improve_suggestion: string;
+  };
+  teacher_comment: string;
+}
+
+interface RecentTestResponse {
+  questTypes: string[];
+  responseAi: {
+    success: boolean;
+    questions: {
+      topic: string;
+      question: string;
+    }[];
+    raw_response: string;
+    topics: string[];
+  };
 }
 
 const MyClassesTab = () => {
+  const router = useRouter();
+  const { setPracticeData } = usePractice();
   const [isLoading, setIsLoading] = useState(true);
   const [learningPaths, setLearningPaths] = useState<LearningPath[]>([]);
   const [metrics, setMetrics] = useState<PerformanceMetrics>({
@@ -67,9 +86,12 @@ const MyClassesTab = () => {
   const [aiResponse, setAiResponse] = useState<AIResponse | null>(null);
   const [selectedSubject, setSelectedSubject] = useState<string>('');
   const [isLoadingAI, setIsLoadingAI] = useState(false);
+  const [recentTestResponse, setRecentTestResponse] = useState<RecentTestResponse | null>(null);
+  const [selectedRecentTestSubject, setSelectedRecentTestSubject] = useState<string>('');
+  const [isLoadingRecentTest, setIsLoadingRecentTest] = useState(false);
 
   useEffect(() => {
-    
+  
     const mockLearningPaths: LearningPath[] = [
       {
         id: 1,
@@ -143,16 +165,34 @@ const MyClassesTab = () => {
     setLearningGoal("Đạt điểm 9+ trong kỳ thi cuối kỳ");
     setIsLoading(false);
   }, []);
-
+  const Recent_test = async (subject: string) => {
+    try {
+        setIsLoadingRecentTest(true);
+        setSelectedRecentTestSubject(subject);
+        const response = await AI_suggest_on_recentTest(subject);
+        console.log("Recent Incorrect Answers Response:", response);
+        
+        if (response) {
+          setRecentTestResponse(response);
+        }
+        setIsLoadingRecentTest(false);
+        return response;  
+    } catch (error) {
+        console.error("Error fetching recent incorrect answers:", error);
+        setIsLoadingRecentTest(false);
+        throw error;
+    }
+  };
   const GenerateTeacherComment = async (subject: string) => {
     try {
         setIsLoadingAI(true);
         setSelectedSubject(subject);
         const response = await generateTeacherComment(subject); 
-        console.log("Generated Teacher Comment:", response);
+  
         
-        if (response?.success && response?.response) {
-          setAiResponse(response.response);
+        if (response) {
+          setAiResponse(response);
+          console.log('AI Response set for subject:', subject, response);
         }
         setIsLoadingAI(false);
         return response;
@@ -161,6 +201,24 @@ const MyClassesTab = () => {
         setIsLoadingAI(false);
     }
   };
+
+  const handleStartPractice = (subject: string) => {
+    if (!aiResponse || !aiResponse.result.exercise_question) {
+      alert('Vui lòng chọn môn học để tạo câu hỏi trước!');
+      return;
+    }
+
+    // Lưu dữ liệu vào context
+    setPracticeData({
+      subject: subject,
+      exercise_question: aiResponse.result.exercise_question,
+      improve_suggestion: aiResponse.result.improve_suggestion || undefined,
+    });
+
+    // Chuyển sang trang practice
+    router.push('/student/practice');
+  };
+
   const getDifficultyColor = (difficulty: string) => {
     switch(difficulty) {
       case 'easy': return 'text-green-600 bg-green-100';
@@ -375,53 +433,50 @@ const MyClassesTab = () => {
                   </div>
 
                   {/* Exercise Question */}
-                  {aiResponse.exercise_question && (
+                  {aiResponse.result.exercise_question && (
                     <div className="bg-white rounded-lg p-4 border border-blue-100">
                       <div className="flex items-start gap-2 mb-2">
                         <BookOpen className="w-4 h-4 text-blue-600 mt-0.5 flex-shrink-0" />
                         <p className="text-xs font-semibold text-gray-700">Bài tập gợi ý</p>
                       </div>
-                      <p className="text-sm text-gray-800 leading-relaxed">{aiResponse.exercise_question}</p>
+                      <p className="text-sm text-gray-800 leading-relaxed">{aiResponse.result.exercise_question}</p>
                     </div>
                   )}
 
                   {/* Improvement Suggestion */}
-                  {aiResponse.improve_suggestion && (
+                  {aiResponse.result.improve_suggestion && (
                     <div className="bg-white rounded-lg p-4 border border-yellow-100">
                       <div className="flex items-start gap-2 mb-2">
                         <Lightbulb className="w-4 h-4 text-yellow-600 mt-0.5 flex-shrink-0" />
                         <p className="text-xs font-semibold text-gray-700">Gợi ý cải thiện</p>
                       </div>
-                      <p className="text-sm text-gray-800 leading-relaxed">{aiResponse.improve_suggestion}</p>
+                      <p className="text-sm text-gray-800 leading-relaxed">{aiResponse.result.improve_suggestion}</p>
                     </div>
                   )}
 
-                  {/* Difficulty */}
-                  {aiResponse.difficulty && (
-                    <div className="bg-white rounded-lg p-4 border border-green-100">
+                  {/* Teacher Comment */}
+                  {aiResponse.teacher_comment && (
+                    <div className="bg-white rounded-lg p-4 border border-purple-100">
                       <div className="flex items-start gap-2 mb-2">
-                        <Target className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" />
-                        <p className="text-xs font-semibold text-gray-700">Độ khó</p>
+                        <AlertCircle className="w-4 h-4 text-purple-600 mt-0.5 flex-shrink-0" />
+                        <p className="text-xs font-semibold text-gray-700">Nhận xét giáo viên</p>
                       </div>
-                      <p className="text-sm text-gray-800">{aiResponse.difficulty}</p>
+                      <p className="text-sm text-gray-800 leading-relaxed">{aiResponse.teacher_comment}</p>
                     </div>
                   )}
 
                   {/* Question & Answer if available */}
-                  {aiResponse.question && (
+                  {aiResponse.question_answer && (
                     <div className="bg-white rounded-lg p-4 border border-gray-100">
-                      <p className="text-xs font-semibold text-gray-700 mb-2">Câu hỏi</p>
-                      <p className="text-sm text-gray-800 mb-3">{aiResponse.question}</p>
-                      {aiResponse.answer && (
-                        <>
-                          <p className="text-xs font-semibold text-gray-700 mb-2">Câu trả lời</p>
-                          <p className="text-sm text-gray-800">{aiResponse.answer}</p>
-                        </>
-                      )}
+                      <p className="text-xs font-semibold text-gray-700 mb-2">Câu hỏi & Câu trả lời</p>
+                      <p className="text-sm text-gray-800">{aiResponse.question_answer}</p>
                     </div>
                   )}
 
-                  <button className="w-full bg-gradient-to-r from-purple-600 to-blue-600 text-white py-3 rounded-lg font-semibold hover:shadow-lg transition-all flex items-center justify-center gap-2">
+                  <button 
+                    onClick={() => handleStartPractice(selectedSubject)}
+                    className="w-full bg-gradient-to-r from-purple-600 to-blue-600 text-white py-3 rounded-lg font-semibold hover:shadow-lg transition-all flex items-center justify-center gap-2"
+                  >
                     Bắt đầu luyện tập
                     <ChevronRight className="w-5 h-5" />
                   </button>
@@ -492,42 +547,169 @@ const MyClassesTab = () => {
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
             <Lightbulb className="w-6 h-6 text-yellow-500" />
-            Câu Hỏi Gợi Ý Tự Động
+            Câu hỏi dựa trên câu trả lời sai gần đây
           </h2>
-          <span className="text-sm text-gray-500">Dựa trên năng lực của bạn</span>
+          <span className="text-sm text-gray-500">Dựa trên lỗi mắc phải gần đây</span>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {suggestedQuestions.map((question) => (
-            <div key={question.id} className="bg-white rounded-xl p-5 border border-gray-200 hover:border-blue-300 hover:shadow-md transition-all">
-              <div className="flex items-start justify-between mb-3">
-                <div className="bg-yellow-50 p-2 rounded-lg">
-                  <Lightbulb className="w-5 h-5 text-yellow-600" />
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+          {/* Left Side - Recent Test AI Response Display */}
+          <div className="lg:col-span-1">
+            <div className="bg-gradient-to-br from-yellow-50 to-orange-50 rounded-xl p-6 border border-yellow-200 sticky top-4">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="bg-yellow-100 p-3 rounded-lg">
+                  <AlertCircle className="w-6 h-6 text-yellow-600" />
                 </div>
-                <span className="text-xs px-2 py-1 bg-gray-100 text-gray-600 rounded-full font-medium">
-                  {question.difficulty}
-                </span>
-              </div>
-
-              <h3 className="font-bold text-gray-900 mb-2">{question.topic}</h3>
-              
-              <div className="bg-blue-50 p-3 rounded-lg mb-3 border border-blue-100">
-                <p className="text-xs text-gray-600 mb-1">Lý do gợi ý:</p>
-                <p className="text-sm text-gray-800">{question.reason}</p>
-              </div>
-
-              <div className="flex items-center justify-between text-xs text-gray-500 mb-3">
-                <div className="flex items-center gap-1">
-                  <Clock className="w-4 h-4" />
-                  <span>{question.estimatedTime}</span>
+                <div>
+                  <h3 className="font-bold text-gray-900">Phân Tích Lỗi Gần Đây</h3>
+                  <p className="text-xs text-gray-500">Từ bài kiểm tra gần nhất</p>
                 </div>
               </div>
 
-              <button className="w-full bg-yellow-100 text-yellow-700 py-2 rounded-lg text-sm font-semibold hover:bg-yellow-200 transition-colors">
-                Luyện tập ngay
-              </button>
+              {isLoadingRecentTest ? (
+                <div className="text-center py-8">
+                  <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-yellow-600 mx-auto mb-3"></div>
+                  <p className="text-sm text-gray-600">Đang phân tích...</p>
+                </div>
+              ) : recentTestResponse ? (
+                <div className="space-y-4">
+                  {/* Subject */}
+                  <div className="bg-white rounded-lg p-4 border border-yellow-100">
+                    <p className="text-xs text-gray-500 mb-1">Môn học</p>
+                    <p className="font-semibold text-gray-900">{selectedRecentTestSubject}</p>
+                  </div>
+
+                 
+
+                  {/* Questions - Câu hỏi gợi ý từ AI */}
+                  {recentTestResponse.responseAi?.questions && recentTestResponse.responseAi.questions.length > 0 && (
+                    <div className="bg-white rounded-lg p-4 border border-blue-100 max-h-96 overflow-y-auto">
+                      <div className="flex items-start gap-2 mb-3">
+                        <Lightbulb className="w-4 h-4 text-blue-600 mt-0.5 flex-shrink-0" />
+                        <p className="text-xs font-semibold text-gray-700">Câu hỏi gợi ý từ AI</p>
+                      </div>
+                      <div className="space-y-3">
+                        {recentTestResponse.responseAi.questions.map((item, index) => (
+                          <div key={index} className="bg-blue-50 rounded-lg p-4 border border-blue-200">
+                            <div className="flex items-start gap-2 mb-2">
+                              <span className="flex-shrink-0 w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs font-bold">
+                                {index + 1}
+                              </span>
+                              <div className="flex-1">
+                                <p className="text-xs font-semibold text-blue-700 mb-1">Làm sai gần đây : {item.topic}</p>
+                                <p className="text-sm text-gray-800 leading-relaxed">{item.question}</p>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  <button 
+                    onClick={() => {
+                      // Handle practice start with recent test data
+                      console.log('Start practice with recent test data');
+                    }}
+                    className="w-full bg-gradient-to-r from-yellow-600 to-orange-600 text-white py-3 rounded-lg font-semibold hover:shadow-lg transition-all flex items-center justify-center gap-2"
+                  >
+                    Luyện tập khắc phục lỗi
+                    <ChevronRight className="w-5 h-5" />
+                  </button>
+                </div>
+              ) : (
+                <div className="text-center py-8">
+                  <div className="bg-yellow-100 p-4 rounded-full w-16 h-16 mx-auto mb-3 flex items-center justify-center">
+                    <BookOpen className="w-8 h-8 text-yellow-600" />
+                  </div>
+                  <p className="text-sm text-gray-600 mb-1">Chọn một môn học</p>
+                  <p className="text-xs text-gray-500">để xem phân tích lỗi gần đây</p>
+                </div>
+              )}
             </div>
-          ))}
+          </div>
+
+          {/* Right Side - Subject Selection for Recent Test */}
+          <div className="lg:col-span-2 bg-white rounded-xl p-6 border border-gray-200">
+            <h3 className="text-sm font-semibold text-gray-700 mb-4">Chọn môn học để xem câu hỏi từ bài kiểm tra gần nhất</h3>
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+              {[
+                'Toán',
+                'Ngữ văn',
+                'Tiếng Anh',
+                'Vật lý',
+                'Hóa học',
+                'Sinh học',
+                'Lịch sử',
+                'Địa lý',
+                'Tin học',
+                'GDCD'
+              ].map((subject) => (
+                <button
+                  key={subject}
+                  onClick={() => Recent_test(subject)}
+                  disabled={isLoadingRecentTest}
+                  className={`flex items-center gap-2 px-4 py-3 rounded-lg text-sm font-medium border transition-all ${
+                    selectedRecentTestSubject === subject
+                      ? 'bg-yellow-600 text-white border-yellow-600 shadow-md'
+                      : 'bg-yellow-50 hover:bg-yellow-100 text-gray-800 border-transparent hover:shadow-sm'
+                  } ${isLoadingRecentTest ? 'opacity-50 cursor-not-allowed' : ''}`}
+                >
+                  <BookOpen className={`w-4 h-4 ${selectedRecentTestSubject === subject ? 'text-white' : 'text-yellow-600'}`} />
+                  {subject}
+                </button>
+              ))}
+            </div>
+            <div className="mt-6 bg-yellow-50 rounded-lg p-4 border border-yellow-100">
+              <div className="flex items-start gap-3">
+                <AlertCircle className="w-5 h-5 text-yellow-600 mt-0.5 flex-shrink-0" />
+                <div>
+                  <p className="text-sm font-semibold text-gray-900 mb-1">Hướng dẫn sử dụng</p>
+                  <p className="text-xs text-gray-700 leading-relaxed">
+                    Nhấn vào một môn học để xem phân tích các lỗi mắc phải trong bài kiểm tra gần nhất. 
+                    Hệ thống AI sẽ đề xuất các câu hỏi luyện tập giúp bạn khắc phục những lỗi này.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Original Suggested Questions Grid */}
+        <div className="bg-white rounded-xl p-6 border border-gray-200">
+          <h3 className="text-sm font-semibold text-gray-700 mb-4">Câu hỏi gợi ý theo năng lực</h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {suggestedQuestions.map((question) => (
+              <div key={question.id} className="bg-white rounded-xl p-5 border border-gray-200 hover:border-blue-300 hover:shadow-md transition-all">
+                <div className="flex items-start justify-between mb-3">
+                  <div className="bg-yellow-50 p-2 rounded-lg">
+                    <Lightbulb className="w-5 h-5 text-yellow-600" />
+                  </div>
+                  <span className="text-xs px-2 py-1 bg-gray-100 text-gray-600 rounded-full font-medium">
+                    {question.difficulty}
+                  </span>
+                </div>
+
+                <h3 className="font-bold text-gray-900 mb-2">{question.topic}</h3>
+                
+                <div className="bg-blue-50 p-3 rounded-lg mb-3 border border-blue-100">
+                  <p className="text-xs text-gray-600 mb-1">Lý do gợi ý:</p>
+                  <p className="text-sm text-gray-800">{question.reason}</p>
+                </div>
+
+                <div className="flex items-center justify-between text-xs text-gray-500 mb-3">
+                  <div className="flex items-center gap-1">
+                    <Clock className="w-4 h-4" />
+                    <span>{question.estimatedTime}</span>
+                  </div>
+                </div>
+
+                <button className="w-full bg-yellow-100 text-yellow-700 py-2 rounded-lg text-sm font-semibold hover:bg-yellow-200 transition-colors">
+                  Luyện tập ngay
+                </button>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 

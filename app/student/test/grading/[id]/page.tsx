@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { getTestGradingDetail } from '../../../api/test';
+import { getTestGradingDetail, editTestAnswer, editTestAnswerFile } from '../../../api/test';
 import { ArrowLeft, CheckCircle, XCircle, Clock, Award, FileText, Calendar, User } from 'lucide-react';
 
 interface Question {
@@ -64,6 +64,10 @@ const TestGradingPage = () => {
   const [gradingData, setGradingData] = useState<GradingDetail | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [editedAnswers, setEditedAnswers] = useState<{[key: string]: string}>({});
+  const [fileUploads, setFileUploads] = useState<{ [questionId: string]: File }>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     const fetchGradingDetail = async () => {
@@ -71,6 +75,14 @@ const TestGradingPage = () => {
         setIsLoading(true);
         const data = await getTestGradingDetail(testId);
         setGradingData(data);
+        // Initialize edited answers with current answers
+        if (data?.answer?.answers) {
+          const initialAnswers: {[key: string]: string} = {};
+          data.answer.answers.forEach((ans: Answer) => {
+            initialAnswers[ans.questionID] = ans.answer;
+          });
+          setEditedAnswers(initialAnswers);
+        }
       } catch (err) {
         console.error('Error fetching grading detail:', err);
         setError('Không thể tải kết quả bài kiểm tra');
@@ -83,6 +95,98 @@ const TestGradingPage = () => {
       fetchGradingDetail();
     }
   }, [testId]);
+
+  const handleAnswerChange = (questionID: string, value: string) => {
+    setEditedAnswers(prev => ({
+      ...prev,
+      [questionID]: value
+    }));
+  };
+
+  const handleFileChange = (questionID: string, file: File | null) => {
+    if (file) {
+      setFileUploads(prev => ({
+        ...prev,
+        [questionID]: file
+      }));
+    } else {
+      setFileUploads(prev => {
+        const updated = { ...prev };
+        delete updated[questionID];
+        return updated;
+      });
+    }
+  };
+
+  const saveEditedAnswers = async () => {
+    if (!gradingData) return;
+    
+    setIsSubmitting(true);
+    try {
+      const originalAnswers = gradingData.answer.answers;
+      
+      // Process all questions that have been modified
+      const questionsToUpdate = new Set([
+        ...Object.keys(editedAnswers),
+        ...Object.keys(fileUploads)
+      ]);
+      
+      for (const questionID of questionsToUpdate) {
+        const originalAnswer = originalAnswers.find(a => a.questionID === questionID);
+        const newAnswer = editedAnswers[questionID];
+        const question = gradingData.questions.find(q => q._id === questionID);
+        
+        // Check if there's a file upload for this question
+        if (fileUploads[questionID]) {
+          // Upload new file
+          const formData = new FormData();
+          formData.append('file', fileUploads[questionID]);
+          formData.append('testId', testId);
+          formData.append('questionId', questionID);
+          
+          try {
+            const response = await editTestAnswerFile(formData);
+            console.log('File answer updated:', response);
+          } catch (error) {
+            console.error('Error editing file answer:', error);
+            alert('Lỗi khi cập nhật file');
+            setIsSubmitting(false);
+            return;
+          }
+        } else if (originalAnswer && originalAnswer.answer !== newAnswer) {
+          // Update text answer only if it has changed
+          try {
+            await editTestAnswer(testId, questionID, newAnswer);
+          } catch (error) {
+            console.error('Error editing answer:', error);
+            alert('Lỗi khi cập nhật câu trả lời');
+            setIsSubmitting(false);
+            return;
+          }
+        }
+      }
+      
+      alert('Đã lưu các thay đổi thành công!');
+      setIsEditMode(false);
+      setFileUploads({});
+      
+      // Refresh data
+      const data = await getTestGradingDetail(testId);
+      setGradingData(data);
+      if (data?.answer?.answers) {
+        const initialAnswers: {[key: string]: string} = {};
+        data.answer.answers.forEach((ans: Answer) => {
+          initialAnswers[ans.questionID] = ans.answer;
+        });
+        setEditedAnswers(initialAnswers);
+      }
+    } catch (error) {
+      console.error('Error saving edited answers:', error);
+      alert('Có lỗi xảy ra khi lưu thay đổi');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   const getDifficultyBadge = (difficult: string) => {
     const styles = {
@@ -141,6 +245,11 @@ const TestGradingPage = () => {
   const totalQuestions = questions.length;
   const correctAnswers = answer.answers.filter(a => a.isCorrect).length;
   const finalGrade = answer.teacherGrade || answer.AIGrade || 0;
+  
+  // Check if can edit (before closeDate)
+  const closeDate = new Date(test.closeDate);
+  const now = new Date();
+  const canEdit = now < closeDate;
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
@@ -207,6 +316,11 @@ const TestGradingPage = () => {
               <div className="flex items-center gap-3 mb-4">
                 <Award className="w-8 h-8" />
                 <h2 className="text-2xl font-bold">Kết quả của bạn</h2>
+                {canEdit && (
+                  <span className="text-xs bg-white/20 px-3 py-1 rounded-full">
+                    Có thể chỉnh sửa đến {closeDate.toLocaleDateString('vi-VN')}
+                  </span>
+                )}
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
@@ -314,7 +428,85 @@ const TestGradingPage = () => {
                       {studentAnswer?.isCorrect ? 'Đúng' : 'Sai'}
                     </span>
                   </div>
-                  <p className="text-gray-700">{studentAnswer?.answer || 'Chưa trả lời'}</p>
+                  
+                  {isEditMode && canEdit ? (
+                    <>
+                      {question.questionType === 'essay' ? (
+                        <textarea
+                          value={editedAnswers[question._id] || ''}
+                          onChange={(e) => handleAnswerChange(question._id, e.target.value)}
+                          className="w-full border rounded-lg p-3 min-h-[120px] focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
+                          placeholder="Nhập câu trả lời mới..."
+                        />
+                      ) : question.questionType === 'file_upload' ? (
+                        <div className="space-y-2">
+                          <p className="text-gray-700 mb-2">File hiện tại: 
+                            <a 
+                              href={editedAnswers[question._id]} 
+                              target="_blank" 
+                              rel="noopener noreferrer"
+                              className="text-blue-600 hover:underline ml-2"
+                            >
+                              Xem file
+                            </a>
+                          </p>
+                          <label className="block">
+                            <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center hover:border-blue-500 cursor-pointer transition-colors">
+                              <input
+                                type="file"
+                                accept="image/*,.pdf,.doc,.docx,.txt"
+                                onChange={(e) => handleFileChange(question._id, e.target.files?.[0] || null)}
+                                className="hidden"
+                                id={`file-${question._id}`}
+                              />
+                              <label htmlFor={`file-${question._id}`} className="cursor-pointer">
+                                {fileUploads[question._id] ? (
+                                  <div className="text-green-600">
+                                    <CheckCircle className="w-6 h-6 mx-auto mb-2" />
+                                    <p className="font-medium text-sm">{fileUploads[question._id].name}</p>
+                                  </div>
+                                ) : (
+                                  <div className="text-gray-500">
+                                    <p className="font-medium text-sm">Tải file mới lên</p>
+                                    <p className="text-xs mt-1">Chọn ảnh, PDF hoặc tài liệu</p>
+                                  </div>
+                                )}
+                              </label>
+                            </div>
+                          </label>
+                        </div>
+                      ) : question.questionType === 'multiple_choice' ? (
+                        <div className="space-y-2">
+                          {question.options.map((option: string, optIndex: number) => (
+                            <label
+                              key={optIndex}
+                              className="flex items-center gap-3 p-3 border rounded-lg hover:bg-gray-50 cursor-pointer"
+                            >
+                              <input
+                                type="radio"
+                                name={`edit-${question._id}`}
+                                value={option}
+                                checked={editedAnswers[question._id] === option}
+                                onChange={(e) => handleAnswerChange(question._id, e.target.value)}
+                                className="w-4 h-4 text-blue-600"
+                              />
+                              <span className="text-gray-800">{option}</span>
+                            </label>
+                          ))}
+                        </div>
+                      ) : (
+                        <input
+                          type="text"
+                          value={editedAnswers[question._id] || ''}
+                          onChange={(e) => handleAnswerChange(question._id, e.target.value)}
+                          className="w-full border rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
+                          placeholder="Nhập câu trả lời mới..."
+                        />
+                      )}
+                    </>
+                  ) : (
+                    <p className="text-gray-700">{studentAnswer?.answer || 'Chưa trả lời'}</p>
+                  )}
                 </div>
               </div>
             );
@@ -322,10 +514,61 @@ const TestGradingPage = () => {
         </div>
 
         {/* Bottom Actions */}
-        <div className="mt-8 flex justify-center">
+        <div className="mt-8 flex justify-center gap-4">
+          {canEdit && !isEditMode && (
+            <button
+              onClick={() => setIsEditMode(true)}
+              className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+              </svg>
+              Chỉnh sửa đáp án
+            </button>
+          )}
+          
+          {isEditMode && (
+            <>
+              <button
+                onClick={() => {
+                  setIsEditMode(false);
+                  setFileUploads({});
+                  // Reset edited answers to original
+                  if (gradingData?.answer?.answers) {
+                    const initialAnswers: {[key: string]: string} = {};
+                    gradingData.answer.answers.forEach((ans: Answer) => {
+                      initialAnswers[ans.questionID] = ans.answer;
+                    });
+                    setEditedAnswers(initialAnswers);
+                  }
+                }}
+                className="px-6 py-3 border border-red-300 rounded-lg font-semibold text-red-700 hover:bg-red-50 transition-colors"
+              >
+                Hủy
+              </button>
+              <button
+                onClick={saveEditedAnswers}
+                disabled={isSubmitting}
+                className="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center gap-2 disabled:bg-gray-400 disabled:cursor-not-allowed"
+              >
+                {isSubmitting ? (
+                  <>
+                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                    Đang lưu...
+                  </>
+                ) : (
+                  <>
+                    <CheckCircle className="w-5 h-5" />
+                    Lưu thay đổi
+                  </>
+                )}
+              </button>
+            </>
+          )}
+          
           <button
             onClick={() => router.push('/student')}
-            className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            className="px-6 py-3 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
           >
             Về trang chủ
           </button>

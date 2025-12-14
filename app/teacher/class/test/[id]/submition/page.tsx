@@ -1,14 +1,16 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { ArrowLeft, FileText, Calendar, Clock, CheckCircle, XCircle, User, X } from 'lucide-react';
-import { getSubmittedAnswers, TeacherGradingAsnwer } from '@/app/teacher/api/test';
+import { ArrowLeft, FileText, Calendar, Clock, CheckCircle, XCircle, User, X, Sparkles } from 'lucide-react';
+import { getSubmittedAnswers, TeacherGradingAsnwer, Ai_grade, Ai_grade_from_file } from '@/app/teacher/api/test';
 
 interface Question {
   questionID: {
     _id: string;
     question: string;
+    questionType: string;
   };
+  
   answer: string;
   isCorrect: boolean;
   _id: string;
@@ -66,6 +68,8 @@ export default function SubmissionPage() {
   const [isSavingComments, setIsSavingComments] = useState(false);
   const [teacherGrade, setTeacherGrade] = useState<number>(0);
   const [editedAnswers, setEditedAnswers] = useState<Question[]>([]);
+  const [aiGradingLoading, setAiGradingLoading] = useState<string | null>(null);
+  const [aiGradingResults, setAiGradingResults] = useState<{[key: string]: any}>({});
 
   useEffect(() => {
     fetchSubmissions();
@@ -101,6 +105,54 @@ export default function SubmissionPage() {
           : answer
       )
     );
+  };
+
+  const handleAiGrade = async (answer: Question) => {
+    if (!selectedSubmission) return;
+
+    try {
+      setAiGradingLoading(answer._id);
+      
+      const questionType = answer.questionID?.questionType;
+      const subject = selectedSubmission.testID.subject;
+      const exercise_question = answer.questionID?.question || '';
+      
+      let result;
+      
+      if (questionType === 'file_upload') {
+        // Call AI grading with file URL
+        result = await Ai_grade_from_file(
+          exercise_question,
+          answer.answer, // This is the file URL
+          subject
+        );
+      } else {
+        // Call AI grading with text answer
+        result = await Ai_grade(
+          exercise_question,
+          answer.answer,
+          subject
+        );
+      }
+      
+      // Extract grading_response from the API result
+      const gradingData = result?.grading_response || result;
+      
+      // Store the AI grading result
+      setAiGradingResults(prev => ({
+        ...prev,
+        [answer._id]: gradingData
+      }));
+      
+      console.log('AI Grading Result:', result);
+      console.log('Grading Data:', gradingData);
+      
+    } catch (error) {
+      console.error('Error in AI grading:', error);
+      alert('Failed to get AI grading');
+    } finally {
+      setAiGradingLoading(null);
+    }
   };
 
   const handleSaveComments = async () => {
@@ -427,9 +479,65 @@ export default function SubmissionPage() {
                       
                       <div>
                         <p className="text-sm text-gray-600 mb-1">Student's Answer:</p>
-                        <p className="text-gray-900 bg-white p-3 rounded border border-gray-200">
-                          {answer.answer}
-                        </p>
+                        {answer.questionID?.questionType === 'file_upload' ? (
+                          <a 
+                            href={answer.answer} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="text-blue-600 hover:text-blue-800 underline bg-white p-3 rounded border border-gray-200 block"
+                          >
+                            View Uploaded File
+                          </a>
+                        ) : (
+                          <p className="text-gray-900 bg-white p-3 rounded border border-gray-200">
+                            {answer.answer}
+                          </p>
+                        )}
+                      </div>
+
+                      {/* AI Grading Button */}
+                      <div className="flex items-center gap-3">
+                        <button
+                          onClick={() => handleAiGrade(answer)}
+                          disabled={aiGradingLoading === answer._id}
+                          className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg hover:from-purple-700 hover:to-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          {aiGradingLoading === answer._id ? (
+                            <>
+                              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                              AI Grading...
+                            </>
+                          ) : (
+                            <>
+                              <Sparkles className="w-4 h-4" />
+                              AI Grade
+                            </>
+                          )}
+                        </button>
+
+                        {aiGradingResults[answer._id] && (
+                          <div className="flex-1 bg-blue-50 p-4 rounded-lg border border-blue-200 space-y-3">
+                            <div className="flex items-center gap-2">
+                              <p className="text-sm font-semibold text-blue-900">AI Analysis:</p>
+                              {aiGradingResults[answer._id].isCorrect ? (
+                                <span className="px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs font-medium">
+                                  Correct
+                                </span>
+                              ) : (
+                                <span className="px-2 py-1 bg-red-100 text-red-700 rounded-full text-xs font-medium">
+                                  Incorrect
+                                </span>
+                              )}
+                            </div>
+                            
+                            <div className="bg-white p-3 rounded border border-blue-200">
+                              <p className="text-xs font-semibold text-gray-600 mb-1">AI Comments:</p>
+                              <p className="text-sm text-gray-800 leading-relaxed">
+                                {aiGradingResults[answer._id].comments}
+                              </p>
+                            </div>
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>

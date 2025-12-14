@@ -1,5 +1,7 @@
 import axios from "axios"; 
+import { sub } from "date-fns";
 import test from "node:test";
+import SubjectTab from "../components/SubjectTab";
 
 const api_url = "http://localhost:4000"
 interface AnswerData {
@@ -8,7 +10,7 @@ interface AnswerData {
     isCorrect: boolean;
 }
 export const createTest = async (classID: String , testtitle: String , 
-    participants: Number, closedDate: String, subject: String ) =>{
+    closedDate: String, subject: String ) =>{
         try {
             const teacherToken = localStorage.getItem('teacherToken');
             if (!teacherToken) {
@@ -17,7 +19,6 @@ export const createTest = async (classID: String , testtitle: String ,
             const res = await axios.post(`${api_url}/api/teacher/tests/create`, {
                 classID: classID,
                 testtitle: testtitle,
-                participants: participants,
                 closeDate: closedDate,
                 subject: subject
             }, {
@@ -72,7 +73,6 @@ export const getTestDetailById = async (testID: String) => {
 }
 export const editTestById = async (
       testId: String,
-      classID: String ,
       testtitle: String ,
       test_time: Number,
       closeDate: String,
@@ -83,7 +83,6 @@ export const editTestById = async (
             throw new Error('Token not found in localStorage');
         }   
         const updateData = {
-            classID: classID,
             testtitle: testtitle,
             test_time: test_time,
             closeDate: closeDate
@@ -123,6 +122,7 @@ export const addQuestionToTest = async (
     difficult: string,
     question: string,
     questionType: string,
+    subjectQuestionType: string,
     grade: number,
     solution: string,
     metadata: string,
@@ -139,6 +139,7 @@ export const addQuestionToTest = async (
         formData.append('difficult', difficult);
         formData.append('question', question);
         formData.append('questionType', questionType);
+        formData.append('subjectQuestionType', subjectQuestionType);
         formData.append('grade', grade.toString());
         formData.append('solution', solution);
         
@@ -175,6 +176,7 @@ export const addQuestionsToTest = async (
         difficult: string;
         question: string;
         questionType: string;
+        subjectQuestionType: string;
         grade: number;
         solution: string;
         metadata?: string;
@@ -218,14 +220,16 @@ export const addQuestionsToTest = async (
 
 export const AI_Generate_Question_Answer = async (
    prompt: string, 
+   subject: string
 ) => {
     try {
         const teacherToken = localStorage.getItem('teacherToken');  
         if (!teacherToken) {
             throw new Error('Token not found in localStorage');
         }
-        const res = await axios.post(`${api_url}/api/teacher/tests/generate`, {
-            prompt: prompt
+        const res = await axios.post(`${api_url}/api/teacher/ai/question-answer/generate`, {
+            prompt: prompt,
+            subject: subject
         }, {
             headers: {
                 'Content-Type': 'application/json',
@@ -263,6 +267,7 @@ export const UpdateQuestion = async (
     difficult: string,
     question: string,
     questionType: string,
+    subjectQuestionType: string,
     grade: number,
     solution: string,
     metadata: string,
@@ -279,6 +284,7 @@ export const UpdateQuestion = async (
         formData.append('difficult', difficult);
         formData.append('question', question);
         formData.append('questionType', questionType);
+        formData.append('subjectQuestionType', subjectQuestionType);
         formData.append('grade', grade.toString());
         formData.append('solution', solution);
         
@@ -354,5 +360,80 @@ export const TeacherGradingAsnwer = async (
     } catch (error) {
         console.error('Error grading answer:', error);
         throw error;
+    }
+};
+
+export const math_question_generation = async (prompt: string) => {
+    try {
+        const teacherToken = localStorage.getItem('teacherToken');
+        if (!teacherToken) {
+            throw new Error('Token not found in localStorage');
+        }
+        const res = await axios.post(`${api_url}/api/teacher/tests/question/math/generate`,
+            { prompt },
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${teacherToken}`
+                }
+            }
+        );
+        console.log('Math question generation response:', res.data);
+        return res.data;
+    } catch (error) {
+        console.error('Error generating math question:', error);
+    }   
+};
+
+export const Ai_grade = async (
+    exercise_question: string,
+    student_answer: string,
+    subject: string
+) => {
+    try {   
+        const teacherToken = localStorage.getItem('teacherToken');  
+        if (!teacherToken) {
+            throw new Error('Token not found in localStorage');
+        }   
+        const res = await axios.post(`${api_url}/api/teacher/ai/auto-grading`, {
+            exercise_question,
+            student_answer,
+            subject
+        }, {
+            headers: {
+                'Content-Type': 'application/json', 
+                'Authorization': `Bearer ${teacherToken}`
+            }
+        });
+        console.log("AI grading response:", res.data);
+        return res.data;
+    } catch (error) {
+        console.error('Error in AI grading:', error);
+    }   
+};
+export const Ai_grade_from_file = async (
+    exercise_question: string,
+    student_answer_file_url: string,
+    subject: string
+) => {
+    try {
+        const teacherToken = localStorage.getItem('teacherToken');
+        if (!teacherToken) {
+            throw new Error('Token not found in localStorage');
+        }
+        const res = await axios.post(`${api_url}/api/teacher/ai/auto-grading/file`, {
+            exercise_question,
+            student_answer_file_url,
+            subject
+        }, {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${teacherToken}`
+            }
+        });
+        console.log("AI grading from file response:", res.data);
+        return res.data;
+    } catch (error) {   
+        console.error('Error in AI grading from file:', error);
     }
 };
