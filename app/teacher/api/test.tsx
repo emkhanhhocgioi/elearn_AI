@@ -437,3 +437,31 @@ export const Ai_grade_from_file = async (
         console.error('Error in AI grading from file:', error);
     }
 };
+
+export const Ai_grade_from_image = async (
+    exercise_question: string,
+    student_answer_image_url: string,
+    subject: string
+) => {
+    try {
+        const teacherToken = localStorage.getItem('teacherToken');
+        if (!teacherToken) {
+            throw new Error('Token not found in localStorage');
+        }   
+        const res = await axios.post(`${api_url}/api/teacher/ai/auto-grading/image`, {
+            exercise_question,
+            student_answer_image_url,
+            subject
+        }, {
+            headers: {
+                'Content-Type': 'application/json', 
+                'Authorization': `Bearer ${teacherToken}`
+            }
+        });
+        console.log("AI grading from image response:", res.data);
+        return res.data;
+    }
+    catch (error) {   
+        console.error('Error in AI grading from image:', error);
+    }
+};

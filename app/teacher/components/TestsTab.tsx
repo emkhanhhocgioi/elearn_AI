@@ -129,13 +129,7 @@ export default function TestsTab() {
             <h2 className="text-3xl font-bold text-gray-900">My Subject Classes</h2>
             <p className="text-gray-600 text-sm mt-1">Manage tests for classes you're teaching</p>
           </div>
-          <button 
-            onClick={() => setShowDialog(true)}
-            className="bg-gradient-to-r from-purple-600 to-purple-700 text-white px-6 py-3 rounded-lg flex items-center gap-2 hover:from-purple-700 hover:to-purple-800 transition shadow-lg hover:shadow-xl transform hover:scale-105"
-          >
-            <Plus className="w-5 h-5" />
-            <span className="font-semibold">Create New Test</span>
-          </button>
+        
         </div>
 
         {/* Dialog */}

@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { ArrowLeft, FileText, Calendar, Clock, CheckCircle, XCircle, User, X, Sparkles } from 'lucide-react';
-import { getSubmittedAnswers, TeacherGradingAsnwer, Ai_grade, Ai_grade_from_file } from '@/app/teacher/api/test';
+import { getSubmittedAnswers, TeacherGradingAsnwer, Ai_grade, Ai_grade_from_file ,Ai_grade_from_image} from '@/app/teacher/api/test';
 
 interface Question {
   questionID: {
@@ -71,6 +71,14 @@ export default function SubmissionPage() {
   const [aiGradingLoading, setAiGradingLoading] = useState<string | null>(null);
   const [aiGradingResults, setAiGradingResults] = useState<{[key: string]: any}>({});
 
+  // Helper function to check if URL is an image
+  const isImageUrl = (url: string) => {
+    const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp', '.svg'];
+    const lowerUrl = url.toLowerCase();
+    return imageExtensions.some(ext => lowerUrl.includes(ext)) || 
+           lowerUrl.includes('/image/upload/'); // Cloudinary image pattern
+  };
+
   useEffect(() => {
     fetchSubmissions();
   }, [testId]);
@@ -120,12 +128,22 @@ export default function SubmissionPage() {
       let result;
       
       if (questionType === 'file_upload') {
-        // Call AI grading with file URL
-        result = await Ai_grade_from_file(
-          exercise_question,
-          answer.answer, // This is the file URL
-          subject
-        );
+        // Check if the file is an image
+        if (isImageUrl(answer.answer)) {
+          // Call AI grading with image URL
+          result = await Ai_grade_from_image(
+            exercise_question,
+            answer.answer, // This is the image URL
+            subject
+          );
+        } else {
+          // Call AI grading with file URL
+          result = await Ai_grade_from_file(
+            exercise_question,
+            answer.answer, // This is the file URL
+            subject
+          );
+        }
       } else {
         // Call AI grading with text answer
         result = await Ai_grade(
@@ -480,14 +498,43 @@ export default function SubmissionPage() {
                       <div>
                         <p className="text-sm text-gray-600 mb-1">Student's Answer:</p>
                         {answer.questionID?.questionType === 'file_upload' ? (
-                          <a 
-                            href={answer.answer} 
-                            target="_blank" 
-                            rel="noopener noreferrer"
-                            className="text-blue-600 hover:text-blue-800 underline bg-white p-3 rounded border border-gray-200 block"
-                          >
-                            View Uploaded File
-                          </a>
+                          isImageUrl(answer.answer) ? (
+                            <div className="bg-white p-3 rounded border border-gray-200">
+                              <img 
+                                src={answer.answer} 
+                                alt="Student's uploaded answer"
+                                className="max-w-full h-auto rounded-lg shadow-sm"
+                                onError={(e) => {
+                                  // Fallback to link if image fails to load
+                                  e.currentTarget.style.display = 'none';
+                                  const link = document.createElement('a');
+                                  link.href = answer.answer;
+                                  link.target = '_blank';
+                                  link.rel = 'noopener noreferrer';
+                                  link.className = 'text-blue-600 hover:text-blue-800 underline';
+                                  link.textContent = 'View Uploaded File';
+                                  e.currentTarget.parentElement?.appendChild(link);
+                                }}
+                              />
+                              <a 
+                                href={answer.answer} 
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                                className="text-blue-600 hover:text-blue-800 underline text-sm mt-2 inline-block"
+                              >
+                                Open in new tab
+                              </a>
+                            </div>
+                          ) : (
+                            <a 
+                              href={answer.answer} 
+                              target="_blank" 
+                              rel="noopener noreferrer"
+                              className="text-blue-600 hover:text-blue-800 underline bg-white p-3 rounded border border-gray-200 block"
+                            >
+                              View Uploaded File
+                            </a>
+                          )
                         ) : (
                           <p className="text-gray-900 bg-white p-3 rounded border border-gray-200">
                             {answer.answer}

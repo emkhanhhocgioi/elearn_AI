@@ -2,6 +2,7 @@
 import { Bell, Search, MoreVertical, Users, BookOpen, FileText, Calendar, TrendingUp, Award } from 'lucide-react';
 import { useState, lazy, Suspense } from 'react';
 import { teacherLogout } from '@/app/api/auth';
+import AnalyticsTab from '../components/AnalyticsTab';
 const LessonsTab = lazy(() => import('../components/LessonsTab'));
 const ClassesTab = lazy(() => import('../components/ClassesTab'));
 const TestsTab = lazy(() => import('../components/TestsTab'));
@@ -70,7 +71,12 @@ export default function TeacherDashboard() {
                 <Calendar className="w-5 h-5" />
                 <span>Schedule</span>
               </li>
-              <li className="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-gray-50 rounded-lg cursor-pointer">
+              <li 
+                onClick={() => setCurrentPage('analytics')}
+                className={`flex items-center gap-3 px-4 py-2 rounded-lg cursor-pointer ${
+                  currentPage === 'analytics' ? 'text-purple-600 bg-purple-50' : 'text-gray-700 hover:bg-gray-50'
+                }`}
+              >
                 <TrendingUp className="w-5 h-5" />
                 <span>Analytics</span>
               </li>
@@ -148,6 +154,7 @@ export default function TeacherDashboard() {
             {currentPage === 'lessons' && <LessonsTab />}
             {currentPage === 'classes' && <ClassesTab />}
             {currentPage === 'tests' && <TestsTab />}
+            {currentPage === 'analytics' && <AnalyticsTab />}
           </Suspense>
         </div>
       </main>
