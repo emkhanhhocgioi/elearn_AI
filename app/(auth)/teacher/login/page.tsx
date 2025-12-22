@@ -1,4 +1,5 @@
 'use client';
+export const dynamic = "force-dynamic";
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
@@ -124,6 +125,7 @@ export default function TeacherLoginPage() {
         setForgotSent(false);
       }, 2000);
     } catch (error) {
+      console.error('Forgot password failed:', error);
       setForgotError('Có lỗi xảy ra. Vui lòng thử lại sau.');
     } finally {
       setLoadingForgot(false);

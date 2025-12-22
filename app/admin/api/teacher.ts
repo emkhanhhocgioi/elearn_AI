@@ -1,3 +1,4 @@
+'use client';
 import axios from "axios";
 
 const BASE_URL = "http://localhost:4000";
@@ -39,7 +40,7 @@ export const getTeacherById  = async (teacherId: string) => {
     });
     return response.data;;
   } catch (error) {
-    
+    console.error("Error fetching teacher by ID:", error);
   }
 }
 

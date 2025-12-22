@@ -2,7 +2,6 @@
 import { useState, useEffect } from 'react';
 import { Users, Edit2, Save, X } from 'lucide-react';
 import { getTeacherClasses } from '@/app/teacher/api/class';
-import EnrollStudent from './EnrollStudent';
 
 interface Student {
   _id: string;

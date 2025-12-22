@@ -1,6 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { Plus, Upload, Trash2, Edit2, Check } from 'lucide-react';
+import { Plus,  Check } from 'lucide-react';
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -39,8 +39,8 @@ interface EnrollStudentProps {
 
 export default function EnrollStudent({ classCode, onSuccess }: EnrollStudentProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [students, setStudents] = useState<StudentData[]>([]);
+  const [isLoading, ] = useState(false);
+  // const [students, setStudents] = useState<StudentData[]>([]);
   const [allStudents, setAllStudents] = useState<AllStudentData[]>([]);
   const [allStudentsLoading, setAllStudentsLoading] = useState(false);
   const [enrollingIds, setEnrollingIds] = useState<Set<string>>(new Set());
@@ -69,70 +69,70 @@ export default function EnrollStudent({ classCode, onSuccess }: EnrollStudentPro
     }
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setStudents(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
+  // const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  //   const { name, value } = e.target;
+  //   setStudents(prev => ({
+  //     ...prev,
+  //     [name]: value
+  //   }));
+  // };
 
-  const handleExcelImport = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+  // const handleExcelImport = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   const file = e.target.files?.[0];
+  //   if (!file) return;
 
-    try {
-      const fileReader = new FileReader();
-      fileReader.onload = (event) => {
-        try {
-          const data = event.target?.result as string;
-          const lines = data.split('\n').filter(line => line.trim());
+  //   try {
+  //     const fileReader = new FileReader();
+  //     fileReader.onload = (event) => {
+  //       try {
+  //         const data = event.target?.result as string;
+  //         const lines = data.split('\n').filter(line => line.trim());
           
-          if (lines.length < 2) {
-            alert('File Excel trống hoặc không hợp lệ');
-            return;
-          }
+  //         if (lines.length < 2) {
+  //           alert('File Excel trống hoặc không hợp lệ');
+  //           return;
+  //         }
 
-          const headers = lines[0].split(',').map(h => h.trim().toLowerCase());
+  //         const headers = lines[0].split(',').map(h => h.trim().toLowerCase());
           
-          const importedStudents: StudentData[] = lines.slice(1).map(line => {
-            const values = line.split(',').map(v => v.trim());
-            const student: any = {
-              class_code: classCode,
-              subjects: {
-                math: '',
-                english: ''
-              }
-            };
+  //         const importedStudents: StudentData[] = lines.slice(1).map(line => {
+  //           const values = line.split(',').map(v => v.trim());
+  //           const student: any = {
+  //             class_code: classCode,
+  //             subjects: {
+  //               math: '',
+  //               english: ''
+  //             }
+  //           };
 
-            headers.forEach((header, index) => {
-              const value = values[index] || '';
-              if (header.startsWith('subjects.')) {
-                const subject = header.split('.')[1];
-                student.subjects[subject] = value ? parseInt(value) : '';
-              } else if (header === 'name' || header === 'email' || header === 'password' || 
-                        header === 'grade' || header === 'conduct') {
-                student[header] = value;
-              }
-            });
+  //           headers.forEach((header, index) => {
+  //             const value = values[index] || '';
+  //             if (header.startsWith('subjects.')) {
+  //               const subject = header.split('.')[1];
+  //               student.subjects[subject] = value ? parseInt(value) : '';
+  //             } else if (header === 'name' || header === 'email' || header === 'password' || 
+  //                       header === 'grade' || header === 'conduct') {
+  //               student[header] = value;
+  //             }
+  //           });
 
-            return student;
-          }).filter(s => s.name && s.email && s.password);
+  //           return student;
+  //         }).filter(s => s.name && s.email && s.password);
 
-          setStudents(prev => [...prev, ...importedStudents]);
-          alert(`Nhập thành công ${importedStudents.length} học sinh từ Excel`);
-          e.target.value = '';
-        } catch (parseError) {
-          alert('Lỗi khi xử lý file Excel');
-          console.error(parseError);
-        }
-      };
-      fileReader.readAsText(file);
-    } catch (error) {
-      alert('Có lỗi xảy ra khi nhập file');
-      console.error(error);
-    }
-  };
+  //         setStudents(prev => [...prev, ...importedStudents]);
+  //         alert(`Nhập thành công ${importedStudents.length} học sinh từ Excel`);
+  //         e.target.value = '';
+  //       } catch (parseError) {
+  //         alert('Lỗi khi xử lý file Excel');
+  //         console.error(parseError);
+  //       }
+  //     };
+  //     fileReader.readAsText(file);
+  //   } catch (error) {
+  //     alert('Có lỗi xảy ra khi nhập file');
+  //     console.error(error);
+  //   }
+  // };
 
   const handleEnrollStudent = async (studentId: string, studentName: string) => {
     try {

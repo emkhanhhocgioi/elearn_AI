@@ -1,4 +1,5 @@
 'use client';
+export const dynamic = "force-dynamic";
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
@@ -18,8 +19,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import axios from 'axios';
 import { adminLogin } from '@/app/api/auth';
+
 export default function AdminLoginPage() {
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
@@ -122,6 +123,7 @@ export default function AdminLoginPage() {
       }, 2000);
     } catch (error) {
       setForgotError('Có lỗi xảy ra. Vui lòng thử lại sau.');
+      console.error('Forgot password failed:', error);
     } finally {
       setLoadingForgot(false);
     }

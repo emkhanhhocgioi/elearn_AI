@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { ArrowLeft, Users, BookOpen, Calendar, Award, Edit, Trash2, Mail, Phone, GraduationCap, UserCircle } from 'lucide-react';
+import { ArrowLeft, Users, BookOpen, Calendar, Award, Edit, Trash2, Mail, Phone, UserCircle } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { getTeacherById , deleteTeacher } from '../../api/teacher';
 
@@ -28,10 +28,7 @@ export default function TeacherDetailPage() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    fetchTeacherDetail();
-  }, [teacherId]);
-
-  const fetchTeacherDetail = async () => {
+    const fetchTeacherDetail = async () => {
     try {
       setIsLoading(true);
       const response = await getTeacherById(teacherId);
@@ -59,6 +56,10 @@ export default function TeacherDetailPage() {
     }
   };
 
+    fetchTeacherDetail();
+  }, [teacherId]);
+
+  
   const deleteTeacherById = async (id: string) => {
     try {
         const response = await deleteTeacher(id);
@@ -67,6 +68,7 @@ export default function TeacherDetailPage() {
           router.push('/admin/dashboard');
         }  
     } catch (error) {
+        console.error('Error deleting teacher:', error);
         
     }
 }

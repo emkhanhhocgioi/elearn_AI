@@ -80,21 +80,21 @@ export default function EditTeacherPage() {
     const newErrors: Partial<TeacherFormData> = {};
     
     if (!formData.name.trim()) {
-      newErrors.name = 'Vui lòng nhập họ tên' as any;
+      newErrors.name = 'Vui lòng nhập họ tên' as string;
     }
     
     if (!formData.email.trim()) {
-      newErrors.email = 'Vui lòng nhập email' as any;
+      newErrors.email = 'Vui lòng nhập email' as string;
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = 'Email không hợp lệ' as any;
+      newErrors.email = 'Email không hợp lệ' as string;
     }
     
     if (!formData.subject.trim()) {
-      newErrors.subject = 'Vui lòng nhập môn giảng dạy' as any;
+      newErrors.subject = 'Vui lòng nhập môn giảng dạy' as string;
     }
     
     if (formData.age <= 0) {
-      newErrors.age = 'Tuổi phải lớn hơn 0' as any;
+      newErrors.age = 0 as number;
     }
     
     setErrors(newErrors);

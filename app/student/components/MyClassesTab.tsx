@@ -17,7 +17,8 @@ import {
   Settings,
   Lightbulb
 } from 'lucide-react';
-import { generateTeacherComment,AI_suggest_on_recentTest } from '@/app/student/api/personal';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { generateTeacherComment,AI_suggest_on_recentTest,DailyTestSubjectChange,getDailyQuestionAnswer } from '@/app/student/api/personal';
 import { usePractice } from '@/app/student/context/PracticeContext';
 import { Button } from '@/components/ui/button';
 interface LearningPath {
@@ -40,11 +41,12 @@ interface PerformanceMetrics {
 }
 
 interface SuggestedQuestion {
-  id: number;
-  topic: string;
-  difficulty: string;
-  reason: string;
-  estimatedTime: string;
+  _id: string;
+  question: string;
+  answer: string;
+  ai_score: number;
+  improvement_suggestions: string;
+  createdAt: string;
 }
 
 interface AIResponse {
@@ -70,6 +72,9 @@ interface RecentTestResponse {
   };
 }
 
+interface DailyQuestionAnswer {
+}
+
 const MyClassesTab = () => {
   const router = useRouter();
   const { setPracticeData } = usePractice();
@@ -89,6 +94,8 @@ const MyClassesTab = () => {
   const [recentTestResponse, setRecentTestResponse] = useState<RecentTestResponse | null>(null);
   const [selectedRecentTestSubject, setSelectedRecentTestSubject] = useState<string>('');
   const [isLoadingRecentTest, setIsLoadingRecentTest] = useState(false);
+  const [selectedDailySubject, setSelectedDailySubject] = useState<string>('');
+  const [isSavingDailySubject, setIsSavingDailySubject] = useState(false);
 
   useEffect(() => {
   
@@ -135,36 +142,28 @@ const MyClassesTab = () => {
       improvement: 15
     };
 
-    const mockSuggestions: SuggestedQuestion[] = [
-      {
-        id: 1,
-        topic: "Phương trình bậc 2",
-        difficulty: "Trung bình",
-        reason: "Bạn đã làm sai 3/5 câu tương tự",
-        estimatedTime: "10 phút"
-      },
-      {
-        id: 2,
-        topic: "Định luật Ôm",
-        difficulty: "Dễ",
-        reason: "Tốc độ làm bài chậm, cần luyện tập thêm",
-        estimatedTime: "8 phút"
-      },
-      {
-        id: 3,
-        topic: "Phản ứng oxi hóa",
-        difficulty: "Khó",
-        reason: "Sẵn sàng thử thách ở mức cao hơn",
-        estimatedTime: "15 phút"
-      }
-    ];
-
     setLearningPaths(mockLearningPaths);
     setMetrics(mockMetrics);
-    setSuggestedQuestions(mockSuggestions);
     setLearningGoal("Đạt điểm 9+ trong kỳ thi cuối kỳ");
     setIsLoading(false);
+    fetchDailyQuestionAnswer();
+
   }, []);
+
+  const fetchDailyQuestionAnswer = async () => {
+    try {
+      const response = await getDailyQuestionAnswer();  
+      console.log("Daily Question Answer Response:", response);
+      if (response && Array.isArray(response)){
+         setSuggestedQuestions(response);
+      }
+    } catch (error) {
+      console.error("Error fetching daily question answer:", error);
+      setSuggestedQuestions([]);
+    }
+  };
+  
+
   const Recent_test = async (subject: string) => {
     try {
         setIsLoadingRecentTest(true);
@@ -219,23 +218,7 @@ const MyClassesTab = () => {
     router.push('/student/practice');
   };
 
-  const getDifficultyColor = (difficulty: string) => {
-    switch(difficulty) {
-      case 'easy': return 'text-green-600 bg-green-100';
-      case 'medium': return 'text-yellow-600 bg-yellow-100';
-      case 'hard': return 'text-red-600 bg-red-100';
-      default: return 'text-gray-600 bg-gray-100';
-    }
-  };
-
-  const getDifficultyLabel = (difficulty: string) => {
-    switch(difficulty) {
-      case 'easy': return 'Dễ';
-      case 'medium': return 'Trung bình';
-      case 'hard': return 'Khó';
-      default: return difficulty;
-    }
-  };
+  
 
   return (
     <div className="space-y-6">
@@ -260,142 +243,9 @@ const MyClassesTab = () => {
       
       </div>
 
-      {/* Performance Metrics */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-          <div className="flex items-center justify-between mb-3">
-            <div className="bg-green-100 p-3 rounded-lg">
-              <CheckCircle2 className="w-6 h-6 text-green-600" />
-            </div>
-            <span className="text-2xl font-bold text-gray-900">{metrics.accuracy}%</span>
-          </div>
-          <p className="text-gray-600 text-sm font-medium">Độ chính xác</p>
-          <p className="text-xs text-gray-500 mt-1">Tỷ lệ làm đúng</p>
-        </div>
+      
 
-        <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-          <div className="flex items-center justify-between mb-3">
-            <div className="bg-blue-100 p-3 rounded-lg">
-              <Zap className="w-6 h-6 text-blue-600" />
-            </div>
-            <span className="text-2xl font-bold text-gray-900">{metrics.speed}%</span>
-          </div>
-          <p className="text-gray-600 text-sm font-medium">Tốc độ học</p>
-          <p className="text-xs text-gray-500 mt-1">So với mục tiêu</p>
-        </div>
-
-        <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-          <div className="flex items-center justify-between mb-3">
-            <div className="bg-purple-100 p-3 rounded-lg">
-              <BarChart3 className="w-6 h-6 text-purple-600" />
-            </div>
-            <span className="text-2xl font-bold text-gray-900">{metrics.consistency}%</span>
-          </div>
-          <p className="text-gray-600 text-sm font-medium">Tính ổn định</p>
-          <p className="text-xs text-gray-500 mt-1">Độ nhất quán</p>
-        </div>
-
-        <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-          <div className="flex items-center justify-between mb-3">
-            <div className="bg-orange-100 p-3 rounded-lg">
-              <TrendingUp className="w-6 h-6 text-orange-600" />
-            </div>
-            <span className="text-2xl font-bold text-gray-900">+{metrics.improvement}%</span>
-          </div>
-          <p className="text-gray-600 text-sm font-medium">Cải thiện</p>
-          <p className="text-xs text-gray-500 mt-1">So với tuần trước</p>
-        </div>
-      </div>
-
-      {/* Learning Paths */}
-      <div>
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
-            <Brain className="w-6 h-6 text-blue-600" />
-            Lộ Trình Học Thích Ứng
-          </h2>
-          <span className="text-sm text-gray-500">{learningPaths.length} môn học</span>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {isLoading ? (
-            <div className="col-span-full text-center py-8 text-gray-500">
-              Đang tải lộ trình học...
-            </div>
-          ) : (
-            learningPaths.map((path) => (
-              <div key={path.id} className="bg-white rounded-xl border border-gray-200 hover:shadow-lg transition-all overflow-hidden">
-                {/* Header */}
-                <div className="bg-gradient-to-r from-blue-50 to-purple-50 p-6 border-b border-gray-200">
-                  <div className="flex items-start justify-between mb-4">
-                    <div>
-                      <h3 className="text-lg font-bold text-gray-900 mb-1">{path.subject}</h3>
-                      <div className="flex items-center gap-2 text-sm text-gray-600">
-                        <span>{path.currentLevel}</span>
-                        <ChevronRight className="w-4 h-4" />
-                        <span className="font-semibold text-blue-600">{path.targetLevel}</span>
-                      </div>
-                    </div>
-                    <span className={`px-3 py-1 rounded-full text-xs font-semibold ${getDifficultyColor(path.difficulty)}`}>
-                      {getDifficultyLabel(path.difficulty)}
-                    </span>
-                  </div>
-
-                  {/* Progress */}
-                  <div>
-                    <div className="flex items-center justify-between text-sm mb-2">
-                      <span className="text-gray-600">Tiến độ</span>
-                      <span className="font-bold text-gray-900">{path.progress}%</span>
-                    </div>
-                    <div className="w-full bg-gray-200 rounded-full h-3">
-                      <div
-                        className="bg-gradient-to-r from-blue-500 to-purple-500 h-3 rounded-full transition-all duration-500"
-                        style={{ width: `${path.progress}%` }}
-                      ></div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Content */}
-                <div className="p-6 space-y-4">
-                  {/* Adaptive Status */}
-                  <div className="flex items-start gap-3 bg-blue-50 p-4 rounded-lg border border-blue-100">
-                    <Brain className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
-                    <div>
-                      <p className="text-sm font-semibold text-gray-900 mb-1">Trạng thái thích ứng</p>
-                      <p className="text-sm text-gray-700">{path.adaptiveStatus}</p>
-                    </div>
-                  </div>
-
-                  {/* Next Lesson */}
-                  <div className="flex items-center gap-3">
-                    <BookOpen className="w-5 h-5 text-gray-400" />
-                    <div className="flex-1">
-                      <p className="text-xs text-gray-500 mb-1">Bài học tiếp theo</p>
-                      <p className="text-sm font-medium text-gray-900">{path.nextLesson}</p>
-                    </div>
-                  </div>
-
-                  {/* Estimated Time */}
-                  <div className="flex items-center gap-3">
-                    <Clock className="w-5 h-5 text-gray-400" />
-                    <div className="flex-1">
-                      <p className="text-xs text-gray-500 mb-1">Thời gian ước tính</p>
-                      <p className="text-sm font-medium text-gray-900">{path.estimatedTime}</p>
-                    </div>
-                  </div>
-
-                  {/* Action Button */}
-                  <button className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 rounded-lg font-semibold hover:shadow-lg transition-all flex items-center justify-center gap-2 mt-4">
-                    Tiếp tục học
-                    <ChevronRight className="w-5 h-5" />
-                  </button>
-                </div>
-              </div>
-            ))
-          )}
-        </div>
-      </div>
+     
        <div>
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
@@ -677,38 +527,99 @@ const MyClassesTab = () => {
 
         {/* Original Suggested Questions Grid */}
         <div className="bg-white rounded-xl p-6 border border-gray-200">
-          <h3 className="text-sm font-semibold text-gray-700 mb-4">Câu hỏi gợi ý theo năng lực</h3>
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-sm font-semibold text-gray-700">Câu hỏi gợi ý theo năng lực</h3>
+            <div className="flex items-center gap-3">
+              <Select value={selectedDailySubject} onValueChange={setSelectedDailySubject}>
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue placeholder="Chọn môn học" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Toán">Toán</SelectItem>
+                  <SelectItem value="Ngữ văn">Văn</SelectItem>
+                  <SelectItem value="Tiếng Anh">Anh</SelectItem>
+                  <SelectItem value="Vật lý">Lý</SelectItem>
+                  <SelectItem value="Hóa học">Hóa</SelectItem>
+                  <SelectItem value="Sinh học">Sinh</SelectItem>
+                  <SelectItem value="Lịch sử">Sử</SelectItem>
+                  <SelectItem value="Địa lý">Địa</SelectItem>
+                  <SelectItem value="GDCD">GDCD</SelectItem>
+                </SelectContent>
+              </Select>
+              <button 
+                onClick={async () => {
+                  if (!selectedDailySubject) {
+                    alert('Vui lòng chọn môn học trước!');
+                    return;
+                  }
+                  try {
+                    setIsSavingDailySubject(true);
+                    await DailyTestSubjectChange(selectedDailySubject);
+                    alert(`Đã lưu môn học: ${selectedDailySubject}`);
+                  } catch (error) {
+                    console.error('Error saving daily subject:', error);
+                    alert('Lỗi khi lưu môn học. Vui lòng thử lại!');
+                  } finally {
+                    setIsSavingDailySubject(false);
+                  }
+                }}
+                disabled={isSavingDailySubject || !selectedDailySubject}
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                {isSavingDailySubject ? 'Đang lưu...' : 'Lưu'}
+              </button>
+            </div>
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {suggestedQuestions.map((question) => (
-              <div key={question.id} className="bg-white rounded-xl p-5 border border-gray-200 hover:border-blue-300 hover:shadow-md transition-all">
-                <div className="flex items-start justify-between mb-3">
-                  <div className="bg-yellow-50 p-2 rounded-lg">
-                    <Lightbulb className="w-5 h-5 text-yellow-600" />
+            {suggestedQuestions.length > 0 ? (
+              suggestedQuestions.map((question) => (
+                <div key={question._id} className="bg-white rounded-xl p-5 border border-gray-200 hover:border-blue-300 hover:shadow-md transition-all">
+                  <div className="flex items-start justify-between mb-3">
+                    <div className="bg-yellow-50 p-2 rounded-lg">
+                      <Lightbulb className="w-5 h-5 text-yellow-600" />
+                    </div>
+                    <span className="text-xs px-2 py-1 bg-blue-100 text-blue-600 rounded-full font-medium">
+                      Điểm AI: {question.ai_score}/10
+                    </span>
                   </div>
-                  <span className="text-xs px-2 py-1 bg-gray-100 text-gray-600 rounded-full font-medium">
-                    {question.difficulty}
-                  </span>
-                </div>
 
-                <h3 className="font-bold text-gray-900 mb-2">{question.topic}</h3>
-                
-                <div className="bg-blue-50 p-3 rounded-lg mb-3 border border-blue-100">
-                  <p className="text-xs text-gray-600 mb-1">Lý do gợi ý:</p>
-                  <p className="text-sm text-gray-800">{question.reason}</p>
-                </div>
-
-                <div className="flex items-center justify-between text-xs text-gray-500 mb-3">
-                  <div className="flex items-center gap-1">
-                    <Clock className="w-4 h-4" />
-                    <span>{question.estimatedTime}</span>
+                  <h3 className="font-bold text-gray-900 mb-2 line-clamp-2">{question.question}</h3>
+                  
+                  <div className="bg-blue-50 p-3 rounded-lg mb-3 border border-blue-100 max-h-32 overflow-y-auto">
+                    <p className="text-xs text-blue-700 font-semibold mb-1">Gợi ý cải thiện:</p>
+                    <p className="text-sm text-gray-800 leading-relaxed">{question.improvement_suggestions}</p>
                   </div>
-                </div>
 
-                <button className="w-full bg-yellow-100 text-yellow-700 py-2 rounded-lg text-sm font-semibold hover:bg-yellow-200 transition-colors">
-                  Luyện tập ngay
-                </button>
+                  <div className="flex items-center justify-between text-xs text-gray-500 mb-3">
+                    <div className="flex items-center gap-1">
+                      <Clock className="w-4 h-4" />
+                      <span>{new Date(question.createdAt).toLocaleDateString('vi-VN')}</span>
+                    </div>
+                  </div>
+
+                  <button 
+                    onClick={() => {
+                      setPracticeData({
+                        subject: selectedDailySubject || 'Toán',
+                        exercise_question: question.question,
+                        improve_suggestion: question.improvement_suggestions,
+                      });
+                      router.push('/student/practice');
+                    }}
+                    className="w-full bg-yellow-100 text-yellow-700 py-2 rounded-lg text-sm font-semibold hover:bg-yellow-200 transition-colors"
+                  >
+                    Luyện tập ngay
+                  </button>
+                </div>
+              ))
+            ) : (
+              <div className="col-span-full text-center py-12">
+                <div className="bg-gray-100 p-4 rounded-full w-16 h-16 mx-auto mb-3 flex items-center justify-center">
+                  <Lightbulb className="w-8 h-8 text-gray-400" />
+                </div>
+                <p className="text-gray-600 mb-2">Chưa có câu hỏi hàng ngày</p>
+                <p className="text-sm text-gray-500">Chọn môn học và lưu để nhận câu hỏi hàng ngày vào lần đăng nhập tiếp theo</p>
               </div>
-            ))}
+            )}
           </div>
         </div>
       </div>

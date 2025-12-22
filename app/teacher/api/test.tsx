@@ -1,7 +1,5 @@
+'use client';
 import axios from "axios"; 
-import { sub } from "date-fns";
-import test from "node:test";
-import SubjectTab from "../components/SubjectTab";
 
 const api_url = "http://localhost:4000"
 interface AnswerData {
@@ -34,7 +32,7 @@ export const createTest = async (classID: String , testtitle: String ,
         }
     };
 
-export const getClassTeacherTest = async (classID: String) => {
+export const getClassTeacherTest = async (classID: string) => {
     try {
         const teacherToken = localStorage.getItem('teacherToken');
         if (!teacherToken) {
@@ -53,7 +51,7 @@ export const getClassTeacherTest = async (classID: String) => {
 
 }
 
-export const getTestDetailById = async (testID: String) => {
+export const getTestDetailById = async (testID: string) => {
     try {
         const teacherToken = localStorage.getItem('teacherToken');
         if (!teacherToken) {
@@ -72,10 +70,10 @@ export const getTestDetailById = async (testID: String) => {
     }   
 }
 export const editTestById = async (
-      testId: String,
-      testtitle: String ,
-      test_time: Number,
-      closeDate: String,
+      testId: string,
+      testtitle: string ,
+      test_time: number,
+      closeDate: string,
 ) => {
     try {
         const teacherToken = localStorage.getItem('teacherToken');
@@ -99,7 +97,7 @@ export const editTestById = async (
         console.error('Error editing test by ID:', error);
     }
 }
-export const deleteTestById = async (testID: String) => {
+export const deleteTestById = async (testID: string) => {
     try {
         const teacherToken = localStorage.getItem('teacherToken');  
         if (!teacherToken) {

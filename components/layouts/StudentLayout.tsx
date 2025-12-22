@@ -11,7 +11,7 @@ interface StudentLayoutProps {
   userId: string;
 }
 
-export default function StudentLayout({ children, token, userId }: StudentLayoutProps) {
+export default function StudentLayout({ children, token, }: StudentLayoutProps) {
   const { connect, isConnected } = useWebSocket();
   const { notifications: apiNotifications, fetchNotifications } = useNotifications(token);
 

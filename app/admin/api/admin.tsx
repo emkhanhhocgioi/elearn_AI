@@ -95,44 +95,5 @@ export const getUserById = async (userId: string) => {
   }
 };
 
-export const updateUser = async (userId: string, userData: any) => {
-  try {
-    const token = localStorage.getItem('adminToken');
-    if (!token) throw new Error('Token not found');
-    const res = await fetch(`${api_url}/api/admin/users/${userId}`, {
-      method: 'PUT',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(userData)
-    });
-    if (!res.ok) throw new Error('Failed to update user');
-    return res.json();
-  } catch (error) {
-    console.error('Error updating user:', error);
-    throw error;
-  }
-};
-
-export const deleteUser = async (userId: string) => {
-  try {
-    const token = localStorage.getItem('adminToken');
-    if (!token) throw new Error('Token not found');
-    const res = await fetch(`${api_url}/api/admin/users/${userId}`, {
-      method: 'DELETE',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
-      }
-    });
-    if (!res.ok) throw new Error('Failed to delete user');
-    return res.json();
-  } catch (error) {
-    console.error('Error deleting user:', error);
-    throw error;
-  }
-};
-
 
 

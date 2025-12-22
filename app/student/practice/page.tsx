@@ -1,7 +1,8 @@
 'use client';
+export const dynamic = "force-dynamic";
 import { useState, useEffect } from 'react';
 import { usePractice } from '@/app/student/context/PracticeContext';
-import { gradeEssay } from '@/app/student/api/personal';
+import { gradeEssay ,AI_auto_grade} from '@/app/student/api/personal';
 import { 
   BookOpen, 
   Send, 
@@ -50,8 +51,10 @@ const PracticePage = () => {
         console.log('Grading Result:', result);
         setGradingResult(result);
       } else {
-        // Cho các môn khác, có thể thêm logic khác hoặc hiển thị thông báo
-        alert('Chức năng chấm điểm cho môn này đang được phát triển!');
+        console.log('Submitting answer for non-Van subject:', practiceData.exercise_question);
+        const result = await AI_auto_grade(practiceData.exercise_question, studentAnswer, practiceData.subject);
+        console.log('Auto Grade Result:', result);
+        setGradingResult(result);
       }
     } catch (error) {
       console.error('Error submitting answer:', error);
@@ -167,7 +170,7 @@ const PracticePage = () => {
                 </button>
               </div>
             </div>
-
+             
             {/* Grading Result */}
             {gradingResult && (
               <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
@@ -181,7 +184,7 @@ const PracticePage = () => {
                   </div>
                 </div>
                     
-                {gradingResult.success && gradingResult.result ? (
+                {gradingResult.success && (gradingResult.result || gradingResult.grading_response) ? (
                   <div className="space-y-6">
                     {/* Overall Grade */}
                     <div className="bg-gradient-to-br from-green-50 to-blue-50 p-6 rounded-xl border-2 border-green-200">
@@ -189,16 +192,16 @@ const PracticePage = () => {
                         <p className="text-sm font-medium text-gray-600 mb-2">Điểm tổng thể</p>
                         <div className="flex items-center justify-center gap-3">
                           <p className="text-6xl font-bold text-green-600">
-                            {gradingResult.result.grade}
+                            {gradingResult.grading_response?.score || gradingResult.result?.grade || 0}
                           </p>
                           <span className="text-3xl text-gray-400">/10</span>
                         </div>
-                        {gradingResult.result.grade >= 8 ? (
+                        {(gradingResult.grading_response?.score || gradingResult.result?.grade || 0) >= 8 ? (
                           <div className="mt-3 inline-flex items-center gap-2 bg-green-100 px-4 py-2 rounded-full">
                             <TrendingUp className="w-4 h-4 text-green-600" />
                             <span className="text-sm font-semibold text-green-700">Xuất sắc!</span>
                           </div>
-                        ) : gradingResult.result.grade >= 6.5 ? (
+                        ) : (gradingResult.grading_response?.score || gradingResult.result?.grade || 0) >= 6.5 ? (
                           <div className="mt-3 inline-flex items-center gap-2 bg-blue-100 px-4 py-2 rounded-full">
                             <CheckCircle2 className="w-4 h-4 text-blue-600" />
                             <span className="text-sm font-semibold text-blue-700">Khá tốt!</span>
@@ -212,21 +215,46 @@ const PracticePage = () => {
                       </div>
                     </div>
 
+                    {/* Correct/Incorrect Status for Non-Van Subjects */}
+                    {gradingResult.grading_response?.isCorrect !== undefined && (
+                      <div className={`${gradingResult.grading_response.isCorrect ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'} p-5 rounded-xl border`}>
+                        <div className="flex items-start gap-3">
+                          {gradingResult.grading_response.isCorrect ? (
+                            <>
+                              <CheckCircle2 className="w-6 h-6 text-green-600 mt-0.5 flex-shrink-0" />
+                              <div>
+                                <h3 className="font-bold text-green-900 mb-1">Câu trả lời đúng!</h3>
+                                <p className="text-sm text-green-700">Bài làm của bạn hoàn toàn chính xác.</p>
+                              </div>
+                            </>
+                          ) : (
+                            <>
+                              <XCircle className="w-6 h-6 text-red-600 mt-0.5 flex-shrink-0" />
+                              <div>
+                                <h3 className="font-bold text-red-900 mb-1">Câu trả lời chưa chính xác</h3>
+                                <p className="text-sm text-red-700">Hãy xem lại nhận xét bên dưới để cải thiện.</p>
+                              </div>
+                            </>
+                          )}
+                        </div>
+                      </div>
+                    )}
+
                     {/* Comments */}
-                    {gradingResult.result.comments && (
+                    {(gradingResult.grading_response?.comments || gradingResult.result?.comments) && (
                       <div className="bg-blue-50 p-5 rounded-xl border border-blue-200">
                         <div className="flex items-start gap-3 mb-3">
                           <Lightbulb className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
                           <h3 className="font-bold text-gray-900">Nhận xét chung</h3>
                         </div>
                         <p className="text-gray-800 leading-relaxed pl-8">
-                          {gradingResult.result.comments}
+                          {gradingResult.grading_response?.comments || gradingResult.result?.comments}
                         </p>
                       </div>
                     )}
 
-                    {/* Criteria Scores */}
-                    {gradingResult.result.criteria_scores && (
+                    {/* Criteria Scores - Only for Van subjects */}
+                    {gradingResult.result?.criteria_scores && (
                       <div className="bg-purple-50 p-5 rounded-xl border border-purple-200">
                         <div className="flex items-start gap-3 mb-4">
                           <BarChart3 className="w-5 h-5 text-purple-600 mt-0.5 flex-shrink-0" />
@@ -251,8 +279,8 @@ const PracticePage = () => {
                       </div>
                     )}
 
-                    {/* Strengths */}
-                    {gradingResult.result.strengths && gradingResult.result.strengths.length > 0 && (
+                    {/* Strengths - Only for Van subjects */}
+                    {gradingResult.result?.strengths && gradingResult.result.strengths.length > 0 && (
                       <div className="bg-green-50 p-5 rounded-xl border border-green-200">
                         <div className="flex items-start gap-3 mb-3">
                           <CheckCircle2 className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
@@ -269,8 +297,8 @@ const PracticePage = () => {
                       </div>
                     )}
 
-                    {/* Weaknesses */}
-                    {gradingResult.result.weaknesses && gradingResult.result.weaknesses.length > 0 && (
+                    {/* Weaknesses - Only for Van subjects */}
+                    {gradingResult.result?.weaknesses && gradingResult.result.weaknesses.length > 0 && (
                       <div className="bg-yellow-50 p-5 rounded-xl border border-yellow-200">
                         <div className="flex items-start gap-3 mb-3">
                           <AlertCircle className="w-5 h-5 text-yellow-600 mt-0.5 flex-shrink-0" />

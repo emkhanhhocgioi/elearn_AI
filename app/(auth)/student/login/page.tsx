@@ -1,4 +1,5 @@
 'use client';
+export const dynamic = "force-dynamic";
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
@@ -20,6 +21,7 @@ import {
 } from '@/components/ui/dialog';
 import { studentlogin } from '@/app/api/auth';
 import { useWebSocket } from '@/app/context/WebSocketContext';
+
 
 export default function StudentLoginPage() {
   const router = useRouter();
@@ -126,6 +128,7 @@ export default function StudentLoginPage() {
         setForgotSent(false);
       }, 2000);
     } catch (error) {
+      console.error('Forgot password failed:', error);
       setForgotError('Có lỗi xảy ra. Vui lòng thử lại sau.');
     } finally {
       setLoadingForgot(false);

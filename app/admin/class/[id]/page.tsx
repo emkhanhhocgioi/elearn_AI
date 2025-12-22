@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { ArrowLeft, Users, BookOpen, Calendar, TrendingUp, Edit, Trash2, UserPlus, FileText, BarChart3, UserCog } from 'lucide-react';
 import { Button } from "@/components/ui/button";
@@ -59,11 +59,7 @@ export default function ClassDetailPage() {
   const [teachers, setTeachers] = useState<Teacher[]>([]);
   const [loadingTeachers, setLoadingTeachers] = useState(false);
 
-  useEffect(() => {
-    fetchClassDetail();
-  }, [classId]);
-
-  const fetchClassDetail = async () => {
+  const fetchClassDetail = useCallback(async () => {
     try {
       setIsLoading(true);
       const response = await getClassById(classId);
@@ -88,7 +84,11 @@ export default function ClassDetailPage() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [classId]);
+
+  useEffect(() => {
+    fetchClassDetail();
+  }, [fetchClassDetail]);
 
   const fetchTeachers = async () => {
     try {

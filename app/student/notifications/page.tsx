@@ -1,5 +1,5 @@
 "use client";
-
+export const dynamic = "force-dynamic";
 import { useEffect, useState } from "react";
 import { getStudentNotifications, markNotificationAsRead } from "../api/notification";
 import { Bell, CheckCircle, Info, AlertCircle, Clock, BookOpen, FileText, Award, AlertTriangle } from "lucide-react";

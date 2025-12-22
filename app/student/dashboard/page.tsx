@@ -1,4 +1,5 @@
 'use client';
+export const dynamic = "force-dynamic";
 import { Bell, Search, MoreVertical, Users, BookOpen, FileText, TrendingUp, Award, LogOut, User, Settings, Star, ZoomIn, SearchIcon, Phone } from 'lucide-react';
 import { useState, lazy, Suspense, useEffect } from 'react';
 import { studentLogout } from '@/app/api/auth';

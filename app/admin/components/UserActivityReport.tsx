@@ -62,10 +62,7 @@ export default function UserActivityReport() {
 
   // Fetch activities on component mount and when filters change
   useEffect(() => {
-    loadActivities();
-  }, [filters.page, filters.role, filters.action, filters.startDate, filters.endDate]);
-
-  const loadActivities = async () => {
+    const loadActivities = async () => {
     setLoading(true);
     setError(null);
     try {
@@ -82,14 +79,17 @@ export default function UserActivityReport() {
         setActivities(response.data.activities);
         setPagination(response.data.pagination);
       }
-    } catch (err: any) {
-      setError(err.message || 'Failed to load activities');
+    } catch (err) {
       console.error('Error loading activities:', err);
     } finally {
       setLoading(false);
     }
   };
 
+    loadActivities();
+  }, [filters.page,filters.limit, filters.role, filters.action, filters.startDate, filters.endDate]);
+
+  
   const handleExportCSV = async () => {
     try {
       const blob = await exportUserActivityLogsToCSV();
@@ -119,7 +119,7 @@ export default function UserActivityReport() {
     }
   };
 
-  const handleFilterChange = (key: keyof ActivityFilters, value: any) => {
+  const handleFilterChange = (key: keyof ActivityFilters, value: ActivityFilters[keyof ActivityFilters]) => {
     setFilters(prev => ({ ...prev, [key]: value, page: 1 }));
   };
 

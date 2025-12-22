@@ -11,7 +11,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import { createStudentAccounts } from '@/app/admin/api/class';
+
 
 interface StudentData {
   name: string;
@@ -85,7 +85,13 @@ export default function CreateStudentAccounts({ onSuccess }: CreateStudentAccoun
           
           const importedStudents: StudentData[] = lines.slice(1).map(line => {
             const values = line.split(',').map(v => v.trim());
-            const student: any = {};
+            const student: StudentData = {
+              name: '',
+              email: '',
+              password: '',
+              grade: '',
+              conduct: ''
+            };
 
             headers.forEach((header, index) => {
               const value = values[index] || '';
@@ -121,7 +127,7 @@ export default function CreateStudentAccounts({ onSuccess }: CreateStudentAccoun
 
     setIsLoading(true);
     try {
-      const result = await createStudentAccounts(students);
+    
       alert(`Tạo thành công ${students.length} tài khoản học sinh!`);
       setStudents([]);
       setIsOpen(false);

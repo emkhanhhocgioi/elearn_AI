@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useWebSocket, Notification } from '@/app/context/WebSocketContext';
-import { Bell, X, CheckCheck } from 'lucide-react';
+import { Bell, CheckCheck } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { vi } from 'date-fns/locale';
 

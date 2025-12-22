@@ -1,7 +1,7 @@
 'use client';
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation';
-import { Plus, Search, Trash2, Edit, Filter } from 'lucide-react';
+import {  Search } from 'lucide-react';
 import { getAllStudent } from '../api/student';
 interface User {
   _id: string;
@@ -74,8 +74,10 @@ export default function UsersTab() {
   };
 
 
-  
+  const hasFetched = useRef(false);
    useEffect(() => {
+  if (hasFetched.current) return;
+  hasFetched.current = true;
     getStudentData();
   }, []);
   return (

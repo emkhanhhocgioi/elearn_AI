@@ -1,18 +1,37 @@
 'use client';
 import { Plus, Edit, Clock, X, ChevronLeft, BarChart3, FileText } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { getTeacherClasses, getSubjectClass } from '@/app/teacher/api/class';
 import { createTest, getClassTeacherTest } from '@/app/api/test';
 
+interface ClassItem {
+  _id: string;
+  class_name?: string;
+  class_code?: string;
+  class_subject?: string;
+  description?: string;
+  student_count?: number;
+}
+
+interface TestItem {
+  _id: string;
+  testtitle: string;
+  classID: string;
+  participants: number;
+  status: string;
+  avg_score: string;
+  closeDate: string;
+}
+
 export default function SubjectTab() {
   const router = useRouter();
   const [showDialog, setShowDialog] = useState(false);
-  const [classes, setClasses] = useState<any[]>([]);
+  const [classes, setClasses] = useState<ClassItem[]>([]);
   const [subjectClassIds, setSubjectClassIds] = useState<string[]>([]);
-  const [tests, setTests] = useState<any[]>([]);
+  const [tests, setTests] = useState<TestItem[]>([]);
   const [loading, setLoading] = useState(false);
-  const [selectedClass, setSelectedClass] = useState<any>(null);
+  const [selectedClass, setSelectedClass] = useState<ClassItem | null>(null);
   const [formData, setFormData] = useState({
     testtitle: '',
     participants: '',
@@ -53,20 +72,14 @@ export default function SubjectTab() {
     fetchTeacherTests();
   }, []);
 
-  useEffect(() => {
-    if (showDialog && classes.length === 0) {
-      fetchClasses();
-    }
-  }, [showDialog]);
-
-  const fetchClasses = async () => {
+  const fetchClasses = useCallback(async () => {
     try {
       setLoading(true);
       const data = await getTeacherClasses();
       const allClasses = data.data.data || [];
       
       // Filter classes to show only those the teacher is teaching (subject classes)
-      const filteredClasses = allClasses.filter((classItem: any) => 
+      const filteredClasses = allClasses.filter((classItem: ClassItem) => 
         subjectClassIds.includes(classItem._id)
       );
       
@@ -78,9 +91,15 @@ export default function SubjectTab() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [subjectClassIds]);
 
-  const handleSelectClass = (classItem: any) => {
+  useEffect(() => {
+    if (showDialog && classes.length === 0) {
+      fetchClasses();
+    }
+  }, [showDialog, classes.length, fetchClasses]);
+
+  const handleSelectClass = (classItem: ClassItem) => {
     setSelectedClass(classItem);
     setFormData({
       testtitle: '',
@@ -103,6 +122,11 @@ export default function SubjectTab() {
     
     if (!formData.testtitle || !formData.participants || !formData.closedDate) {
       setError('Please fill in all fields');
+      return;
+    }
+
+    if (!selectedClass) {
+      setError('No class selected');
       return;
     }
 
@@ -138,7 +162,7 @@ export default function SubjectTab() {
   };
 
   // Filter tests to show only those for classes the teacher is teaching
-  const filteredTests = tests.filter((test: any) => 
+  const filteredTests = tests.filter((test: TestItem) => 
     subjectClassIds.includes(test.classID)
   );
 
@@ -148,7 +172,7 @@ export default function SubjectTab() {
         <div className="flex items-center justify-between mb-8">
           <div>
             <h2 className="text-3xl font-bold text-gray-900">My Subject Classes</h2>
-            <p className="text-gray-600 text-sm mt-1">Manage tests for classes you're teaching</p>
+            <p className="text-gray-600 text-sm mt-1">Manage tests for classes you&apos;re teaching</p>
           </div>
           <button 
             onClick={() => setShowDialog(true)}
@@ -169,7 +193,7 @@ export default function SubjectTab() {
                   <div className="flex items-center justify-between mb-8">
                     <div>
                       <h3 className="text-2xl font-bold text-gray-900">Select a Class</h3>
-                      <p className="text-gray-500 text-sm mt-1">Choose a class you're teaching to create a test</p>
+                      <p className="text-gray-500 text-sm mt-1">Choose a class you&apos;re teaching to create a test</p>
                     </div>
                     <button
                       onClick={handleCloseDialog}
@@ -347,7 +371,7 @@ export default function SubjectTab() {
               </thead>
               <tbody className="divide-y divide-gray-200">
                 {filteredTests && filteredTests.length > 0 ? (
-                  filteredTests.map((test: any) => (
+                  filteredTests.map((test: TestItem) => (
                     <tr key={test._id} className="hover:bg-purple-50/50 transition">
                       <td className="px-6 py-4 cursor-pointer hover:text-purple-600 transition" onClick={() => router.push(`/teacher/test/${test._id}`)}>
                         <p className="text-sm font-semibold text-gray-900">{test.testtitle}</p>

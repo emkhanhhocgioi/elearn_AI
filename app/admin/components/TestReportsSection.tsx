@@ -4,6 +4,44 @@ import { Search, ChevronDown, ChevronUp, FileText, Eye, X } from 'lucide-react';
 import { getAllClasses } from '../api/class';
 import { getTestReportByClassId } from '../api/report';
 
+interface Student {
+  _id: string;
+  name: string;
+  email?: string;
+}
+
+interface TestResult {
+  studentId: string;
+  studentName?: string;
+  score: number;
+}
+
+interface TestData {
+  testId: string;
+  results?: TestResult[];
+}
+
+interface ScoreDistribution {
+  range: string;
+  count: number;
+}
+
+interface TestReportSummary {
+  totalAttempts: number;
+  completedAttempts: number;
+  averageScore: number;
+  highestScore: number;
+  lowestScore: number;
+  passRate: number;
+}
+
+interface TestReport {
+  summary?: TestReportSummary;
+  scoreDistribution?: ScoreDistribution[];
+  tests?: TestData[];
+  error?: string;
+}
+
 interface ClassData {
   _id: string;
   class_code: string;
@@ -12,7 +50,7 @@ interface ClassData {
     _id: string;
     name: string;
   };
-  students?: any[];
+  students?: Student[];
   class_avarage_grade?: number;
 }
 
@@ -25,7 +63,7 @@ export default function TestReportsSection() {
   const [classSortOrder, setClassSortOrder] = useState<'asc' | 'desc'>('asc');
   const [classPage, setClassPage] = useState(1);
   const [classLimit] = useState(10);
-  const [selectedTestReport, setSelectedTestReport] = useState<any>(null);
+  const [selectedTestReport, setSelectedTestReport] = useState<TestReport | null>(null);
   const [showTestReportModal, setShowTestReportModal] = useState(false);
   const [loadingTestReport, setLoadingTestReport] = useState(false);
 
@@ -49,21 +87,22 @@ export default function TestReportsSection() {
 
     // Sort
     result.sort((a, b) => {
-      let aVal: any = a[classSortField];
-      let bVal: any = b[classSortField];
+  let aVal: string | number;
+  let bVal: string | number;
 
-      if (classSortField === 'class_code' || classSortField === 'class_year') {
-        aVal = aVal || '';
-        bVal = bVal || '';
-      } else {
-        aVal = aVal || 0;
-        bVal = bVal || 0;
-      }
+  if (classSortField === 'class_code' || classSortField === 'class_year') {
+    aVal = a[classSortField] ?? '';
+    bVal = b[classSortField] ?? '';
+  } else {
+    aVal = a[classSortField] ?? 0;
+    bVal = b[classSortField] ?? 0;
+  }
 
-      if (aVal < bVal) return classSortOrder === 'asc' ? -1 : 1;
-      if (aVal > bVal) return classSortOrder === 'asc' ? 1 : -1;
-      return 0;
-    });
+  if (aVal < bVal) return classSortOrder === 'asc' ? -1 : 1;
+  if (aVal > bVal) return classSortOrder === 'asc' ? 1 : -1;
+  return 0;
+  });
+
 
     setFilteredClasses(result);
   }, [classes, classSearch, classSortField, classSortOrder]);
@@ -320,7 +359,7 @@ export default function TestReportsSection() {
                   <div>
                     <h4 className="font-bold text-gray-900 mb-3">Score Distribution</h4>
                     <div className="grid grid-cols-5 gap-3">
-                      {selectedTestReport.scoreDistribution.map((dist: any, index: number) => (
+                      {selectedTestReport.scoreDistribution.map((dist: ScoreDistribution, index: number) => (
                         <div key={index} className="p-3 border border-gray-200 rounded-lg text-center">
                           <p className="text-xs text-gray-500 mb-1">{dist.range}</p>
                           <p className="text-xl font-bold text-gray-900">{dist.count}</p>
@@ -335,7 +374,7 @@ export default function TestReportsSection() {
                   <div>
                     <h4 className="font-bold text-gray-900 mb-3">Individual Tests</h4>
                     <div className="space-y-3">
-                      {selectedTestReport.tests.map((test: any, index: number) => (
+                      {selectedTestReport.tests.map((test: TestData, index: number) => (
                         <div key={index} className="border border-gray-200 rounded-lg p-4">
                           <div className="flex items-center justify-between mb-2">
                             <p className="font-medium text-gray-900">Test ID: {test.testId}</p>
@@ -345,7 +384,7 @@ export default function TestReportsSection() {
                           </div>
                           {test.results && test.results.length > 0 ? (
                             <div className="mt-3 space-y-2">
-                              {test.results.map((result: any, resultIndex: number) => (
+                              {test.results.map((result: TestResult, resultIndex: number) => (
                                 <div key={resultIndex} className="text-sm bg-gray-50 p-2 rounded">
                                   <p className="text-gray-700">
                                     Student: {result.studentName || result.studentId || 'Unknown'}

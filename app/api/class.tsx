@@ -1,8 +1,11 @@
+'use client';
 import axios from "axios"; 
 
 const api_url = "http://localhost:4000"
 
-export const createClass = async (classCode: String,class_subject: String,class_year: String) => {
+interface Student {
+}
+export const createClass = async (classCode: string,class_subject: string,class_year: string) => {
     try {
         const token = localStorage.getItem('teacherToken');
         

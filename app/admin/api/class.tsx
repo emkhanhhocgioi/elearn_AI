@@ -1,3 +1,4 @@
+'use client';
 import axios from "axios"; 
 
 const api_url = "http://localhost:4000"
@@ -13,7 +14,16 @@ export interface StudentData {
   conduct?: 'Tốt' | 'Khá' | 'Trung bình' | 'Yếu';
   averageScore?: number;
 }
-export const createClass = async (classCode: String,teacher_id:String , class_year: String) => {
+
+interface ClassData {
+  class_code: string;
+  class_year: string;
+  teacher_id: string;
+    class_teacher?: string;
+    class_avarage_grade?: number;
+}
+
+export const createClass = async (classCode: string,teacher_id:string , class_year: string) => {
     try {
         const token = localStorage.getItem('adminToken');
         if (!token) throw new Error('Token not found');
@@ -141,7 +151,7 @@ export const updateClass = async (
         const token = localStorage.getItem('adminToken');
         if (!token) throw new Error('Token not found');
         
-        const updateData: any = {};
+        const updateData: Partial<ClassData> = {};
         if (classCode !== undefined) updateData.class_code = classCode;
         if (class_teacher !== undefined) updateData.class_teacher = class_teacher;
         if (classYear !== undefined) updateData.class_year = classYear;

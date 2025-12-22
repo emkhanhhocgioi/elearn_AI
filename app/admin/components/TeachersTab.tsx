@@ -1,8 +1,8 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Plus, Search, Trash2, Edit, CheckCircle, XCircle } from 'lucide-react';
-import { getAllTeachers, createTeacher, updateTeacher, deleteTeacher, Teacher as APITeacher, CreateTeacherDTO } from '../api/teacher';
+import { Plus, Search } from 'lucide-react';
+import { getAllTeachers, createTeacher, updateTeacher, Teacher as APITeacher, CreateTeacherDTO } from '../api/teacher';
 import {
   Dialog,
   DialogContent,
@@ -144,36 +144,9 @@ export default function TeachersTab() {
     }
   };
 
-  const handleEdit = (teacher: APITeacher) => {
-    setEditingTeacher(teacher);
-    setFormData({
-      name: teacher.name,
-      email: teacher.email,
-      password: '',
-      age: teacher.age.toString(),
-      gender: teacher.gender,
-      subject: teacher.subject,
-      phoneNumber: teacher.phoneNumber || '',
-      yearsOfExperience: teacher.yearsOfExperience?.toString() || ''
-    });
-    setIsOpen(true);
-  };
+ 
 
 
-  const handleDelete = async (teacherId: string) => {
-    if (!confirm('Bạn có chắc chắn muốn xóa giáo viên này?')) {
-      return;
-    }
-
-    try {
-      await deleteTeacher(teacherId);
-      alert('Xóa giáo viên thành công!');
-      await fetchTeachers();
-    } catch (error) {
-      alert('Có lỗi xảy ra khi xóa giáo viên');
-      console.error(error);
-    }
-  };
 
   const handleOpenDialog = () => {
     setEditingTeacher(null);

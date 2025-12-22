@@ -25,10 +25,7 @@ export default function EditClassPage() {
   });
 
   useEffect(() => {
-    fetchData();
-  }, [classId]);
-
-  const fetchData = async () => {
+    const fetchData = async () => {
     try {
       setIsLoading(true);
       const [classResponse, teachersResponse] = await Promise.all([
@@ -52,6 +49,10 @@ export default function EditClassPage() {
       setIsLoading(false);
     }
   };
+    fetchData();
+  }, [classId]);
+
+  
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

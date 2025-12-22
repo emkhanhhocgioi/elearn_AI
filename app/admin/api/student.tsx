@@ -1,7 +1,20 @@
+'use client';
 import axios from "axios";
 
 const api_url = "http://localhost:4000"
 
+interface StudentFormData {
+  name: string;
+  email: string;
+  classid: string;
+  DOB: string;
+  avatar: string;
+  password?: string;
+  parentContact: string;
+  academic_performance: 'Tốt' | 'Khá' | 'Trung bình' | 'Yếu';
+  conduct: 'Tốt' | 'Khá' | 'Trung bình' | 'Yếu';
+  averageScore: number;
+}
 export const getAllStudent = async () => {
     try {
         const token = localStorage.getItem('adminToken');
@@ -73,7 +86,7 @@ export const getStudentByClass = async (classid: string ) => {
         console.error('Error fetching students by class:', error);
     }
 }
-export const enrollStudentToClass = async (studentID: String, classCode: String) => {
+export const enrollStudentToClass = async (studentID: string, classCode: string) => {
     try {
         const token = localStorage.getItem('adminToken');
         if (!token) throw new Error('Token not found');
@@ -94,7 +107,7 @@ export const enrollStudentToClass = async (studentID: String, classCode: String)
     }           
 }
 
-export const updateStudent = async (studentID: string, data: any) => {
+export const updateStudent = async (studentID: string, data: StudentFormData) => {
     try {
         const token = localStorage.getItem('adminToken');
         if (!token) throw new Error('Token not found');

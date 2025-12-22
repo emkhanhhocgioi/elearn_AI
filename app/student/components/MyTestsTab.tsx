@@ -1,7 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { Clock, CheckCircle, AlertCircle, Filter, Calendar, ChevronRight } from 'lucide-react';
-import axios from 'axios';
 import { getStudentClassTest } from '../../student/api/test';
 import { useRouter } from 'next/navigation';
 

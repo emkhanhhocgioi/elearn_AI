@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Plus, Search, Trash2, Edit, Users, BookOpen } from 'lucide-react';
+import { Plus, Search, Trash2, Users } from 'lucide-react';
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -41,21 +41,7 @@ interface Class {
   created_at?: string;
 }
 
-const subjects = [
-  'Tiếng Việt',
-  'Toán học',
-  'Tiếng Anh',
-  'Lịch Sử',
-  'Địa Lý',
-  'Vật Lý',
-  'Hóa Học',
-  'Sinh Học',
-  'Công Nghệ',
-  'Tin Học',
-  'Giáo Dục Thể Chất',
-  'Nhạc Nhạc',
-  'Mỹ Thuật',
-];
+
 
 const generateSchoolYears = () => {
   const currentYear = new Date().getFullYear();
@@ -150,7 +136,12 @@ export default function ClassesTab() {
     try {
       const classYearRange = `${formData.classYear}-${parseInt(formData.classYear) + 4}`;
       const result = await createClass(formData.classCode, formData.teacher_id, classYearRange);
-      alert('Tạo lớp học thành công!');
+      if (result.error) {
+        alert(`Có lỗi xảy ra: ${result.error}`);
+        return;
+      }else {
+        alert('Tạo lớp học thành công!');
+      }
       setFormData({
         classCode: '',
         classYear: '',
@@ -446,10 +437,7 @@ export default function ClassesTab() {
           classCode={selectedClass._id}
           isOpen={isEnrollDialogOpen}
           onOpenChange={setIsEnrollDialogOpen}
-          onSuccess={() => {
-            setIsEnrollDialogOpen(false);
-            fetchClasses();
-          }}
+        
         />
       )}
     </div>

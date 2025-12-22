@@ -1,19 +1,38 @@
 'use client';
-import { Plus, Edit, Clock, X, ChevronLeft, BarChart3, FileText } from 'lucide-react';
+import { Clock, X, ChevronLeft, FileText } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { getSubjectClass } from '@/app/teacher/api/class';
 import { createTest, getClassTeacherTest } from '@/app/api/test';
 
+interface ClassItem {
+  classId: string;
+  class_code?: string;
+  class_year?: string;
+  subjects?: string[];
+}
+
+interface TestItem {
+  classID: string;
+  status?: string;
+}
+
+interface FormData {
+  testtitle: string;
+  participants: string;
+  closedDate: string;
+  subject: string;
+}
+
 export default function TestsTab() {
   const router = useRouter();
   const [showDialog, setShowDialog] = useState(false);
-  const [classes, setClasses] = useState<any[]>([]);
+  const [classes, setClasses] = useState<ClassItem[]>([]);
   const [subjectClassIds, setSubjectClassIds] = useState<string[]>([]);
-  const [tests, setTests] = useState<any[]>([]);
+  const [tests, setTests] = useState<TestItem[]>([]);
   const [loading, setLoading] = useState(false);
-  const [selectedClass, setSelectedClass] = useState<any>(null);
-  const [formData, setFormData] = useState({
+  const [selectedClass, setSelectedClass] = useState<ClassItem | null>(null);
+  const [formData, setFormData] = useState<FormData>({
     testtitle: '',
     participants: '',
     closedDate: '',
@@ -43,7 +62,7 @@ export default function TestsTab() {
         // Map the full class objects
         setClasses(response.data);
         // Extract just the IDs for filtering
-        const classIds = response.data.map((classItem: any) => classItem.classId);
+        const classIds = response.data.map((classItem: ClassItem) => classItem.classId);
         setSubjectClassIds(classIds);
       }
     } catch (err) {
@@ -59,7 +78,7 @@ export default function TestsTab() {
 
 
 
-  const handleSelectClass = (classItem: any) => {
+  const handleSelectClass = (classItem: ClassItem) => {
     setSelectedClass(classItem);
     setFormData({
       testtitle: '',
@@ -82,6 +101,11 @@ export default function TestsTab() {
     
     if (!formData.testtitle || !formData.participants || !formData.closedDate) {
       setError('Please fill in all fields');
+      return;
+    }
+
+    if (!selectedClass) {
+      setError('No class selected');
       return;
     }
 
@@ -117,7 +141,7 @@ export default function TestsTab() {
   };
 
   // Filter tests to show only those for classes the teacher is teaching
-  const filteredTests = tests.filter((test: any) => 
+  const filteredTests = tests.filter((test: TestItem) => 
     subjectClassIds.includes(test.classID)
   );
 
@@ -142,7 +166,7 @@ export default function TestsTab() {
                   <div className="flex items-center justify-between mb-8">
                     <div>
                       <h3 className="text-2xl font-bold text-gray-900">Select a Class</h3>
-                      <p className="text-gray-500 text-sm mt-1">Choose a class you're teaching to create a test</p>
+                      <p className="text-gray-500 text-sm mt-1">Choose a class you&apos;re teaching to create a test</p>
                     </div>
                     <button
                       onClick={handleCloseDialog}
@@ -307,7 +331,7 @@ export default function TestsTab() {
             classes.map((classItem) => (
               <div
                 key={classItem.classId}
-                onClick={() => router.push(`/teacher/class/${classItem.classId}?subject=${classItem.subjects[0] || ''}`)}
+                onClick={() => router.push(`/teacher/class/${classItem.classId}?subject=${classItem.subjects?.[0] || ''}`)}
                 className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-all cursor-pointer group"
               >
                 <div className="bg-gradient-to-br from-purple-500 to-purple-700 h-32 flex items-center justify-center relative">
@@ -339,7 +363,7 @@ export default function TestsTab() {
                         Total Tests
                       </span>
                       <span className="font-bold text-gray-900">
-                        {filteredTests.filter((test: any) => test.classID === classItem.classId).length}
+                        {filteredTests.filter((test: TestItem) => test.classID === classItem.classId).length}
                       </span>
                     </div>
                     <div className="flex items-center justify-between text-sm">
@@ -348,7 +372,7 @@ export default function TestsTab() {
                         Active Tests
                       </span>
                       <span className="font-bold text-green-600">
-                        {filteredTests.filter((test: any) => test.classID === classItem.classId && test.status === 'ongoing').length}
+                        {filteredTests.filter((test: TestItem) => test.classID === classItem.classId && test.status === 'ongoing').length}
                       </span>
                     </div>
                   </div>

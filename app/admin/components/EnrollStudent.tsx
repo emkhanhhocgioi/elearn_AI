@@ -1,6 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { Plus, Check, Search, Filter, X } from 'lucide-react';
+import { Check, Search, X } from 'lucide-react';
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -14,14 +14,14 @@ import {
 import { getAllStudent } from '@/app/admin/api/student';
 import { EnrollStudentToClass } from '@/app/admin/api/class';
 
-interface StudentData {
-  name: string;
-  class: string;
-  email: string;
-  password: string;
-  grade: string;
-  conduct: string;
-}
+// interface StudentData {
+//   name: string;
+//   class: string;
+//   email: string;
+//   password: string;
+//   grade: string;
+//   conduct: string;
+// }
 
 interface AllStudentData {
   _id?: string;
@@ -35,12 +35,12 @@ interface AllStudentData {
 
 interface EnrollStudentProps {
   classCode: string;
-  onSuccess?: () => void;
+
   isOpen?: boolean;
   onOpenChange?: (open: boolean) => void;
 }
 
-export default function EnrollStudent({ classCode, onSuccess, isOpen: externalIsOpen, onOpenChange }: EnrollStudentProps) {
+export default function EnrollStudent({ classCode,  isOpen: externalIsOpen, onOpenChange }: EnrollStudentProps) {
   const [internalIsOpen, setInternalIsOpen] = useState(false);
   const isOpen = externalIsOpen !== undefined ? externalIsOpen : internalIsOpen;
   
@@ -86,9 +86,6 @@ export default function EnrollStudent({ classCode, onSuccess, isOpen: externalIs
     student.email?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-  };
 
   const handleEnrollStudent = async (studentId: string, studentName: string) => {
     try {
@@ -98,6 +95,8 @@ export default function EnrollStudent({ classCode, onSuccess, isOpen: externalIs
 
       if (response) {
         // Refresh the list after successful enrollment
+         
+        alert(`Đã thêm ${studentName} vào lớp thành công`);
         await fetchAllStudents();
       } else {
         alert(`Lỗi: ${studentName} có thể đã được thêm vào lớp hoặc có lỗi xảy ra`);
@@ -123,7 +122,7 @@ export default function EnrollStudent({ classCode, onSuccess, isOpen: externalIs
         <DialogHeader>
           <DialogTitle>Thêm Học Sinh Vào Lớp {classCode}</DialogTitle>
           <DialogDescription>
-            Chọn học sinh và nhấn nút "Enroll" để thêm vào lớp
+            Chọn học sinh và nhấn nút Enroll để thêm vào lớp
           </DialogDescription>
         </DialogHeader>
 

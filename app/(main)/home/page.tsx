@@ -1,5 +1,5 @@
 import { Bell, Mail, MessageSquare, Search, MoreVertical, ChevronLeft, ChevronRight, Play } from 'lucide-react';
-
+export const dynamic = "force-dynamic";
 export default function CourseDashboard() {
   const courses = [
     {

@@ -1,6 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { BookOpen, TrendingUp, Award, BarChart3, Calendar, FileText } from 'lucide-react';
+import { BookOpen, TrendingUp, Award } from 'lucide-react';
 import { getAllSubjectsGrade } from '../api/personal';
 
 interface SubjectGrade {

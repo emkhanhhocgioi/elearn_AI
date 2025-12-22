@@ -1,5 +1,5 @@
 'use client';
-import { Plus, Edit, Trash2, Clock, FileText, ArrowUpDown } from 'lucide-react';
+import { Plus, Edit, Trash2, FileText, ArrowUpDown } from 'lucide-react';
 import { getTeacherLessons, deleteLesson } from '@/app/teacher/api/lesson';
 import { useEffect, useState } from 'react';
 

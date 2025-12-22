@@ -1,10 +1,10 @@
 'use client';
+export const dynamic = "force-dynamic";
 import { Bell, Search, MoreVertical, Users, BookOpen, FileText, BarChart3, Settings, LogOut, Activity } from 'lucide-react';
 import { useState, lazy, Suspense, useEffect } from 'react';
-import { getAllStudent } from '../api/student';
+
 import { checServiceHeath } from '../api/admin';  
-import { getAllClasses } from '../api/class';
-import { getAllTeachers } from '../api/teacher';
+
 const UsersTab = lazy(() => import('../components/UsersTab'));
 const ClassesTab = lazy(() => import('../components/ClassesTab'));
 const TeachersTab = lazy(() => import('../components/TeachersTab'));

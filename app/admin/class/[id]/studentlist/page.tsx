@@ -31,6 +31,28 @@ interface Student {
   class?: string;
   grade?: string;
 }
+interface StudentEnroll {
+  studentID: { 
+  _id: string;
+  name: string;
+  email: string;
+  DOB?: string;
+  parentContact?: string;
+  avatar?: string;
+  academic_performance?: string;
+  conduct?: string;
+  averageScore?: number;
+  ClassID?: string;
+  enrollmentId?: string;
+
+  class?: string;
+  grade?: string;
+   }
+     timeJoin?: string;
+       _id: string;
+         classID?: string;
+  
+}
 
 export default function StudentListPage() {
   const params = useParams();
@@ -43,30 +65,14 @@ export default function StudentListPage() {
   const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
-    fetchStudents();
-  }, [classId]);
-
-  useEffect(() => {
-    if (searchTerm.trim() === '') {
-      setFilteredStudents(students);
-    } else {
-      const filtered = students.filter(student =>
-        student.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        student.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (student.enrollmentId && student.enrollmentId.toLowerCase().includes(searchTerm.toLowerCase()))
-      );
-      setFilteredStudents(filtered);
-    }
-  }, [searchTerm, students]);
-
-  const fetchStudents = async () => {
+    const fetchStudents = async () => {
     try {
       setIsLoading(true);
       const response = await getStudentByClass(classId);
       console.log('Students data:', response.students);
 
       // Extract the array of enrollments from response
-      let enrollments = Array.isArray(response.students)
+      const enrollments = Array.isArray(response.students)
         ? response.students   
         : Array.isArray(response?.data)
         ? response.data
@@ -75,7 +81,7 @@ export default function StudentListPage() {
         : [];
 
       // Map the nested structure to flat student objects
-      const studentsData = enrollments.map((enrollment: any) => ({
+      const studentsData = enrollments.map((enrollment: StudentEnroll) => ({
         _id: enrollment.studentID._id,
         name: enrollment.studentID.name,
         email: enrollment.studentID.email,
@@ -100,6 +106,23 @@ export default function StudentListPage() {
       setIsLoading(false);
     }
   };
+    fetchStudents();
+  }, [classId]);
+
+  useEffect(() => {
+    if (searchTerm.trim() === '') {
+      setFilteredStudents(students);
+    } else {
+      const filtered = students.filter(student =>
+        student.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        student.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (student.enrollmentId && student.enrollmentId.toLowerCase().includes(searchTerm.toLowerCase()))
+      );
+      setFilteredStudents(filtered);
+    }
+  }, [searchTerm, students]);
+
+  
 
   const handleExport = () => {
     // TODO: Implement export functionality

@@ -55,7 +55,7 @@ export default function AddStudentPage() {
     averageScore: 0
   });
 
-  const updateFormField = (field: keyof StudentData, value: any) => {
+  const updateFormField = (field: keyof StudentData, value: string | number) => {
     setFormData({ ...formData, [field]: value });
   };
 
@@ -311,7 +311,10 @@ export default function AddStudentPage() {
             <div className="text-center py-12 text-gray-500">
               <UserPlus className="w-16 h-16 mx-auto mb-4 opacity-50" />
               <p className="text-lg">Chưa có học sinh nào</p>
-              <p className="text-sm">Điền thông tin bên trái và nhấn "Thêm vào danh sách"</p>
+           <p className="text-sm">
+  Điền thông tin bên trái và nhấn 'Thêm vào danh sách'
+</p>
+
             </div>
           ) : (
             <div className="overflow-x-auto">

@@ -1,5 +1,5 @@
 'use client';
-
+export const dynamic = "force-dynamic";
 import { useEffect, useState } from 'react';
 import { useWebSocket } from '@/app/context/WebSocketContext';
 import { useNotifications } from '@/app/hooks/useNotifications';

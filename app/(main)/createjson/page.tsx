@@ -1,4 +1,5 @@
 'use client';
+export const dynamic = "force-dynamic";
 import { useState, ChangeEvent } from 'react';
 import { Download, Plus, Trash2, FileJson, FileCode } from 'lucide-react';
 
@@ -93,6 +94,7 @@ export default function JsonlCreator() {
       setRawJson('');
       setShowJsonInput(false);
     } catch (error) {
+      console.error('Invalid JSON:', error);
       alert('JSON không hợp lệ! Vui lòng kiểm tra lại cú pháp.');
     }
   };
