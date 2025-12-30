@@ -1,9 +1,10 @@
 'use client';
 import { useParams, useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
-import { ArrowLeft, Plus, Edit2, Trash2, Clock, Users, Calendar, FileText, BarChart3, BookOpen } from 'lucide-react';
+import { ArrowLeft, Plus, Edit2, Trash2, Clock, Users, Calendar, FileText, BarChart3, BookOpen, Mail, X } from 'lucide-react';
 import {getClassTeacherTest,deleteTestById} from '../../api/test';
 import {getTeacherLessons, deleteLesson} from '../../api/lesson';
+import { sendEmailToSubjectClass } from '../../api/mailing';
 import { useSearchParams } from 'next/navigation';
 import { get } from 'http';
 export default function ClassDetailPage() {
@@ -22,6 +23,12 @@ export default function ClassDetailPage() {
   });
 
   const [lessons, setLessons] = useState<any[]>([]);
+  
+  // Email dialog states
+  const [emailDialogOpen, setEmailDialogOpen] = useState(false);
+  const [emailSubject, setEmailSubject] = useState('');
+  const [emailMessage, setEmailMessage] = useState('');
+  const [sendingEmail, setSendingEmail] = useState(false);
 
   const [tests, setTests] = useState([
     {
@@ -112,6 +119,13 @@ export default function ClassDetailPage() {
               </div>
             </div>
             <div className="flex items-center gap-3">
+              <button 
+                onClick={() => setEmailDialogOpen(true)}
+                className="bg-gradient-to-r from-green-600 to-green-700 text-white px-5 py-2.5 rounded-lg flex items-center gap-2 hover:from-green-700 hover:to-green-800 transition shadow-md hover:shadow-lg"
+              >
+                <Mail className="w-5 h-5" />
+                <span className="font-semibold">Send Email</span>
+              </button>
               {activeTab === 'lessons' ? (
                 <button 
                   onClick={() => router.push(`/teacher/class/${classId}/add-lesson?subject=${subject}`)}
@@ -494,6 +508,139 @@ export default function ClassDetailPage() {
           </div>
         )}
       </div>
+
+      {/* Email Dialog */}
+      {emailDialogOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6 border-b border-gray-200 flex items-center justify-between sticky top-0 bg-white">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-green-100 rounded-lg">
+                  <Mail className="w-6 h-6 text-green-600" />
+                </div>
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-900">Send Email to Class</h2>
+                  <p className="text-sm text-gray-500 mt-1">Send message to all students in {classInfo.class_code}</p>
+                </div>
+              </div>
+              <button
+                onClick={() => {
+                  setEmailDialogOpen(false);
+                  setEmailSubject('');
+                  setEmailMessage('');
+                }}
+                className="p-2 hover:bg-gray-100 rounded-lg transition"
+              >
+                <X className="w-5 h-5 text-gray-600" />
+              </button>
+            </div>
+
+            <div className="p-6 space-y-6">
+              {/* Subject Input */}
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Email Subject *
+                </label>
+                <input
+                  type="text"
+                  value={emailSubject}
+                  onChange={(e) => setEmailSubject(e.target.value)}
+                  placeholder="Enter email subject..."
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition"
+                  disabled={sendingEmail}
+                />
+              </div>
+
+              {/* Message Input */}
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Message *
+                </label>
+                <textarea
+                  value={emailMessage}
+                  onChange={(e) => setEmailMessage(e.target.value)}
+                  placeholder="Enter your message..."
+                  rows={8}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition resize-none"
+                  disabled={sendingEmail}
+                />
+              </div>
+
+              {/* Info Box */}
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <div className="flex items-start gap-3">
+                  <Users className="w-5 h-5 text-blue-600 mt-0.5" />
+                  <div>
+                    <p className="text-sm font-semibold text-blue-900">Recipients</p>
+                    <p className="text-sm text-blue-700 mt-1">This email will be sent to all students enrolled in class {classInfo.class_code} for subject {subject}.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Footer Actions */}
+            <div className="p-6 border-t border-gray-200 flex items-center justify-end gap-3 sticky bottom-0 bg-white">
+              <button
+                onClick={() => {
+                  setEmailDialogOpen(false);
+                  setEmailSubject('');
+                  setEmailMessage('');
+                }}
+                className="px-6 py-2.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition font-semibold"
+                disabled={sendingEmail}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={async () => {
+                  if (!emailSubject.trim() || !emailMessage.trim()) {
+                    alert('Please fill in both subject and message');
+                    return;
+                  }
+                  
+                  if (!subject) {
+                    alert('Subject information is missing');
+                    return;
+                  }
+
+                  try {
+                    setSendingEmail(true);
+                    await sendEmailToSubjectClass({
+                      classId: classId,
+                      subjectId: subject,
+                      subject: emailSubject,
+                      message: emailMessage
+                    });
+                    alert('Email sent successfully!');
+                    setEmailDialogOpen(false);
+                    setEmailSubject('');
+                    setEmailMessage('');
+                  } catch (error) {
+                    console.error('Error sending email:', error);
+                    alert('Failed to send email. Please try again.');
+                  } finally {
+                    setSendingEmail(false);
+                  }
+                }}
+                disabled={sendingEmail || !emailSubject.trim() || !emailMessage.trim()}
+                className="bg-gradient-to-r from-green-600 to-green-700 text-white px-6 py-2.5 rounded-lg hover:from-green-700 hover:to-green-800 transition shadow-md hover:shadow-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+              >
+                {sendingEmail ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    <span>Sending...</span>
+                  </>
+                ) : (
+                  <>
+                    <Mail className="w-5 h-5" />
+                    <span>Send Email</span>
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

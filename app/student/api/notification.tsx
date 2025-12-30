@@ -1,16 +1,23 @@
-'use client';
 import axios from "axios";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:4000/api";
 
+const getStudentToken = () => {
+  if (typeof window !== "undefined") {
+    return localStorage.getItem("studentToken");
+  }
+  return null;
+};
+const getAuthConfig = () => {
+  const token = getStudentToken();
+  return token
+    ? { headers: { Authorization: `Bearer ${token}` } }
+    : {};
+};
+
 export const getStudentNotifications = async () => {
   try {
-    const token = localStorage.getItem("studentToken");
-    const response = await axios.get(`${API_BASE_URL}/student/notifications`, {
-        headers: {  
-            Authorization: `Bearer ${token}`
-        }
-    });
+    const response = await axios.get(`${API_BASE_URL}/student/notifications`, getAuthConfig());
     return response.data;
   } catch (error) {
     console.error("Error fetching notifications:", error);
@@ -20,12 +27,7 @@ export const getStudentNotifications = async () => {
 
 export const markNotificationAsRead = async (notificationId: string) => {
   try {
-    const token = localStorage.getItem("studentToken"); 
-    const response = await axios.patch(`${API_BASE_URL}/student/notifications/${notificationId}/read`, {}, {
-        headers: {  
-            Authorization: `Bearer ${token}` 
-        }
-    });
+    const response = await axios.patch(`${API_BASE_URL}/student/notifications/${notificationId}/read`, {}, getAuthConfig());
     return response.data;
   } catch (error) {
     console.error("Error marking notification as read:", error);

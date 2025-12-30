@@ -1,6 +1,6 @@
 'use client';
 import { useState } from 'react';
-import { Bell, Lock, Eye, Globe, Save, X } from 'lucide-react';
+import { Bell, Lock,  Globe, Save, X } from 'lucide-react';
 
 const SettingsTab = () => {
   const [isEditing, setIsEditing] = useState(false);

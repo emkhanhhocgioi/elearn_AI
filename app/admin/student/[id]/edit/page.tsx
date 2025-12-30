@@ -56,11 +56,7 @@ export default function EditStudentPage() {
   const [errors, setErrors] = useState<Partial<Record<keyof StudentFormData, string>>>({});
 
   useEffect(() => {
-    fetchStudentData();
-    fetchClasses();
-  }, [studentId]);
-
-  const fetchStudentData = async () => {
+    const fetchStudentData = async () => {
     try {
       setIsLoading(true);
       const response = await getStudentById(studentId);
@@ -94,6 +90,11 @@ export default function EditStudentPage() {
     }
   };
 
+    fetchStudentData();
+    fetchClasses();
+  }, [studentId]);
+
+  
   const fetchClasses = async () => {
     try {
       const response = await getAllClasses();
@@ -378,7 +379,7 @@ export default function EditStudentPage() {
             <select
               name="academic_performance"
               value={formData.academic_performance}
-              onChange={(e) => setFormData(prev => ({ ...prev, academic_performance: e.target.value as any }))}
+              onChange={(e) => setFormData(prev => ({ ...prev, academic_performance: e.target.value as 'Tốt' }))}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
               <option value="Tốt">Tốt</option>
@@ -396,7 +397,7 @@ export default function EditStudentPage() {
             <select
               name="conduct"
               value={formData.conduct}
-              onChange={(e) => setFormData(prev => ({ ...prev, conduct: e.target.value as any }))}
+              onChange={(e) => setFormData(prev => ({ ...prev, conduct: e.target.value as 'Tốt' }))}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
               <option value="Tốt">Tốt</option>

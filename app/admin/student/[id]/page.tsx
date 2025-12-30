@@ -42,10 +42,7 @@ export default function StudentDetailPage() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    fetchStudentDetail();
-  }, [studentId]);
-
-  const fetchStudentDetail = async () => {
+    const fetchStudentDetail = async () => {
     try {
       setIsLoading(true);
       const response = await getStudentById(studentId);
@@ -61,6 +58,10 @@ export default function StudentDetailPage() {
       setIsLoading(false);
     }
   };
+    fetchStudentDetail();
+  }, [studentId]);
+
+  
 
   const handleDeleteStudent = async (id: string) => {
     try {

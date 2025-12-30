@@ -4,6 +4,40 @@ import { Clock, CheckCircle, AlertCircle, Filter, Calendar, ChevronRight } from 
 import { getStudentClassTest } from '../../student/api/test';
 import { useRouter } from 'next/navigation';
 
+// Interface for API response
+interface TestApiResponse {
+  _id: string;
+  classID: string;
+  teacherID: string;
+  testtitle: string;
+  subject: string;
+  avg_score: string;
+  participants: number;
+  closeDate: string;
+  status: string;
+  createDate: string;
+  __v: number;
+  test_time: number;
+  isSubmited: boolean;
+  isSubmitedTime: string;
+}
+
+// Interface for mapped test object
+interface MappedTest {
+  id: string;
+  title: string;
+  subject: string;
+  classID: string;
+  teacherID: string;
+  status: string;
+  score: number | null;
+  closeDate: string;
+  participants: number;
+  daysUntilClose: number;
+  isSubmited: boolean;
+  isLateSubmission: boolean;
+}
+
 // Danh sách 12 môn học THCS
 const THCS_SUBJECTS = [
   'Tất cả môn',
@@ -22,8 +56,8 @@ const THCS_SUBJECTS = [
 ];
 
 const MyTestsTab = () => {
-  const [tests, setTests] = useState<any[]>([]);
-  const [filteredTests, setFilteredTests] = useState<any[]>([]);
+  const [tests, setTests] = useState<MappedTest[]>([]);
+  const [filteredTests, setFilteredTests] = useState<MappedTest[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedSubject, setSelectedSubject] = useState('Tất cả môn');
   const router = useRouter();
@@ -35,7 +69,7 @@ const MyTestsTab = () => {
         const response = await getStudentClassTest();
         
         // Map the response data to the expected format
-        const mappedTests = response.map((test: any) => {
+        const mappedTests = response.map((test: TestApiResponse) => {
           const closeDate = new Date(test.closeDate);
           const now = new Date();
           const daysUntilClose = Math.ceil((closeDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
@@ -95,13 +129,14 @@ const MyTestsTab = () => {
     }
   }, [selectedSubject, tests]);
 
-  const getStatusBadge = (status: string, daysUntilClose?: number) => {
+  const getStatusBadge = (status: string) => {
     switch (status) {
+    
       case 'Submitted':
         return <span className="inline-flex items-center gap-1 bg-green-100 text-green-700 text-xs px-3 py-1 rounded-full"><CheckCircle className="w-3 h-3" /> Đã nộp</span>;
       case 'Submitted Late':
         return <span className="inline-flex items-center gap-1 bg-yellow-100 text-yellow-700 text-xs px-3 py-1 rounded-full"><AlertCircle className="w-3 h-3" /> Nộp trễ</span>;
-      case 'Overdue':
+      case 'Overdue' :
         return <span className="inline-flex items-center gap-1 bg-red-100 text-red-700 text-xs px-3 py-1 rounded-full"><AlertCircle className="w-3 h-3" /> Quá hạn</span>;
       case 'Pending':
         return <span className="inline-flex items-center gap-1 bg-orange-100 text-orange-700 text-xs px-3 py-1 rounded-full"><AlertCircle className="w-3 h-3" /> Sắp hết hạn</span>;
@@ -287,7 +322,7 @@ const MyTestsTab = () => {
                       <p className="text-sm text-gray-600">{test.participants} học viên</p>
                     </td>
                     <td className="px-6 py-4">
-                      {getStatusBadge(test.status, test.daysUntilClose)}
+                      {getStatusBadge(test.status)}
                     </td>
                     <td className="px-6 py-4">
                       <span className={`text-sm font-medium ${

@@ -1,7 +1,19 @@
-'use client';
 import axios from "axios";
 
 const api_url = "http://localhost:4000"
+
+const getAdminToken = () => {
+  if (typeof window !== "undefined") {
+    return localStorage.getItem("adminToken");
+  }
+  return null;
+};
+const getAuthConfig = () => {
+  const token = getAdminToken();
+  return token
+    ? { headers: { Authorization: `Bearer ${token}` } }
+    : {};
+};
 
 interface StudentFormData {
   name: string;
@@ -17,11 +29,12 @@ interface StudentFormData {
 }
 export const getAllStudent = async () => {
     try {
-        const token = localStorage.getItem('adminToken');
+        const token = getAdminToken();
         if (!token) throw new Error('Token not found');
         const res = await axios.get(`${api_url}/api/admin/students`, {
+            ...getAuthConfig(),
             headers: {
-                'Authorization': `Bearer ${token}`,
+                ...getAuthConfig().headers,
                 'Content-Type': 'application/json'
             }
         });
@@ -35,11 +48,12 @@ export const getAllStudent = async () => {
 
 export const getStudentById = async (StudentID: string) => { 
     try {
-        const token = localStorage.getItem('adminToken');
+        const token = getAdminToken();
         if (!token) throw new Error('Token not found');
         const res = await axios.get(`${api_url}/api/admin/students/${StudentID}`, {
+            ...getAuthConfig(),
             headers: {
-                'Authorization': `Bearer ${token}`,
+                ...getAuthConfig().headers,
                 'Content-Type': 'application/json'
             }
         });
@@ -53,11 +67,12 @@ export const getStudentById = async (StudentID: string) => {
 
 export const deleteStudentById = async (StudentID: string) => { 
     try {
-        const token = localStorage.getItem('adminToken');
+        const token = getAdminToken();
         if (!token) throw new Error('Token not found');
         const res = await axios.delete(`${api_url}/api/admin/student/delete/${StudentID}`, {
+            ...getAuthConfig(),
             headers: {
-                'Authorization': `Bearer ${token}`,
+                ...getAuthConfig().headers,
                 'Content-Type': 'application/json'
             }
         });
@@ -72,11 +87,12 @@ export const deleteStudentById = async (StudentID: string) => {
 
 export const getStudentByClass = async (classid: string ) => {
     try {
-        const token = localStorage.getItem('adminToken');
+        const token = getAdminToken();
         if (!token) throw new Error('Token not found');
         const res = await axios.get(`${api_url}/api/admin/students/class/${classid}`, {
+            ...getAuthConfig(),
             headers: {
-                'Authorization': `Bearer ${token}`,
+                ...getAuthConfig().headers,
                 'Content-Type': 'application/json'
             }
         });
@@ -88,14 +104,15 @@ export const getStudentByClass = async (classid: string ) => {
 }
 export const enrollStudentToClass = async (studentID: string, classCode: string) => {
     try {
-        const token = localStorage.getItem('adminToken');
+        const token = getAdminToken();
         if (!token) throw new Error('Token not found');
         const res = await axios.post(`${api_url}/api/class/enroll`, {
             student_id: studentID,
             class_code: classCode
         }, {
+            ...getAuthConfig(),
             headers: {
-                'Authorization': `Bearer ${token}`,
+                ...getAuthConfig().headers,
                 'Content-Type': 'application/json'
             }
         });
@@ -109,11 +126,12 @@ export const enrollStudentToClass = async (studentID: string, classCode: string)
 
 export const updateStudent = async (studentID: string, data: StudentFormData) => {
     try {
-        const token = localStorage.getItem('adminToken');
+        const token = getAdminToken();
         if (!token) throw new Error('Token not found');
         const res = await axios.put(`${api_url}/api/admin/student/update/${studentID}`, data, {
+            ...getAuthConfig(),
             headers: {
-                'Authorization': `Bearer ${token}`,
+                ...getAuthConfig().headers,
                 'Content-Type': 'application/json'
             }
         });

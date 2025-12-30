@@ -1,15 +1,22 @@
-'use client';
 import axios from "axios";
-const API_BASE_URL = 'http://localhost:4000/api/admin'; 
+const API_BASE_URL = 'http://localhost:4000/api/admin';
+
+const getAdminToken = () => {
+  if (typeof window !== "undefined") {
+    return localStorage.getItem("adminToken");
+  }
+  return null;
+};
+const getAuthConfig = () => {
+  const token = getAdminToken();
+  return token
+    ? { headers: { Authorization: `Bearer ${token}` } }
+    : {};
+}; 
 
 export const fetchUserActivityLogs = async () => {
     try {
-        const token = localStorage.getItem('adminToken');
-        const response = await axios.get(`${API_BASE_URL}/activities`, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        });
+        const response = await axios.get(`${API_BASE_URL}/activities`, getAuthConfig());
         return response.data;
     } catch (error) {
         console.error('Error fetching user activity logs:', error);
@@ -18,12 +25,7 @@ export const fetchUserActivityLogs = async () => {
 };
 export const fetchUserActivityById = async (activityId: string) => {
     try {
-        const token = localStorage.getItem('adminToken');   
-        const response = await axios.get(`${API_BASE_URL}/activity/${activityId}`, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        });
+        const response = await axios.get(`${API_BASE_URL}/activity/${activityId}`, getAuthConfig());
         return response.data;
     } catch (error) {
         console.error('Error fetching user activity by ID:', error);
@@ -32,11 +34,8 @@ export const fetchUserActivityById = async (activityId: string) => {
 };
 export const exportUserActivityLogsToCSV = async () => {
     try {
-        const token = localStorage.getItem('adminToken');   
         const response = await axios.get(`${API_BASE_URL}/activities/export/csv`, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
+            ...getAuthConfig(),
             responseType: 'blob', // Important for file download
         });
         return response.data;
@@ -49,12 +48,7 @@ export const exportUserActivityLogsToCSV = async () => {
 // Test Report API
 export const getTestReportByClassId = async (classId: string) => {
     try {
-        const token = localStorage.getItem('adminToken');   
-        const response = await axios.get(`${API_BASE_URL}/test-reports/class/${classId}`, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        });
+        const response = await axios.get(`${API_BASE_URL}/test-reports/class/${classId}`, getAuthConfig());
         console.log("Test report data:", response.data);
         return response.data;
     } catch (error) {

@@ -55,15 +55,7 @@ export default function UsersTab() {
     const matchesStatus = filterStatus === 'all'; // No status field in new data
     return matchesSearch && matchesRole && matchesStatus;
   });
-  const getStudentData = async () => {
-    try {
-      const data = await getAllStudent();
-      console.log(data.students);
-      setUsers(data.students);
-    } catch (error) {
-      console.error('Failed to fetch student data:', error);
-    }
-  };
+  
   const getRoleColor = (role: string) => {
     switch(role) {
       case 'admin': return 'bg-red-100 text-red-700';
@@ -76,8 +68,15 @@ export default function UsersTab() {
 
   const hasFetched = useRef(false);
    useEffect(() => {
-  if (hasFetched.current) return;
-  hasFetched.current = true;
+    const getStudentData = async () => {
+    try {
+      const data = await getAllStudent();
+      console.log(data.students);
+      setUsers(data.students);
+    } catch (error) {
+      console.error('Failed to fetch student data:', error);
+    }
+  };
     getStudentData();
   }, []);
   return (

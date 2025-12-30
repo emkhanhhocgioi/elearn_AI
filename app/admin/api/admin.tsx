@@ -1,18 +1,25 @@
-'use client';
 import axios from "axios";
 // Admin API endpoints
 const api_url = "http://localhost:4000";
 
+const getAdminToken = () => {
+  if (typeof window !== "undefined") {
+    return localStorage.getItem("adminToken");
+  }
+  return null;
+};
+const getAuthConfig = () => {
+  const token = getAdminToken();
+  return token
+    ? { headers: { Authorization: `Bearer ${token}` } }
+    : {};
+};
 
 // ============ System Heath    ============
 
 export const checServiceHeath = async () =>{
   try {
-    const response = await axios.get('http://localhost:4000/api/admin/service',{
-      headers: {
-        "Authorization": "Bearer " + localStorage.getItem('adminToken')
-      }
-    });
+    const response = await axios.get('http://localhost:4000/api/admin/service', getAuthConfig());
     return response;
   } catch (error) {
     console.error('Error checking service health:', error);
@@ -38,7 +45,7 @@ export interface StudentData {
 
 export const createMutilpleStudentAccount = async (students: StudentData[], classid: string) => {
   try {
-    const token = localStorage.getItem('adminToken');
+    const token = getAdminToken();
     if (!token) throw new Error('Token not found');
     const res = await fetch(`${api_url}/api/admin/students/create`, {
       method: 'POST',
@@ -59,7 +66,7 @@ export const createMutilpleStudentAccount = async (students: StudentData[], clas
 
 export const getAllUsers = async () => {
   try {
-    const token = localStorage.getItem('adminToken');
+    const token = getAdminToken();
     if (!token) {
       throw new Error('Token not found in localStorage');
     }
@@ -79,7 +86,7 @@ export const getAllUsers = async () => {
 
 export const getUserById = async (userId: string) => {
   try {
-    const token = localStorage.getItem('adminToken');
+    const token = getAdminToken();
     if (!token) throw new Error('Token not found');
     const res = await fetch(`${api_url}/api/admin/users/${userId}`, {
       headers: {

@@ -1,11 +1,11 @@
 'use client';
 import { useState, useEffect, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { ArrowLeft, Users, BookOpen, Calendar, TrendingUp, Edit, Trash2, UserPlus, FileText, BarChart3, UserCog } from 'lucide-react';
+import { ArrowLeft, Users, BookOpen, Calendar, TrendingUp, Edit, Trash2, UserPlus, FileText, BarChart3, UserCog, Clock } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { getClassById, updateSubjectTeacher } from '../../api/class';
+import { getClassById, updateSubjectTeacher, getClassSchedule, ClassScheduleResponse } from '../../api/class';
 import { getAllTeachers, Teacher } from '../../api/teacher';
 
 interface SubjectTeacher {
@@ -58,6 +58,9 @@ export default function ClassDetailPage() {
   const [selectedSubject, setSelectedSubject] = useState<string>('');
   const [teachers, setTeachers] = useState<Teacher[]>([]);
   const [loadingTeachers, setLoadingTeachers] = useState(false);
+  const [scheduleDialogOpen, setScheduleDialogOpen] = useState(false);
+  const [classSchedule, setClassSchedule] = useState<ClassScheduleResponse | null>(null);
+  const [loadingSchedule, setLoadingSchedule] = useState(false);
 
   const fetchClassDetail = useCallback(async () => {
     try {
@@ -147,6 +150,35 @@ export default function ClassDetailPage() {
     return teachers.filter(teacher => 
       teacher.subject?.toLowerCase() === subjectDisplayName.toLowerCase()
     );
+  };
+
+  const fetchClassSchedule = async () => {
+    try {
+      setLoadingSchedule(true);
+      const schedule = await getClassSchedule(classId);
+      setClassSchedule(schedule);
+    } catch (error) {
+      console.error('Error fetching class schedule:', error);
+    } finally {
+      setLoadingSchedule(false);
+    }
+  };
+
+  const handleViewSchedule = () => {
+    router.push(`/admin/class/${classId}/schedule/manage`);
+  };
+
+  const getDayDisplayName = (day: string): string => {
+    const dayNames: { [key: string]: string } = {
+      Mon: 'Thứ 2',
+      Tue: 'Thứ 3',
+      Wed: 'Thứ 4',
+      Thu: 'Thứ 5',
+      Fri: 'Thứ 6',
+      Sat: 'Thứ 7',
+      Sun: 'Chủ nhật'
+    };
+    return dayNames[day] || day;
   };
 
   if (isLoading) {
@@ -315,6 +347,17 @@ export default function ClassDetailPage() {
             <div className="text-sm opacity-90">Xóa lớp học khỏi hệ thống</div>
           </div>
         </Button>
+
+        <Button 
+          className="bg-indigo-600 hover:bg-indigo-700 text-white p-6 h-auto flex flex-col items-start gap-2"
+          onClick={handleViewSchedule}
+        >
+          <Clock className="w-6 h-6" />
+          <div className="text-left">
+            <div className="font-semibold text-lg">Lịch dạy học</div>
+            <div className="text-sm opacity-90">Xem và quản lý thời khóa biểu</div>
+          </div>
+        </Button>
       </div>
 
       {/* Class Information Details */}
@@ -453,6 +496,129 @@ export default function ClassDetailPage() {
                   )}
                 </TableBody>
               </Table>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Schedule Dialog */}
+      <Dialog open={scheduleDialogOpen} onOpenChange={setScheduleDialogOpen}>
+        <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-2xl">Thời khóa biểu lớp {classData?.class_code}</DialogTitle>
+            <DialogDescription>
+              Lịch giảng dạy của các môn học trong tuần
+            </DialogDescription>
+          </DialogHeader>
+          
+          {loadingSchedule ? (
+            <div className="flex items-center justify-center py-12">
+              <div className="w-10 h-10 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+            </div>
+          ) : classSchedule ? (
+            <div className="mt-4 space-y-6">
+              {/* Summary */}
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <div className="flex items-center gap-2 text-blue-700">
+                  <Calendar className="w-5 h-5" />
+                  <span className="font-semibold">
+                    Tổng số: {classSchedule.totalSchedules} tiết học
+                  </span>
+                </div>
+              </div>
+
+              {/* Schedule by Day */}
+              <div className="space-y-4">
+                {Object.entries(classSchedule.schedules).map(([day, schedules]) => (
+                  schedules.length > 0 && (
+                    <div key={day} className="border rounded-lg overflow-hidden">
+                      <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-4 py-3">
+                        <h3 className="font-semibold text-lg flex items-center gap-2">
+                          <Calendar className="w-5 h-5" />
+                          {getDayDisplayName(day)}
+                        </h3>
+                      </div>
+                      <div className="p-4 bg-white">
+                        <Table>
+                          <TableHeader>
+                            <TableRow>
+                              <TableHead className="w-[120px]">Thời gian</TableHead>
+                              <TableHead>Môn học</TableHead>
+                              <TableHead>Giáo viên</TableHead>
+                              <TableHead>Email</TableHead>
+                              <TableHead>Học kỳ</TableHead>
+                            </TableRow>
+                          </TableHeader>
+                          <TableBody>
+                            {schedules.map((schedule, idx) => (
+                              <TableRow key={schedule.scheduleId || idx}>
+                                <TableCell className="font-medium">
+                                  <div className="flex items-center gap-1">
+                                    <Clock className="w-4 h-4 text-gray-500" />
+                                    <span className="text-sm">
+                                      {schedule.timeSlot.startTime} - {schedule.timeSlot.endTime}
+                                    </span>
+                                  </div>
+                                </TableCell>
+                                <TableCell>
+                                  <span className="font-medium text-gray-900">
+                                    {schedule.subject || 'N/A'}
+                                  </span>
+                                </TableCell>
+                                <TableCell>
+                                  <div className="flex items-center gap-2">
+                                    <Users className="w-4 h-4 text-gray-500" />
+                                    <span>{schedule.teacher?.name || 'N/A'}</span>
+                                  </div>
+                                </TableCell>
+                                <TableCell className="text-gray-600 text-sm">
+                                  {schedule.teacher?.email || 'N/A'}
+                                </TableCell>
+                                <TableCell>
+                                  <span className="px-2 py-1 bg-purple-100 text-purple-700 rounded text-sm">
+                                    {schedule.semester}
+                                  </span>
+                                </TableCell>
+                              </TableRow>
+                            ))}
+                          </TableBody>
+                        </Table>
+                      </div>
+                    </div>
+                  )
+                ))}
+              </div>
+
+              {classSchedule.totalSchedules === 0 && (
+                <div className="text-center py-12 text-gray-500">
+                  <Calendar className="w-16 h-16 mx-auto mb-4 text-gray-300" />
+                  <p className="text-lg font-medium">Chưa có lịch dạy học</p>
+                  <p className="text-sm mt-2">Vui lòng thêm lịch dạy cho lớp học này</p>
+                </div>
+              )}
+
+              {/* Action Buttons */}
+              <div className="flex justify-end gap-3 pt-4 border-t">
+                <Button
+                  variant="outline"
+                  onClick={() => setScheduleDialogOpen(false)}
+                >
+                  Đóng
+                </Button>
+                <Button
+                  className="bg-blue-600 hover:bg-blue-700 text-white"
+                  onClick={() => {
+                    setScheduleDialogOpen(false);
+                    router.push(`/admin/class/${classId}/schedule/manage`);
+                  }}
+                >
+                  Quản lý lịch dạy
+                </Button>
+              </div>
+            </div>
+          ) : (
+            <div className="text-center py-8 text-gray-500">
+              Không thể tải lịch dạy học
             </div>
           )}
         </DialogContent>

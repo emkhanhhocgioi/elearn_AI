@@ -2,15 +2,14 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { 
-  Target, 
-  TrendingUp, 
+ 
   Brain, 
-  Zap, 
+
   Award, 
   Clock, 
-  CheckCircle2, 
+
   AlertCircle,
-  BarChart3,
+
   Sparkles,
   BookOpen,
   ChevronRight,
@@ -20,7 +19,7 @@ import {
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { generateTeacherComment,AI_suggest_on_recentTest,DailyTestSubjectChange,getDailyQuestionAnswer } from '@/app/student/api/personal';
 import { usePractice } from '@/app/student/context/PracticeContext';
-import { Button } from '@/components/ui/button';
+
 interface LearningPath {
   id: number;
   subject: string;
@@ -72,22 +71,16 @@ interface RecentTestResponse {
   };
 }
 
-interface DailyQuestionAnswer {
-}
+
 
 const MyClassesTab = () => {
   const router = useRouter();
   const { setPracticeData } = usePractice();
-  const [isLoading, setIsLoading] = useState(true);
+  
   const [learningPaths, setLearningPaths] = useState<LearningPath[]>([]);
-  const [metrics, setMetrics] = useState<PerformanceMetrics>({
-    accuracy: 0,
-    speed: 0,
-    consistency: 0,
-    improvement: 0
-  });
+  
   const [suggestedQuestions, setSuggestedQuestions] = useState<SuggestedQuestion[]>([]);
-  const [learningGoal, setLearningGoal] = useState('');
+
   const [aiResponse, setAiResponse] = useState<AIResponse | null>(null);
   const [selectedSubject, setSelectedSubject] = useState<string>('');
   const [isLoadingAI, setIsLoadingAI] = useState(false);
@@ -135,17 +128,10 @@ const MyClassesTab = () => {
       }
     ];
 
-    const mockMetrics: PerformanceMetrics = {
-      accuracy: 75,
-      speed: 82,
-      consistency: 68,
-      improvement: 15
-    };
+   
 
     setLearningPaths(mockLearningPaths);
-    setMetrics(mockMetrics);
-    setLearningGoal("Đạt điểm 9+ trong kỳ thi cuối kỳ");
-    setIsLoading(false);
+    
     fetchDailyQuestionAnswer();
 
   }, []);

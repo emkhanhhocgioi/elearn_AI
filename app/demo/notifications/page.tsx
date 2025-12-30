@@ -201,27 +201,7 @@ export default function StudentNotificationDemo() {
 
         </div>
 
-        {/* Instructions */}
-        <div className="mt-8 bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-            📚 Hướng dẫn sử dụng
-          </h2>
-          <ol className="list-decimal list-inside space-y-2 text-sm text-gray-600 dark:text-gray-400">
-            <li>Đăng nhập vào hệ thống để lấy JWT token (hoặc lấy từ localStorage)</li>
-            <li>Copy JWT token vào ô "JWT Token" ở trên</li>
-            <li>Nhập Student ID của bạn vào ô "User ID"</li>
-            <li>Click nút "Kết nối" để kết nối WebSocket</li>
-            <li>Khi giáo viên tạo bài kiểm tra mới, bạn sẽ nhận được thông báo realtime</li>
-            <li>Click vào icon chuông 🔔 ở góc phải trên để xem tất cả thông báo</li>
-            <li>Thông báo mới sẽ hiển thị dưới dạng toast ở góc phải trên màn hình</li>
-          </ol>
-
-          <div className="mt-4 p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-md">
-            <p className="text-sm text-yellow-800 dark:text-yellow-400">
-              <strong>Lưu ý:</strong> Để nhận browser notification, hãy cho phép quyền thông báo khi trình duyệt hỏi.
-            </p>
-          </div>
-        </div>
+       
       </main>
 
       {/* Toast Notifications */}

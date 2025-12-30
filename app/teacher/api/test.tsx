@@ -1,7 +1,21 @@
-'use client';
-import axios from "axios"; 
+import axios from "axios";
 
-const api_url = "http://localhost:4000"
+const api_url = "http://localhost:4000";
+
+const getAdminToken = () => {
+  if (typeof window !== "undefined") {
+    return localStorage.getItem("teacherToken");
+  }
+  return null;
+};
+
+const getAuthConfig = () => {
+  const token = getAdminToken();
+  return token
+    ? { headers: { Authorization: `Bearer ${token}` } }
+    : {};
+};
+
 interface AnswerData {
     questionID: string;
     answer: string;
@@ -10,7 +24,7 @@ interface AnswerData {
 export const createTest = async (classID: String , testtitle: String , 
     closedDate: String, subject: String ) =>{
         try {
-            const teacherToken = localStorage.getItem('teacherToken');
+            const teacherToken = getAdminToken();
             if (!teacherToken) {
                 throw new Error('Token not found in localStorage');
             }   
@@ -34,7 +48,7 @@ export const createTest = async (classID: String , testtitle: String ,
 
 export const getClassTeacherTest = async (classID: string) => {
     try {
-        const teacherToken = localStorage.getItem('teacherToken');
+        const teacherToken = getAdminToken();
         if (!teacherToken) {
             throw new Error('Token not found in localStorage');
         }
@@ -53,7 +67,7 @@ export const getClassTeacherTest = async (classID: string) => {
 
 export const getTestDetailById = async (testID: string) => {
     try {
-        const teacherToken = localStorage.getItem('teacherToken');
+        const teacherToken = getAdminToken();
         if (!teacherToken) {
             throw new Error('Token not found in localStorage');
         }
@@ -76,7 +90,7 @@ export const editTestById = async (
       closeDate: string,
 ) => {
     try {
-        const teacherToken = localStorage.getItem('teacherToken');
+        const teacherToken = getAdminToken();
         if (!teacherToken) {
             throw new Error('Token not found in localStorage');
         }   
@@ -99,7 +113,7 @@ export const editTestById = async (
 }
 export const deleteTestById = async (testID: string) => {
     try {
-        const teacherToken = localStorage.getItem('teacherToken');  
+        const teacherToken = getAdminToken();  
         if (!teacherToken) {
             throw new Error('Token not found in localStorage');
         }
@@ -183,7 +197,7 @@ export const addQuestionsToTest = async (
     files?: (File | null)[]
 ) => {
     try {
-        const teacherToken = localStorage.getItem('teacherToken');
+        const teacherToken = getAdminToken();
         if (!teacherToken) {
             throw new Error('Token not found in localStorage');
         }
@@ -221,7 +235,7 @@ export const AI_Generate_Question_Answer = async (
    subject: string
 ) => {
     try {
-        const teacherToken = localStorage.getItem('teacherToken');  
+        const teacherToken = getAdminToken();  
         if (!teacherToken) {
             throw new Error('Token not found in localStorage');
         }
@@ -243,7 +257,7 @@ export const AI_Generate_Question_Answer = async (
 
 export const deleteQuestionFromTest = async (questionId: string) => {
     try {
-        const teacherToken = localStorage.getItem('teacherToken');  
+        const teacherToken = getAdminToken();  
         if (!teacherToken) {
             throw new Error('Token not found in localStorage');
         }
@@ -273,7 +287,7 @@ export const UpdateQuestion = async (
     file?: File | null
 ) => {
     try {
-        const teacherToken = localStorage.getItem('teacherToken');
+        const teacherToken = getAdminToken();
         if (!teacherToken) {
             throw new Error('Token not found in localStorage');
         }
@@ -315,7 +329,7 @@ export const UpdateQuestion = async (
 
 export const getSubmittedAnswers = async (testId: string) => {
     try {
-        const teacherToken = localStorage.getItem('teacherToken');
+        const teacherToken = getAdminToken();
         if (!teacherToken) {
             throw new Error('Token not found in localStorage');
         }
@@ -339,7 +353,7 @@ export const TeacherGradingAsnwer = async (
     answerData: AnswerData[]
 ) => {
     try {   
-        const teacherToken = localStorage.getItem('teacherToken');
+        const teacherToken = getAdminToken();
         if (!teacherToken) {
             throw new Error('Token not found in localStorage');
         }   
@@ -363,7 +377,7 @@ export const TeacherGradingAsnwer = async (
 
 export const math_question_generation = async (prompt: string) => {
     try {
-        const teacherToken = localStorage.getItem('teacherToken');
+        const teacherToken = getAdminToken();
         if (!teacherToken) {
             throw new Error('Token not found in localStorage');
         }
@@ -389,7 +403,7 @@ export const Ai_grade = async (
     subject: string
 ) => {
     try {   
-        const teacherToken = localStorage.getItem('teacherToken');  
+        const teacherToken = getAdminToken();  
         if (!teacherToken) {
             throw new Error('Token not found in localStorage');
         }   
@@ -415,7 +429,7 @@ export const Ai_grade_from_file = async (
     subject: string
 ) => {
     try {
-        const teacherToken = localStorage.getItem('teacherToken');
+        const teacherToken = getAdminToken();
         if (!teacherToken) {
             throw new Error('Token not found in localStorage');
         }
@@ -442,7 +456,7 @@ export const Ai_grade_from_image = async (
     subject: string
 ) => {
     try {
-        const teacherToken = localStorage.getItem('teacherToken');
+        const teacherToken = getAdminToken();
         if (!teacherToken) {
             throw new Error('Token not found in localStorage');
         }   

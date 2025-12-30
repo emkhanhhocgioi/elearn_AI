@@ -1,10 +1,10 @@
-'use client';
+
 import axios from "axios"; 
 
 const api_url = "http://localhost:4000"
 
-export const createTest = async (classID: String , testtitle: String , 
-    participants: Number, closedDate: String, subject: String ) =>{
+export const createTest = async (classID: string , testtitle: string , 
+    participants: number, closedDate: string, subject: string ) =>{
         try {
             const teacherToken = localStorage.getItem('teacherToken');
             if (!teacherToken) {
@@ -49,7 +49,7 @@ export const getClassTeacherTest = async () => {
 }
 
 
-export const getTestDetailById = async (testid: String) => {
+export const getTestDetailById = async (testid: string) => {
     try {
         const teacherToken = localStorage.getItem('teacherToken');
         if (!teacherToken) {

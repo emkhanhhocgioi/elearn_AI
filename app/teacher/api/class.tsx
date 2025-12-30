@@ -1,15 +1,24 @@
-'use client';
 import axios from "axios";
 const api_url = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
+
+const getAdminToken = () => {
+  if (typeof window !== "undefined") {
+    return localStorage.getItem("teacherToken");
+  }
+  return null;
+};
+
+const getAuthConfig = () => {
+  const token = getAdminToken();
+  return token
+    ? { headers: { Authorization: `Bearer ${token}` } }
+    : {};
+};
 export const getSubjectClass = async () =>{
     try {
-        const token = localStorage.getItem('teacherToken');
+        const token = getAdminToken();
         if (!token) throw new Error('Token not found');
-        const res = await axios.get(`${api_url}/api/teacher/class/subjects`, {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        });
+        const res = await axios.get(`${api_url}/api/teacher/class/subjects`, getAuthConfig());
         console.log('Fetched subject class:', res.data);
         return res.data;
     } catch (error) {
@@ -19,14 +28,7 @@ export const getSubjectClass = async () =>{
 }
 export const getTeacherClasses = async () => {
     try {
-        const token = localStorage.getItem('teacherToken');
-        
-        const res = await axios.get(`${api_url}/api/teacher/class`, {
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            }
-        });
+        const res = await axios.get(`${api_url}/api/teacher/class`, getAuthConfig());
         console.log("Fetched teacher classes:", res.data);
         return res.data;
     } catch (error) {
@@ -36,13 +38,7 @@ export const getTeacherClasses = async () => {
 }
 export const deleteClass = async (classId: string) => {
     try {
-        const token = localStorage.getItem('teacherToken');
-        const res = await axios.delete(`${api_url}/api/teacher/class/${classId}`, {
-            headers: {  
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            }
-        });
+        const res = await axios.delete(`${api_url}/api/teacher/class/${classId}`, getAuthConfig());
         console.log("Deleted class response:", res.data);
         return res.data;
     } catch (error) {
@@ -50,3 +46,15 @@ export const deleteClass = async (classId: string) => {
         throw error;
     }   
 }   
+
+export const getTeacherSchedule = async () => {
+    try {
+        const res = await axios.get(`${api_url}/api/teacher/schedule`, getAuthConfig());
+        console.log("Fetched teacher schedule:", res.data);
+        return res.data;
+    } catch (error) {
+        console.error("Error fetching teacher schedule:", error);
+        throw error;
+    }
+}
+

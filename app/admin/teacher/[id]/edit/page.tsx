@@ -37,10 +37,7 @@ export default function EditTeacherPage() {
   const [errors, setErrors] = useState<Partial<TeacherFormData>>({});
 
   useEffect(() => {
-    fetchTeacherData();
-  }, [teacherId]);
-
-  const fetchTeacherData = async () => {
+    const fetchTeacherData = async () => {
     try {
       setIsLoading(true);
       const response = await getTeacherById(teacherId);
@@ -63,6 +60,10 @@ export default function EditTeacherPage() {
       setIsLoading(false);
     }
   };
+    fetchTeacherData();
+  }, [teacherId]);
+
+  
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;

@@ -1,16 +1,24 @@
-'use client';
 import axios from 'axios';
 
 const API_BASE_URL = 'http://localhost:4000/api/teacher/analytics';
 
+const getAdminToken = () => {
+  if (typeof window !== "undefined") {
+    return localStorage.getItem("teacherToken");
+  }
+  return null;
+};
+
+const getAuthConfig = () => {
+  const token = getAdminToken();
+  return token
+    ? { headers: { Authorization: `Bearer ${token}` } }
+    : {};
+};
+
 export const fetchClassAverageGrades = async () => {
   try {
-    const token = localStorage.getItem('teacherToken');
-    const response = await axios.get(`${API_BASE_URL}/class/average-grades`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        },  
-    });
+    const response = await axios.get(`${API_BASE_URL}/class/average-grades`, getAuthConfig());
     return response.data;
   } catch (error) {
     console.error('Error fetching class average grades:', error);
@@ -20,12 +28,7 @@ export const fetchClassAverageGrades = async () => {
 
 export const fetchTestsAnalytics = async () => {
     try {
-        const token = localStorage.getItem('teacherToken'); 
-        const response = await axios.get(`${API_BASE_URL}/tests/performance`, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        });
+        const response = await axios.get(`${API_BASE_URL}/tests/performance`, getAuthConfig());
         return response.data;
     } catch (error) {
         console.error('Error fetching tests analytics:', error);

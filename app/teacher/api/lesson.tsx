@@ -1,7 +1,20 @@
-'use client';
 import axios from "axios";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
+
+const getAdminToken = () => {
+  if (typeof window !== "undefined") {
+    return localStorage.getItem("teacherToken");
+  }
+  return null;
+};
+
+const getAuthConfig = () => {
+  const token = getAdminToken();
+  return token
+    ? { headers: { Authorization: `Bearer ${token}` } }
+    : {};
+};
 
 export const createLesson = async (title: string, classId: string,
     
@@ -12,7 +25,7 @@ export const createLesson = async (title: string, classId: string,
     formData.append("teacherId", teacherId);
     formData.append("subject", subject);
     formData.append("file", file);
-    const token = localStorage.getItem("teacherToken");
+    const token = getAdminToken();
     const response = await axios.post(`${API_URL}/api/teacher/lessons/create`, formData, {
         headers: {
             "Content-Type": "multipart/form-data",
@@ -24,15 +37,12 @@ export const createLesson = async (title: string, classId: string,
 
 export const getTeacherLessons = async (classId?: string) => {
     try {
-        const token = localStorage.getItem("teacherToken");
         const params: any = {};
         if (classId) {
             params.classId = classId;
         }
         const response = await axios.get(`${API_URL}/api/teacher/lessons`, {
-            headers: {
-                "Authorization": `Bearer ${token}`,
-            },
+            ...getAuthConfig(),
             params: params,
         });
         return response.data;
@@ -44,12 +54,7 @@ export const getTeacherLessons = async (classId?: string) => {
     
 export const deleteLesson = async (lessonId: string) => {
     try {
-        const token = localStorage.getItem("teacherToken");
-        const response = await axios.delete(`${API_URL}/api/teacher/lessons/${lessonId}`, {
-            headers: {
-                "Authorization": `Bearer ${token}`,
-            },
-        });
+        const response = await axios.delete(`${API_URL}/api/teacher/lessons/${lessonId}`, getAuthConfig());
         return response.data;
     }
     catch (error) {
@@ -59,12 +64,7 @@ export const deleteLesson = async (lessonId: string) => {
     }   
 export const getLessonById = async (lessonId: string) => {
     try {
-        const token = localStorage.getItem("teacherToken");
-        const response = await axios.get(`${API_URL}/api/teacher/lessons/${lessonId}`, {
-            headers: {
-                "Authorization": `Bearer ${token}`,
-            },
-        });
+        const response = await axios.get(`${API_URL}/api/teacher/lessons/${lessonId}`, getAuthConfig());
         return response.data;
     }   
     catch (error) {
@@ -84,7 +84,7 @@ export const updateLesson = async (lessonId: string, title: string, classId: str
     if (file) {
         formData.append("file", file);
     }
-    const token = localStorage.getItem("teacherToken");
+    const token = getAdminToken();
     const response = await axios.put(`${API_URL}/api/teacher/lessons/${lessonId}`, formData, {
         headers: {
             "Authorization": `Bearer ${token}`,

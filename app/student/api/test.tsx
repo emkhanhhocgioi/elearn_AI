@@ -1,18 +1,31 @@
-'use client';
 import axios from "axios";
 
 const api_url = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
 
+const getStudentToken = () => {
+  if (typeof window !== "undefined") {
+    return localStorage.getItem("studentToken");
+  }
+  return null;
+};
+const getAuthConfig = () => {
+  const token = getStudentToken();
+  return token
+    ? { headers: { Authorization: `Bearer ${token}` } }
+    : {};
+};
+
 export const getStudentClassTest = async () => { 
     try {
-        const studentToken = localStorage.getItem('studentToken');
+        const studentToken = getStudentToken();
         if (!studentToken) {
             throw new Error('Token not found in localStorage');
         }
         const res = await axios.get(`${api_url}/api/student/tests`, {
+            ...getAuthConfig(),
             headers: {
-                'Content-Type': 'application/json', 
-                'Authorization': `Bearer ${studentToken}`
+                ...getAuthConfig().headers,
+                'Content-Type': 'application/json'
             }
         });
         console.log('Fetched student class tests:', res.data);  
@@ -24,14 +37,15 @@ export const getStudentClassTest = async () => {
 
 export const getTestQuestionsDetail = async (testId: string) => {   
     try {
-        const studentToken = localStorage.getItem('studentToken');
+        const studentToken = getStudentToken();
         if (!studentToken) {
             throw new Error('Token not found in localStorage');
         }
         const res = await axios.get(`${api_url}/api/student/test/${testId}`, {
+            ...getAuthConfig(),
             headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${studentToken}`
+                ...getAuthConfig().headers,
+                'Content-Type': 'application/json'
             }
         });
         console.log('Fetched test questions detail:', res.data);
@@ -43,14 +57,15 @@ export const getTestQuestionsDetail = async (testId: string) => {
 
 export const getTestGradingDetail = async (testId: string) => {
     try {
-        const studentToken = localStorage.getItem('studentToken');
+        const studentToken = getStudentToken();
         if (!studentToken) {
             throw new Error('Token not found in localStorage');
         }
         const res = await axios.get(`${api_url}/api/student/test/grading/${testId}`, {
+            ...getAuthConfig(),
             headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${studentToken}`
+                ...getAuthConfig().headers,
+                'Content-Type': 'application/json'
             }
         });
         console.log('Fetched test grading detail:', res.data);
@@ -62,16 +77,12 @@ export const getTestGradingDetail = async (testId: string) => {
 
 export const uploadTestAnswerFile = async (formData: FormData) => {
     try {
-        const studentToken = localStorage.getItem('studentToken');
+        const studentToken = getStudentToken();
         if (!studentToken) {
             throw new Error('Token not found in localStorage');
         }
 
-        const res = await axios.post(`${api_url}/api/student/test/answer/file-upload`, formData, {
-            headers: {
-                'Authorization': `Bearer ${studentToken}`
-            }
-        });
+        const res = await axios.post(`${api_url}/api/student/test/answer/file-upload`, formData, getAuthConfig());
         console.log('Uploaded test answer file:', res.data);
         return res.data;
     }
@@ -83,7 +94,7 @@ export const uploadTestAnswerFile = async (formData: FormData) => {
 
 export const editTestAnswer = async (testId: string, questionId: string, answer: string) => {
     try {
-        const studentToken = localStorage.getItem('studentToken');
+        const studentToken = getStudentToken();
         if (!studentToken) {
             throw new Error('Token not found in localStorage');
         }
@@ -95,9 +106,10 @@ export const editTestAnswer = async (testId: string, questionId: string, answer:
                 answer
             },
             {
+                ...getAuthConfig(),
                 headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${studentToken}`
+                    ...getAuthConfig().headers,
+                    'Content-Type': 'application/json'
                 }
             }
         );
@@ -112,16 +124,12 @@ export const editTestAnswer = async (testId: string, questionId: string, answer:
 
 export const editTestAnswerFile = async (formData: FormData) => {
     try {
-        const studentToken = localStorage.getItem('studentToken');
+        const studentToken = getStudentToken();
         if (!studentToken) {
             throw new Error('Token not found in localStorage');
         }
 
-        const res = await axios.put(`${api_url}/api/student/test/answer/file-edit`, formData, {
-            headers: {
-                'Authorization': `Bearer ${studentToken}`
-            }
-        });
+        const res = await axios.put(`${api_url}/api/student/test/answer/file-edit`, formData, getAuthConfig());
         console.log('Edited test answer file:', res.data);
         return res.data;
     }

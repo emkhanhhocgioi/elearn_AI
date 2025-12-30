@@ -1,10 +1,10 @@
 'use client';
 export const dynamic = "force-dynamic";
-import { Bell, Search, MoreVertical, Users, BookOpen, FileText, TrendingUp, Award, LogOut, User, Settings, Star, ZoomIn, SearchIcon, Phone } from 'lucide-react';
+import { Bell, Search, MoreVertical, BookOpen, FileText, TrendingUp, Award, LogOut, User, Settings, Star, Phone, Calendar } from 'lucide-react';
 import { useState, lazy, Suspense, useEffect } from 'react';
 import { studentLogout } from '@/app/api/auth';
 import { useRouter } from 'next/navigation';
-import { Button } from '@/components/ui/button';
+
 const MyClassesTab = lazy(() => import('../components/MyClassesTab'));
 const MyTestsTab = lazy(() => import('../components/MyTestsTab'));
 const DocumentsTab = lazy(() => import('../components/DocumentsTab'));
@@ -12,6 +12,7 @@ const PersonalInfoTab = lazy(() => import('../components/PersonalInfoTab'));
 const SettingsTab = lazy(() => import('../components/SettingsTab'));
 const MyGradeTab = lazy(() => import('../components/MyGradeTab'));
 const TeacherContactTab = lazy(() => import('../components/TeacherContactTab'));
+const ScheduleTab = lazy(() => import('../components/ScheduleTab'));
 import {searchLessonsAndTests} from '@/app/student/api/search'
 
 const TabLoader = () => (
@@ -19,20 +20,56 @@ const TabLoader = () => (
     <div className="text-gray-500">Loading...</div>
   </div>
 );
+// Interface for API response
+interface TestApiResponse {
+  _id: string;
+  classID: string;
+  teacherID: string;
+  testtitle: string;
+  subject: string;
+  avg_score: string;
+  participants: number;
+  closeDate: string;
+  status: string;
+  createDate: string;
+  __v: number;
+  test_time: number;
+  isSubmited: boolean;
+  isSubmitedTime: string;
+}
 
+// Interface for mapped test object
+
+export interface Lesson {
+  _id: string;
+  title: string;
+  classId: string;
+  teacherId: string;
+  subject: string;
+  lessonMetadata: string;
+  fileType?: string;
+  createDate: string;
+  __v: number;
+}
+
+export interface DocumentItem {
+  id: string;
+  title: string;
+  class: string;
+  type: string;
+  size: string;
+  uploadedDate: string;
+  uploader: string;
+  downloadUrl: string;
+}
 export default function StudentDashboard() {
   const router = useRouter(); 
   const [currentPage, setCurrentPage] = useState('classes');
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [searchResults, setSearchResults] = useState<any>(null);
+  const [searchResults, setSearchResults] = useState<{ lessons: Lesson[]; tests: TestApiResponse[] } | null>(null);
   const [isSearching, setIsSearching] = useState(false);
-  const stats = [
-    { label: "Active Classes", value: "3", icon: BookOpen, color: "blue" },
-    { label: "Pending Tests", value: "2", icon: Award, color: "orange" },
-    { label: "Documents", value: "24", icon: FileText, color: "green" },
-    { label: "Current GPA", value: "3.8", icon: TrendingUp, color: "purple" }
-  ];
+ 
 
   // Debounce search với 5 giây
   useEffect(() => {
@@ -132,6 +169,15 @@ export default function StudentDashboard() {
                 <span className="font-medium">Teacher Contact</span>
               </li>
               <li 
+                onClick={() => setCurrentPage('schedule')}
+                className={`flex items-center gap-3 px-4 py-2 rounded-lg cursor-pointer transition-colors ${
+                  currentPage === 'schedule' ? 'text-blue-600 bg-blue-50' : 'text-gray-700 hover:bg-gray-50'
+                }`}
+              >
+                <Calendar className="w-5 h-5" />
+                <span className="font-medium">Schedule</span>
+              </li>
+              <li 
                 onClick={() => setCurrentPage('personal')}
                 className={`flex items-center gap-3 px-4 py-2 rounded-lg cursor-pointer transition-colors ${
                   currentPage === 'personal' ? 'text-blue-600 bg-blue-50' : 'text-gray-700 hover:bg-gray-50'
@@ -193,10 +239,10 @@ export default function StudentDashboard() {
                   {searchResults.lessons && searchResults.lessons.length > 0 && (
                     <div className="p-2">
                       <h4 className="text-xs font-semibold text-gray-500 px-2 py-1">Lessons</h4>
-                      {searchResults.lessons.map((lesson: any) => (
+                      {searchResults.lessons.map((lesson: Lesson) => (
                         <div key={lesson._id} className="px-3 py-2 hover:bg-gray-50 rounded cursor-pointer">
-                          <div className="text-sm font-medium text-gray-900">{lesson.title || lesson.name}</div>
-                          <div className="text-xs text-gray-500">{lesson.description || 'No description'}</div>
+                          <div className="text-sm font-medium text-gray-900">{lesson.title }</div>
+                       
                         </div>
                       ))}
                     </div>
@@ -205,7 +251,7 @@ export default function StudentDashboard() {
                   {searchResults.tests && searchResults.tests.length > 0 && (
                     <div className="p-2 border-t border-gray-100">
                       <h4 className="text-xs font-semibold text-gray-500 px-2 py-1">Tests</h4>
-                      {searchResults.tests.map((test: any) => (
+                      {searchResults.tests.map((test: TestApiResponse) => (
                         <div key={test._id} className="px-3 py-2 hover:bg-gray-50 rounded cursor-pointer">
                           <div className="flex items-start justify-between">
                             <div className="flex-1">
@@ -313,6 +359,7 @@ export default function StudentDashboard() {
             {currentPage === 'documents' && <DocumentsTab />}
             {currentPage === 'grades' && <MyGradeTab />}
             {currentPage === 'teacher-contact' && <TeacherContactTab />}
+            {currentPage === 'schedule' && <ScheduleTab />}
             {currentPage === 'personal' && <PersonalInfoTab />}
             {currentPage === 'settings' && <SettingsTab />}
           </Suspense>

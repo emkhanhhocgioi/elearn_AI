@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { Users, Edit2, Save, X } from 'lucide-react';
 import { getTeacherClasses } from '@/app/teacher/api/class';
+import {sendEmailToHomeroomClass} from '@/app/teacher/api/mailing';
 
 interface Student {
   _id: string;
@@ -94,6 +95,9 @@ export default function ClassesTab() {
     const date = new Date(dateString);
     return date.toLocaleDateString('vi-VN');
   };
+
+
+  
 
   return (
     <div className="space-y-6">
@@ -264,6 +268,7 @@ export default function ClassesTab() {
           </div>
         </>
       )}
+      
     </div>
   );
 }

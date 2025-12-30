@@ -1,6 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { Edit2, Save, X, Mail, Phone, MapPin, Calendar, User } from 'lucide-react';
+import { Edit2, Save, X, Mail, Phone, Calendar, User } from 'lucide-react';
 import { getStudentInfo } from '@/app/student/api/personal';
 
 const PersonalInfoTab = () => {

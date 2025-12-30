@@ -1,4 +1,4 @@
-'use client';
+
 
 import { useEffect, useRef, useState } from 'react';
 
@@ -8,7 +8,7 @@ const WS_URL = 'ws://localhost:4000';
 export function useWebSocket() {
     const wsRef = useRef<WebSocket | null>(null);
     const [isConnected, setIsConnected] = useState(false);
-    const [lastMessage, setLastMessage] = useState<any>(null);
+    const [lastMessage, setLastMessage] = useState<unknown>(null);
 
     useEffect(() => {
         // Create WebSocket connection
@@ -52,7 +52,7 @@ export function useWebSocket() {
     }, []);
 
     // Send message function
-    const sendMessage = (message: any) => {
+    const sendMessage = (message: unknown) => {
         if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
             wsRef.current.send(JSON.stringify(message));
         } else {
@@ -63,7 +63,6 @@ export function useWebSocket() {
     return {
         isConnected,
         lastMessage,
-        sendMessage,
-        ws: wsRef.current
+        sendMessage
     };
 }

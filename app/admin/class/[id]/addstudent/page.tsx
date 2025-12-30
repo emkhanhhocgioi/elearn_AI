@@ -312,7 +312,7 @@ export default function AddStudentPage() {
               <UserPlus className="w-16 h-16 mx-auto mb-4 opacity-50" />
               <p className="text-lg">Chưa có học sinh nào</p>
            <p className="text-sm">
-  Điền thông tin bên trái và nhấn 'Thêm vào danh sách'
+  Điền thông tin bên trái và nhấn Thêm vào danh sách
 </p>
 
             </div>

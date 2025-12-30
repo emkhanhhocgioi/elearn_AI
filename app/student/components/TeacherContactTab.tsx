@@ -58,7 +58,7 @@ export default function TeacherContactTab() {
     return matchesSearch && matchesSubject;
   });
 
-  const classTeachers = filteredTeachers.filter(t => t.isClassTeacher);
+
   const subjectTeachers = filteredTeachers.filter(t => !t.isClassTeacher);
 
   if (loading) {
@@ -135,21 +135,9 @@ export default function TeacherContactTab() {
 }
 
 function TeacherCard({ teacher }: { teacher: Teacher }) {
-  const getAvatarUrl = (avatar?: string) => {
-    if (!avatar || avatar === 'noname.png') {
-      return null;
-    }
-    return avatar;
-  };
 
-  const getInitials = (name: string) => {
-    return name
-      .split(' ')
-      .map(n => n[0])
-      .join('')
-      .toUpperCase()
-      .slice(0, 2);
-  };
+
+
 
   return (
     <div className="bg-white rounded-lg border border-gray-200 p-6 hover:shadow-lg transition-shadow">

@@ -1,5 +1,5 @@
 'use client';
-export const dynamic = "force-dynamic";
+
 import { useState, useEffect } from 'react';
 import { usePractice } from '@/app/student/context/PracticeContext';
 import { gradeEssay ,AI_auto_grade} from '@/app/student/api/personal';

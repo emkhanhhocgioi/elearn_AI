@@ -20,9 +20,9 @@ export default function AdminDashboard() {
   const [currentPage, setCurrentPage] = useState('dashboard');
   const [serviceStatus, setServiceStatus] = useState<any>(null);
   const [isCheckingHealth, setIsCheckingHealth] = useState(false);
-  const [totalStudents, setTotalStudents] = useState(0);
-  const [totalClasses, setTotalClasses] = useState(0);
-  const [totalTeachers, setTotalTeachers] = useState(0);
+  const [totalStudents, ] = useState(0);
+  const [totalClasses, ] = useState(0);
+  const [totalTeachers, ] = useState(0);
 
   useEffect(() => {
     // const fetchData = async () => {

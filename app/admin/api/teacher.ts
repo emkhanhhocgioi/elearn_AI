@@ -1,7 +1,19 @@
-'use client';
 import axios from "axios";
 
 const BASE_URL = "http://localhost:4000";
+
+const getAdminToken = () => {
+  if (typeof window !== "undefined") {
+    return localStorage.getItem("adminToken");
+  }
+  return null;
+};
+const getAuthConfig = () => {
+  const token = getAdminToken();
+  return token
+    ? { headers: { Authorization: `Bearer ${token}` } }
+    : {};
+};
 
 export interface Teacher {
   _id: string;
@@ -30,11 +42,12 @@ export interface CreateTeacherDTO {
 
 export const getTeacherById  = async (teacherId: string) => {
   try {
-    const token = localStorage.getItem('adminToken');
+    const token = getAdminToken();
     if (!token) throw new Error('Token not found');
     const response = await axios.get(`${BASE_URL}/api/admin/teacher/${teacherId}`, {
+      ...getAuthConfig(),
       headers: {
-        'Authorization': `Bearer ${token}`,
+        ...getAuthConfig().headers,
         "Content-Type": "application/json",
       },
     });
@@ -46,11 +59,12 @@ export const getTeacherById  = async (teacherId: string) => {
 
 export const getAllTeachers = async ()  => {
   try {
-    const token = localStorage.getItem('adminToken');
+    const token = getAdminToken();
     if (!token) throw new Error('Token not found');
     const response = await axios.get(`${BASE_URL}/api/admin/teachers`, {
+      ...getAuthConfig(),
       headers: {
-        'Authorization': `Bearer ${token}`,
+        ...getAuthConfig().headers,
         "Content-Type": "application/json",
       },
     });
@@ -65,11 +79,12 @@ export const getAllTeachers = async ()  => {
 
 export const createTeacher = async (teacherData: CreateTeacherDTO) => {
   try {
-    const token = localStorage.getItem('adminToken');
+    const token = getAdminToken();
     if (!token) throw new Error('Token not found');
     const response = await axios.post(`${BASE_URL}/api/admin/teachers/create`, teacherData, {
+      ...getAuthConfig(),
       headers: {
-        'Authorization': `Bearer ${token}`,
+        ...getAuthConfig().headers,
         "Content-Type": "application/json",
       },
     });
@@ -82,11 +97,12 @@ export const createTeacher = async (teacherData: CreateTeacherDTO) => {
 
 export const updateTeacher = async (id: string, teacherData: Partial<CreateTeacherDTO>) => {
   try {
-    const token = localStorage.getItem('adminToken');
+    const token = getAdminToken();
     if (!token) throw new Error('Token not found');
     const response = await axios.put(`${BASE_URL}/api/admin/teacher/update/${id}`, teacherData, {
+      ...getAuthConfig(),
       headers: {
-        'Authorization': `Bearer ${token}`,
+        ...getAuthConfig().headers,
         "Content-Type": "application/json",
       },
     });
@@ -99,11 +115,12 @@ export const updateTeacher = async (id: string, teacherData: Partial<CreateTeach
 
 export const deleteTeacher = async (id: string) => {
   try {
-    const token = localStorage.getItem('adminToken');
+    const token = getAdminToken();
     if (!token) throw new Error('Token not found');
     const response = await axios.delete(`${BASE_URL}/api/admin/teacher/delete/${id}`, {
+      ...getAuthConfig(),
       headers: {
-        'Authorization': `Bearer ${token}`,
+        ...getAuthConfig().headers,
         "Content-Type": "application/json",
       },
     });

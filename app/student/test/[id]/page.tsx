@@ -106,7 +106,7 @@ const TestDetailPage = () => {
     sendMessage({
       type: 'start_test',
       testId,
-      token
+      token: token ? token : '',
     });
   };
 
@@ -215,7 +215,7 @@ const TestDetailPage = () => {
         type: 'submit_test',
         testId,
         answerData: updatedAnswers,
-        token: token
+        token: token ? token : '',
       });
       setShowConfirmDialog(false);
     } catch (error) {

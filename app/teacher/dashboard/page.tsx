@@ -7,6 +7,7 @@ import AnalyticsTab from '../components/AnalyticsTab';
 const LessonsTab = lazy(() => import('../components/LessonsTab'));
 const ClassesTab = lazy(() => import('../components/ClassesTab'));
 const TestsTab = lazy(() => import('../components/TestsTab'));
+const ScheduleTab = lazy(() => import('../components/ScheduleTab'));
 
 const TabLoader = () => (
   <div className="flex items-center justify-center py-12">
@@ -68,9 +69,14 @@ export default function TeacherDashboard() {
                 <FileText className="w-5 h-5" />
                 <span className="font-medium">Tests & Assignments</span>
               </li>
-              <li className="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-gray-50 rounded-lg cursor-pointer">
+              <li 
+                onClick={() => setCurrentPage('schedule')}
+                className={`flex items-center gap-3 px-4 py-2 rounded-lg cursor-pointer ${
+                  currentPage === 'schedule' ? 'text-purple-600 bg-purple-50' : 'text-gray-700 hover:bg-gray-50'
+                }`}
+              >
                 <Calendar className="w-5 h-5" />
-                <span>Schedule</span>
+                <span className="font-medium">Schedule</span>
               </li>
               <li 
                 onClick={() => setCurrentPage('analytics')}
@@ -155,6 +161,7 @@ export default function TeacherDashboard() {
             {currentPage === 'lessons' && <LessonsTab />}
             {currentPage === 'classes' && <ClassesTab />}
             {currentPage === 'tests' && <TestsTab />}
+            {currentPage === 'schedule' && <ScheduleTab />}
             {currentPage === 'analytics' && <AnalyticsTab />}
           </Suspense>
         </div>
