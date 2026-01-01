@@ -5,7 +5,7 @@ import { useState, lazy, Suspense, useEffect } from 'react';
 import { studentLogout } from '@/app/api/auth';
 import { useRouter } from 'next/navigation';
 
-const MyClassesTab = lazy(() => import('../components/MyClassesTab'));
+const MyClassesTab = lazy(() => import('../components/PersonalTab'));
 const MyTestsTab = lazy(() => import('../components/MyTestsTab'));
 const DocumentsTab = lazy(() => import('../components/DocumentsTab'));
 const PersonalInfoTab = lazy(() => import('../components/PersonalInfoTab'));
@@ -107,106 +107,106 @@ export default function StudentDashboard() {
   };
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
+    <div className="flex min-h-screen bg-[#F1F5F9]">
       {/* Sidebar */}
-      <aside className="hidden lg:flex flex-col w-64 bg-white border-r border-gray-200 fixed h-full">
+      <aside className="hidden lg:flex flex-col w-64 bg-white border-r border-gray-200 fixed h-full shadow-sm">
         <div className="p-6 border-b border-gray-200">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
-              <span className="text-white font-bold text-sm">S</span>
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-[#2563EB] rounded-lg flex items-center justify-center shadow-sm">
+              <span className="text-white font-bold text-base">S</span>
             </div>
-            <span className="font-bold text-gray-900">STUDENT PORTAL</span>
+            <span className="font-bold text-[#0F172A] text-base tracking-tight">STUDENT PORTAL</span>
           </div>
         </div>
 
-        <nav className="flex-1 p-4">
-          <div className="mb-6">
-            <h3 className="text-xs font-semibold text-gray-500 mb-3 px-2">MAIN MENU</h3>
+        <nav className="flex-1 p-4 overflow-y-auto">
+          <div className="mb-8">
+            <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3 px-3">Main Menu</h3>
             <ul className="space-y-1">
               <li 
                 onClick={() => setCurrentPage('classes')}
-                className={`flex items-center gap-3 px-4 py-2 rounded-lg cursor-pointer transition-colors ${
-                  currentPage === 'classes' ? 'text-blue-600 bg-blue-50' : 'text-gray-700 hover:bg-gray-50'
+                className={`flex items-center gap-3 px-4 py-2.5 rounded-lg cursor-pointer transition-all duration-200 ${
+                  currentPage === 'classes' ? 'text-white bg-[#2563EB] shadow-sm' : 'text-[#0F172A] hover:bg-[#F1F5F9]'
                 }`}
               >
                 <User className="w-5 h-5" />
-                <span className="font-medium">Personal</span>
+                <span className="font-medium text-sm">Personal</span>
               </li>
               <li 
                 onClick={() => setCurrentPage('tests')}
-                className={`flex items-center gap-3 px-4 py-2 rounded-lg cursor-pointer transition-colors ${
-                  currentPage === 'tests' ? 'text-blue-600 bg-blue-50' : 'text-gray-700 hover:bg-gray-50'
+                className={`flex items-center gap-3 px-4 py-2.5 rounded-lg cursor-pointer transition-all duration-200 ${
+                  currentPage === 'tests' ? 'text-white bg-[#2563EB] shadow-sm' : 'text-[#0F172A] hover:bg-[#F1F5F9]'
                 }`}
               >
                 <Award className="w-5 h-5" />
-                <span className="font-medium">My Assignments</span>
+                <span className="font-medium text-sm">My Assignments</span>
               </li>
               <li 
                 onClick={() => setCurrentPage('documents')}
-                className={`flex items-center gap-3 px-4 py-2 rounded-lg cursor-pointer transition-colors ${
-                  currentPage === 'documents' ? 'text-blue-600 bg-blue-50' : 'text-gray-700 hover:bg-gray-50'
+                className={`flex items-center gap-3 px-4 py-2.5 rounded-lg cursor-pointer transition-all duration-200 ${
+                  currentPage === 'documents' ? 'text-white bg-[#2563EB] shadow-sm' : 'text-[#0F172A] hover:bg-[#F1F5F9]'
                 }`}
               >
                 <BookOpen className="w-5 h-5" />
-                <span className="font-medium">Class Documents</span>
+                <span className="font-medium text-sm">Class Documents</span>
               </li>
                <li 
                 onClick={() => setCurrentPage('grades')}
-                className={`flex items-center gap-3 px-4 py-2 rounded-lg cursor-pointer transition-colors ${
-                  currentPage === 'grades' ? 'text-blue-600 bg-blue-50' : 'text-gray-700 hover:bg-gray-50'
+                className={`flex items-center gap-3 px-4 py-2.5 rounded-lg cursor-pointer transition-all duration-200 ${
+                  currentPage === 'grades' ? 'text-white bg-[#2563EB] shadow-sm' : 'text-[#0F172A] hover:bg-[#F1F5F9]'
                 }`}
               >
                 <Star className="w-5 h-5" />
-                <span className="font-medium">Your Grade</span>
+                <span className="font-medium text-sm">Your Grade</span>
               </li>
               <li 
                 onClick={() => setCurrentPage('teacher-contact')}
-                className={`flex items-center gap-3 px-4 py-2 rounded-lg cursor-pointer transition-colors ${
-                  currentPage === 'teacher-contact' ? 'text-blue-600 bg-blue-50' : 'text-gray-700 hover:bg-gray-50'
+                className={`flex items-center gap-3 px-4 py-2.5 rounded-lg cursor-pointer transition-all duration-200 ${
+                  currentPage === 'teacher-contact' ? 'text-white bg-[#2563EB] shadow-sm' : 'text-[#0F172A] hover:bg-[#F1F5F9]'
                 }`}
               >
                 <Phone className="w-5 h-5" />
-                <span className="font-medium">Teacher Contact</span>
+                <span className="font-medium text-sm">Teacher Contact</span>
               </li>
               <li 
                 onClick={() => setCurrentPage('schedule')}
-                className={`flex items-center gap-3 px-4 py-2 rounded-lg cursor-pointer transition-colors ${
-                  currentPage === 'schedule' ? 'text-blue-600 bg-blue-50' : 'text-gray-700 hover:bg-gray-50'
+                className={`flex items-center gap-3 px-4 py-2.5 rounded-lg cursor-pointer transition-all duration-200 ${
+                  currentPage === 'schedule' ? 'text-white bg-[#2563EB] shadow-sm' : 'text-[#0F172A] hover:bg-[#F1F5F9]'
                 }`}
               >
                 <Calendar className="w-5 h-5" />
-                <span className="font-medium">Schedule</span>
+                <span className="font-medium text-sm">Schedule</span>
               </li>
               <li 
                 onClick={() => setCurrentPage('personal')}
-                className={`flex items-center gap-3 px-4 py-2 rounded-lg cursor-pointer transition-colors ${
-                  currentPage === 'personal' ? 'text-blue-600 bg-blue-50' : 'text-gray-700 hover:bg-gray-50'
+                className={`flex items-center gap-3 px-4 py-2.5 rounded-lg cursor-pointer transition-all duration-200 ${
+                  currentPage === 'personal' ? 'text-white bg-[#2563EB] shadow-sm' : 'text-[#0F172A] hover:bg-[#F1F5F9]'
                 }`}
               >
                 <User className="w-5 h-5" />
-                <span className="font-medium">Personal Info</span>
+                <span className="font-medium text-sm">Personal Info</span>
               </li>
             </ul>
           </div>
 
           <div>
-            <h3 className="text-xs font-semibold text-gray-500 mb-3 px-2">ACCOUNT</h3>
+            <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3 px-3">Account</h3>
             <ul className="space-y-1">
               <li 
                 onClick={() => setCurrentPage('settings')}
-                className={`flex items-center gap-3 px-4 py-2 rounded-lg cursor-pointer transition-colors ${
-                  currentPage === 'settings' ? 'text-blue-600 bg-blue-50' : 'text-gray-700 hover:bg-gray-50'
+                className={`flex items-center gap-3 px-4 py-2.5 rounded-lg cursor-pointer transition-all duration-200 ${
+                  currentPage === 'settings' ? 'text-white bg-[#2563EB] shadow-sm' : 'text-[#0F172A] hover:bg-[#F1F5F9]'
                 }`}
               >
                 <Settings className="w-5 h-5" />
-                <span className="font-medium">Settings</span>
+                <span className="font-medium text-sm">Settings</span>
               </li>
               <li 
                 onClick={handleLogout}
-                className="flex items-center gap-3 px-4 py-2 text-red-600 hover:bg-red-50 rounded-lg cursor-pointer transition-colors"
+                className="flex items-center gap-3 px-4 py-2.5 text-red-600 hover:bg-red-50 rounded-lg cursor-pointer transition-all duration-200"
               >
                 <LogOut className="w-5 h-5" />
-                <span className="font-medium">Logout</span>
+                <span className="font-medium text-sm">Logout</span>
               </li>
             </ul>
           </div>
@@ -216,7 +216,7 @@ export default function StudentDashboard() {
       {/* Main Content */}
       <main className="flex-1 lg:ml-64">
         {/* Header */}
-        <header className="bg-white border-b border-gray-200 sticky top-0 z-10">
+        <header className="bg-white border-b border-gray-200 sticky top-0 z-10 shadow-sm">
           <div className="flex items-center justify-between px-4 lg:px-8 py-4">
             <div className="flex items-center gap-4 flex-1 max-w-2xl relative">
               <Search className="text-gray-400 w-5 h-5" />
@@ -225,7 +225,8 @@ export default function StudentDashboard() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search classes, documents, tests..."
-                className="flex-1 outline-none text-sm bg-transparent"
+                className="flex-1 outline-none text-sm bg-transparent text-[#0F172A] placeholder-gray-400 focus:placeholder-gray-500 transition-colors"
+                aria-label="Search"
               />
               {isSearching && (
                 <div className="absolute right-0 text-xs text-gray-500">
@@ -237,11 +238,11 @@ export default function StudentDashboard() {
               {searchResults && searchQuery.trim() && (
                 <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-lg shadow-lg border border-gray-200 max-h-96 overflow-y-auto z-20">
                   {searchResults.lessons && searchResults.lessons.length > 0 && (
-                    <div className="p-2">
-                      <h4 className="text-xs font-semibold text-gray-500 px-2 py-1">Lessons</h4>
+                    <div className="p-3">
+                      <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wide px-3 py-2">Lessons</h4>
                       {searchResults.lessons.map((lesson: Lesson) => (
-                        <div key={lesson._id} className="px-3 py-2 hover:bg-gray-50 rounded cursor-pointer">
-                          <div className="text-sm font-medium text-gray-900">{lesson.title }</div>
+                        <div key={lesson._id} className="px-3 py-3 hover:bg-[#F1F5F9] rounded-lg cursor-pointer transition-colors">
+                          <div className="text-sm font-medium text-[#0F172A]">{lesson.title }</div>
                        
                         </div>
                       ))}
@@ -249,14 +250,14 @@ export default function StudentDashboard() {
                   )}
                   
                   {searchResults.tests && searchResults.tests.length > 0 && (
-                    <div className="p-2 border-t border-gray-100">
-                      <h4 className="text-xs font-semibold text-gray-500 px-2 py-1">Tests</h4>
+                    <div className="p-3 border-t border-gray-100">
+                      <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wide px-3 py-2">Tests</h4>
                       {searchResults.tests.map((test: TestApiResponse) => (
-                        <div key={test._id} className="px-3 py-2 hover:bg-gray-50 rounded cursor-pointer">
+                        <div key={test._id} className="px-3 py-3 hover:bg-[#F1F5F9] rounded-lg cursor-pointer transition-colors">
                           <div className="flex items-start justify-between">
                             <div className="flex-1">
-                              <div className="text-sm font-medium text-gray-900">{test.testtitle}</div>
-                              <div className="text-xs text-gray-500 mt-1">
+                              <div className="text-sm font-medium text-[#0F172A]">{test.testtitle}</div>
+                              <div className="text-xs text-gray-600 mt-1.5 leading-relaxed">
                                 <span className="inline-flex items-center gap-1">
                                   <span className="font-medium">{test.subject}</span>
                                   <span>•</span>
@@ -269,8 +270,8 @@ export default function StudentDashboard() {
                                 Đóng: {new Date(test.closeDate).toLocaleDateString('vi-VN')}
                               </div>
                             </div>
-                            <span className={`text-xs px-2 py-1 rounded-full ${
-                              test.status === 'open' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700'
+                            <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${
+                              test.status === 'open' ? 'bg-green-50 text-green-700 border border-green-200' : 'bg-gray-100 text-gray-700 border border-gray-200'
                             }`}>
                               {test.status === 'open' ? 'Mở' : 'Đóng'}
                             </span>
@@ -282,7 +283,7 @@ export default function StudentDashboard() {
                   
                   {(!searchResults.lessons || searchResults.lessons.length === 0) && 
                    (!searchResults.tests || searchResults.tests.length === 0) && (
-                    <div className="p-4 text-center text-sm text-gray-500">
+                    <div className="p-6 text-center text-sm text-gray-500">
                       No results found
                     </div>
                   )}
@@ -292,33 +293,35 @@ export default function StudentDashboard() {
             <div className="flex items-center gap-4">
               <button
               onClick={() => router.push('/student/notifications')}
-              className="relative"
+              className="relative p-2 rounded-lg hover:bg-[#F1F5F9] transition-colors focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:ring-offset-2"
               aria-label="Notifications"
               >
-              <Bell className="w-5 h-5 text-gray-600 cursor-pointer hover:text-gray-900" />
+              <Bell className="w-5 h-5 text-gray-600 hover:text-[#0F172A]" />
               </button>
 
               <div className="relative">
-              <div 
-                className="flex items-center gap-3 cursor-pointer"
+              <button 
+                className="flex items-center gap-3 p-1.5 rounded-lg hover:bg-[#F1F5F9] transition-colors focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:ring-offset-2"
                 onClick={() => setProfileMenuOpen(!profileMenuOpen)}
+                aria-label="Profile menu"
+                aria-expanded={profileMenuOpen}
               >
-                <span className="hidden md:block text-sm font-medium">Student Profile</span>
-                <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center">
+                <span className="hidden md:block text-sm font-medium text-[#0F172A]">Student Profile</span>
+                <div className="w-10 h-10 bg-[#2563EB] rounded-lg flex items-center justify-center shadow-sm">
                 <span className="text-white font-bold text-sm">A</span>
                 </div>
                 <MoreVertical className="w-5 h-5 text-gray-600" />
-              </div>
+              </button>
 
               {/* Profile Dropdown */}
               {profileMenuOpen && (
-                <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-2">
+                <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-2">
                 <button 
                   onClick={() => {
                   setCurrentPage('personal');
                   setProfileMenuOpen(false);
                   }}
-                  className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2"
+                  className="w-full text-left px-4 py-2.5 text-sm text-[#0F172A] hover:bg-[#F1F5F9] flex items-center gap-3 transition-colors"
                 >
                   <User className="w-4 h-4" />
                   View Profile
@@ -328,15 +331,15 @@ export default function StudentDashboard() {
                   setCurrentPage('settings');
                   setProfileMenuOpen(false);
                   }}
-                  className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2"
+                  className="w-full text-left px-4 py-2.5 text-sm text-[#0F172A] hover:bg-[#F1F5F9] flex items-center gap-3 transition-colors"
                 >
                   <Settings className="w-4 h-4" />
                   Settings
                 </button>
-                <hr className="my-2" />
+                <hr className="my-2 border-gray-200" />
                 <button 
                   onClick={handleLogout}
-                  className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 flex items-center gap-2"
+                  className="w-full text-left px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 flex items-center gap-3 transition-colors"
                 >
                   <LogOut className="w-4 h-4" />
                   Logout

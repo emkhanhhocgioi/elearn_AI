@@ -234,52 +234,54 @@ export default function SubmissionPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 p-4 sm:p-6">
       {/* Header */}
       <div className="mb-8">
         <button
           onClick={() => router.back()}
-          className="flex items-center gap-2 text-purple-600 hover:text-purple-700 mb-4"
+          className="flex items-center gap-2 text-purple-600 hover:text-purple-700 mb-4 px-3 py-2 rounded-xl hover:bg-purple-50 transition-all hover:scale-105 font-semibold group"
         >
-          <ArrowLeft className="w-5 h-5" />
-          Back to Test
+          <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
+          Quay lại Bài kiểm tra
         </button>
 
-        <div className="bg-white rounded-lg shadow-sm p-6">
+        <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl p-6 border border-gray-100">
           <div className="flex items-center gap-3 mb-4">
-            <FileText className="w-8 h-8 text-purple-600" />
+            <div className="p-3 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl shadow-md">
+              <FileText className="w-8 h-8 text-white" />
+            </div>
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">
-                {submissions[0]?.testID?.testtitle || 'Test Submissions'}
+              <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 bg-clip-text text-transparent">
+                {submissions[0]?.testID?.testtitle || 'Bài nộp Kiểm tra'}
               </h1>
               {submissions[0]?.testID && (
                 <p className="text-gray-600 mt-1">
-                  Subject: {submissions[0].testID.subject} • Duration: {submissions[0].testID.test_time} minutes
+                  Môn: {submissions[0].testID.subject} • Thời gian: {submissions[0].testID.test_time} phút
                 </p>
               )}
             </div>
           </div>
 
-          <div className="grid grid-cols-4 gap-4 mt-6">
-            <div className="bg-blue-50 rounded-lg p-4">
-              <p className="text-sm text-gray-600">Total Participants</p>
-              <p className="text-2xl font-bold text-blue-600">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
+            <div className="bg-gradient-to-br from-blue-100 to-indigo-100 rounded-xl p-4 shadow-md hover:shadow-lg transition-all hover:scale-105">
+              <p className="text-sm text-blue-700 font-semibold">Tổng số Học sinh</p>
+              <p className="text-3xl font-bold text-blue-700">
                 {submissions[0]?.testID?.participants || 0}
               </p>
             </div>
-            <div className="bg-green-50 rounded-lg p-4">
-              <p className="text-sm text-gray-600">Submissions</p>
-              <p className="text-2xl font-bold text-green-600">{submissions.length}</p>
+            <div className="bg-gradient-to-br from-green-100 to-emerald-100 rounded-xl p-4 shadow-md hover:shadow-lg transition-all hover:scale-105">
+              <p className="text-sm text-green-700 font-semibold">Bài nộp</p>
+              <p className="text-3xl font-bold text-green-700">{submissions.length}</p>
             </div>
-            <div className="bg-purple-50 rounded-lg p-4">
-              <p className="text-sm text-gray-600">Average Score</p>
-              <p className="text-2xl font-bold text-purple-600">
+            <div className="bg-gradient-to-br from-purple-100 to-pink-100 rounded-xl p-4 shadow-md hover:shadow-lg transition-all hover:scale-105">
+              <p className="text-sm text-purple-700 font-semibold">Điểm TB</p>
+              <p className="text-3xl font-bold text-purple-700">
                 {submissions[0]?.testID?.avg_score || '0'}%
               </p>
             </div>
-            <div className="bg-orange-50 rounded-lg p-4">
-              <p className="text-sm text-gray-600">Status</p>
-              <p className="text-2xl font-bold text-orange-600 capitalize">
+            <div className="bg-gradient-to-br from-orange-100 to-amber-100 rounded-xl p-4 shadow-md hover:shadow-lg transition-all hover:scale-105">
+              <p className="text-sm text-orange-700 font-semibold">Trạng thái</p>
+              <p className="text-2xl font-bold text-orange-700 capitalize">
                 {submissions[0]?.testID?.status || 'N/A'}
               </p>
             </div>
@@ -288,16 +290,16 @@ export default function SubmissionPage() {
       </div>
 
       {error && (
-        <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
-          {error}
+        <div className="mb-4 p-4 bg-gradient-to-r from-red-50 to-pink-50 border-l-4 border-red-500 rounded-lg text-red-700 shadow-sm">
+          <p className="font-semibold">{error}</p>
         </div>
       )}
 
       {/* Submissions List */}
-      <div className="bg-white rounded-xl overflow-hidden shadow-sm">
-        <div className="px-6 py-4 border-b border-gray-200">
+      <div className="bg-white/80 backdrop-blur-sm rounded-2xl overflow-hidden shadow-xl border border-gray-100">
+        <div className="px-6 py-5 border-b border-gray-200 bg-gradient-to-r from-purple-50 to-pink-50">
           <h2 className="text-xl font-bold text-gray-900">
-            Student Submissions ({submissions.length})
+            Bài nộp của Học sinh ({submissions.length})
           </h2>
         </div>
 
@@ -311,7 +313,7 @@ export default function SubmissionPage() {
               return (
                 <div
                   key={submission._id}
-                  className="p-6 hover:bg-gray-50 transition cursor-pointer"
+                  className="p-6 hover:bg-gradient-to-r hover:from-purple-50 hover:to-pink-50 transition-all duration-200 cursor-pointer group"
                   onClick={() => {
                     setSelectedSubmission(submission);
                     setTeacherComments(submission.teacherComments || '');
@@ -353,18 +355,18 @@ export default function SubmissionPage() {
                       </div>
 
                       {/* Score */}
-                      <div className="text-center bg-purple-50 rounded-lg px-6 py-3">
-                        <p className="text-3xl font-bold text-purple-600">{score}%</p>
+                      <div className="text-center bg-gradient-to-br from-purple-100 to-pink-100 rounded-xl px-6 py-3 shadow-md group-hover:scale-110 transition-transform">
+                        <p className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">{score}%</p>
                         <p className="text-xs text-gray-600 mt-1">
-                          {correctCount}/{totalCount} correct
+                          {correctCount}/{totalCount} đúng
                         </p>
                       </div>
 
                       {/* Status Badge */}
                       {submission.submit && (
-                        <div className="flex items-center gap-2 bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-medium">
+                        <div className="flex items-center gap-2 bg-gradient-to-r from-green-100 to-emerald-100 text-green-700 px-3 py-1.5 rounded-full text-sm font-medium shadow-sm">
                           <CheckCircle className="w-4 h-4" />
-                          Submitted
+                          Đã nộp
                         </div>
                       )}
                     </div>
@@ -386,9 +388,9 @@ export default function SubmissionPage() {
 
       {/* Submission Detail Modal */}
       {selectedSubmission && (  
-        <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto shadow-xl">
-            <div className="sticky top-0 bg-white border-b border-gray-200 p-6 z-10">
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white/95 backdrop-blur-md rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-gray-200">
+            <div className="sticky top-0 bg-white/95 backdrop-blur-md border-b border-gray-200 p-6 z-10 rounded-t-2xl">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
                   <img
@@ -397,46 +399,45 @@ export default function SubmissionPage() {
                     className="w-14 h-14 rounded-full object-cover"
                   />
                   <div>
-                    <h2 className="text-2xl font-bold text-gray-900">
-                      {selectedSubmission.studentID.name}'s Submission
+                    <h2 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 bg-clip-text text-transparent">
+                      Bài nộp của {selectedSubmission.studentID.name}
                     </h2>
-                    <p className="text-sm text-gray-600">
-                      Submitted on {new Date(selectedSubmission.submissionTime).toLocaleString('vi-VN')}
+                    <p className="text-sm text-gray-600 mt-1">
+                      Nộp lúc {new Date(selectedSubmission.submissionTime).toLocaleString('vi-VN')}
                     </p>
                   </div>
                 </div>
                 <button
                   onClick={() => setSelectedSubmission(null)}
-                  className="p-2 hover:bg-gray-100 rounded-lg transition"
+                  className="p-2 hover:bg-gray-100 rounded-xl transition-all hover:scale-110"
                 >
-                  <X
-                   className="w-6 h-6 text-gray-500" />
+                  <X className="w-6 h-6 text-gray-500" />
                 </button>
               </div>
 
               {/* Student Stats */}
-              <div className="grid grid-cols-4 gap-3 mt-4">
-                <div className="bg-gray-50 rounded-lg p-3">
-                  <p className="text-xs text-gray-600">Academic Performance</p>
-                  <p className="text-sm font-semibold text-gray-900">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-4">
+                <div className="bg-gradient-to-br from-gray-50 to-slate-50 rounded-xl p-3 border border-gray-200 shadow-sm">
+                  <p className="text-xs text-gray-600 font-semibold">Học lực</p>
+                  <p className="text-sm font-bold text-gray-900">
                     {selectedSubmission.studentID.academic_performance}
                   </p>
                 </div>
-                <div className="bg-gray-50 rounded-lg p-3">
-                  <p className="text-xs text-gray-600">Conduct</p>
-                  <p className="text-sm font-semibold text-gray-900">
+                <div className="bg-gradient-to-br from-gray-50 to-slate-50 rounded-xl p-3 border border-gray-200 shadow-sm">
+                  <p className="text-xs text-gray-600 font-semibold">Hạnh kiểm</p>
+                  <p className="text-sm font-bold text-gray-900">
                     {selectedSubmission.studentID.conduct}
                   </p>
                 </div>
-                <div className="bg-gray-50 rounded-lg p-3">
-                  <p className="text-xs text-gray-600">Average Score</p>
-                  <p className="text-sm font-semibold text-gray-900">
+                <div className="bg-gradient-to-br from-gray-50 to-slate-50 rounded-xl p-3 border border-gray-200 shadow-sm">
+                  <p className="text-xs text-gray-600 font-semibold">Điểm TB</p>
+                  <p className="text-sm font-bold text-gray-900">
                     {selectedSubmission.studentID.averageScore}
                   </p>
                 </div>
-                <div className="bg-purple-50 rounded-lg p-3">
-                  <p className="text-xs text-gray-600">Test Score</p>
-                  <p className="text-sm font-semibold text-purple-600">
+                <div className="bg-gradient-to-br from-purple-100 to-pink-100 rounded-xl p-3 border border-purple-200 shadow-sm">
+                  <p className="text-xs text-purple-700 font-semibold">Điểm kiểm tra</p>
+                  <p className="text-sm font-bold text-purple-700">
                     {calculateScore(selectedSubmission.answers)}%
                   </p>
                 </div>
@@ -445,7 +446,7 @@ export default function SubmissionPage() {
 
             <div className="p-6">
               <h3 className="text-lg font-bold text-gray-900 mb-4">
-                Answers ({selectedSubmission.answers.length})
+                Câu trả lời ({selectedSubmission.answers.length})
               </h3>
 
             
@@ -547,17 +548,17 @@ export default function SubmissionPage() {
                         <button
                           onClick={() => handleAiGrade(answer)}
                           disabled={aiGradingLoading === answer._id}
-                          className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg hover:from-purple-700 hover:to-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 text-white rounded-xl hover:from-purple-700 hover:via-pink-700 hover:to-blue-700 transition-all shadow-md hover:shadow-lg hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed font-semibold"
                         >
                           {aiGradingLoading === answer._id ? (
                             <>
                               <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                              AI Grading...
+                              AI đang chấm...
                             </>
                           ) : (
                             <>
                               <Sparkles className="w-4 h-4" />
-                              AI Grade
+                              AI Chấm điểm
                             </>
                           )}
                         </button>

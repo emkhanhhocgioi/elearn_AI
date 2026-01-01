@@ -79,27 +79,34 @@ const PracticePage = () => {
                        practiceData.subject.toLowerCase() === 'ngữ văn';
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 p-6">
-      <div className="max-w-5xl mx-auto">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 p-6">
+      <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="mb-6">
           <button 
             onClick={() => router.back()}
-            className="flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-4 transition-colors"
+            className="flex items-center gap-2 text-gray-700 hover:text-gray-900 bg-white px-4 py-2.5 rounded-xl shadow-md hover:shadow-lg transition-all duration-200 font-medium mb-4"
           >
             <ChevronLeft className="w-5 h-5" />
-            <span className="font-medium">Quay lại</span>
+            <span>Quay lại</span>
           </button>
           
-          <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-6 text-white">
-            <div className="flex items-center gap-3 mb-2">
-              <div className="bg-white/20 p-3 rounded-lg">
-                <BookOpen className="w-6 h-6" />
+          <div className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 rounded-2xl p-8 text-white shadow-2xl border-4 border-white">
+            <div className="flex items-center gap-4 mb-3">
+              <div className="bg-white/20 backdrop-blur-sm p-4 rounded-xl shadow-lg">
+                <BookOpen className="w-8 h-8" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold">Luyện tập: {practiceData.subject}</h1>
-                <p className="text-blue-100 text-sm">
-                  {practiceData.difficulty && `Độ khó: ${practiceData.difficulty}`}
+                <h1 className="text-3xl font-bold">Luyện tập: {practiceData.subject}</h1>
+                <p className="text-blue-100 text-sm mt-1 flex items-center gap-2">
+                  {practiceData.difficulty && (
+                    <>
+                      <Target className="w-4 h-4" />
+                      <span className="bg-white/20 px-3 py-1 rounded-full font-semibold">
+                        Độ khó: {practiceData.difficulty}
+                      </span>
+                    </>
+                  )}
                 </p>
               </div>
             </div>
@@ -110,15 +117,17 @@ const PracticePage = () => {
           {/* Main Content - Exercise */}
           <div className="lg:col-span-2 space-y-6">
             {/* Question Card */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-              <div className="flex items-start gap-3 mb-4">
-                <div className="bg-blue-100 p-2 rounded-lg">
-                  <Target className="w-5 h-5 text-blue-600" />
+            <div className="bg-white rounded-2xl shadow-xl border-2 border-blue-100 p-8">
+              <div className="flex items-start gap-4 mb-6">
+                <div className="bg-gradient-to-br from-blue-500 to-purple-600 p-3 rounded-xl shadow-md">
+                  <Target className="w-6 h-6 text-white" />
                 </div>
                 <div className="flex-1">
-                  <h2 className="text-lg font-bold text-gray-900 mb-2">Câu hỏi</h2>
-                  <div className="bg-blue-50 p-4 rounded-lg border border-blue-100">
-                    <p className="text-gray-800 leading-relaxed whitespace-pre-wrap">
+                  <h2 className="text-2xl font-bold text-gray-900 mb-3 flex items-center gap-2">
+                    🎯 Câu hỏi
+                  </h2>
+                  <div className="bg-gradient-to-br from-blue-50 to-purple-50 p-6 rounded-xl border-2 border-blue-200 shadow-inner">
+                    <p className="text-gray-900 leading-relaxed whitespace-pre-wrap font-medium text-lg">
                       {practiceData.exercise_question}
                     </p>
                   </div>
@@ -127,13 +136,13 @@ const PracticePage = () => {
             </div>
 
             {/* Answer Input */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="bg-purple-100 p-2 rounded-lg">
-                  <Send className="w-5 h-5 text-purple-600" />
+            <div className="bg-white rounded-2xl shadow-xl border-2 border-purple-100 p-8">
+              <div className="flex items-center gap-4 mb-6">
+                <div className="bg-gradient-to-br from-purple-500 to-pink-600 p-3 rounded-xl shadow-md">
+                  <Send className="w-6 h-6 text-white" />
                 </div>
-                <h2 className="text-lg font-bold text-gray-900">
-                  {isVanSubject ? 'Bài làm của bạn' : 'Câu trả lời của bạn'}
+                <h2 className="text-2xl font-bold text-gray-900">
+                  {isVanSubject ? '✍️ Bài làm của bạn' : '✍️ Câu trả lời của bạn'}
                 </h2>
               </div>
               
@@ -143,22 +152,33 @@ const PracticePage = () => {
                 placeholder={isVanSubject 
                   ? "Nhập bài làm của bạn vào đây...\n\nHãy trình bày rõ ràng, mạch lạc và có dẫn chứng cụ thể."
                   : "Nhập câu trả lời của bạn vào đây..."}
-                className="w-full min-h-[300px] p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                className="w-full min-h-[300px] p-5 border-2 border-purple-300 rounded-xl focus:ring-4 focus:ring-purple-200 focus:border-purple-500 resize-none shadow-inner bg-gradient-to-br from-white to-purple-50 text-lg"
                 disabled={isSubmitting}
               />
 
-              <div className="mt-4 flex items-center justify-between">
-                <p className="text-sm text-gray-500">
-                  {studentAnswer.length} ký tự
-                </p>
+              <div className="mt-6 flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="bg-blue-50 px-4 py-2 rounded-full border border-blue-200">
+                    <p className="text-sm font-semibold text-blue-700">
+                      📝 {studentAnswer.length} ký tự
+                    </p>
+                  </div>
+                  {studentAnswer.length > 0 && (
+                    <div className="bg-green-50 px-4 py-2 rounded-full border border-green-200">
+                      <p className="text-sm font-semibold text-green-700">
+                        ✅ Sẵn sàng nộp
+                      </p>
+                    </div>
+                  )}
+                </div>
                 <button
                   onClick={handleSubmit}
                   disabled={isSubmitting || !studentAnswer.trim()}
-                  className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3 rounded-lg font-semibold hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                  className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 text-white px-8 py-3.5 rounded-xl font-bold hover:shadow-2xl transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center gap-2 text-lg"
                 >
                   {isSubmitting ? (
                     <>
-                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                      <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
                       Đang chấm bài...
                     </>
                   ) : (
@@ -170,46 +190,48 @@ const PracticePage = () => {
                 </button>
               </div>
             </div>
-             
             {/* Grading Result */}
             {gradingResult && (
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                <div className="flex items-start gap-3 mb-6">
-                  <div className="bg-green-100 p-3 rounded-lg">
-                    <Award className="w-6 h-6 text-green-600" />
+              <div className="bg-white rounded-2xl shadow-2xl border-4 border-green-200 p-8">
+                <div className="flex items-start gap-4 mb-8">
+                  <div className="bg-gradient-to-br from-green-500 to-green-600 p-4 rounded-xl shadow-lg">
+                    <Award className="w-8 h-8 text-white" />
                   </div>
                   <div className="flex-1">
-                    <h2 className="text-xl font-bold text-gray-900">Đánh Giá Của AI</h2>
-                    <p className="text-sm text-gray-500">Phân tích chi tiết bài làm của bạn</p>
+                    <h2 className="text-2xl font-bold text-gray-900">🤖 Đánh Giá Của AI</h2>
+                    <p className="text-sm text-gray-600 mt-1 flex items-center gap-2">
+                      <Sparkles className="w-4 h-4 text-yellow-500" />
+                      Phân tích chi tiết bài làm của bạn
+                    </p>
                   </div>
                 </div>
                     
                 {gradingResult.success && (gradingResult.result || gradingResult.grading_response) ? (
                   <div className="space-y-6">
                     {/* Overall Grade */}
-                    <div className="bg-gradient-to-br from-green-50 to-blue-50 p-6 rounded-xl border-2 border-green-200">
+                    <div className="bg-gradient-to-br from-green-50 via-blue-50 to-purple-50 p-8 rounded-2xl border-4 border-green-300 shadow-lg">
                       <div className="text-center">
-                        <p className="text-sm font-medium text-gray-600 mb-2">Điểm tổng thể</p>
-                        <div className="flex items-center justify-center gap-3">
-                          <p className="text-6xl font-bold text-green-600">
+                        <p className="text-sm font-bold text-gray-600 mb-3 uppercase tracking-wide">Điểm tổng thể</p>
+                        <div className="flex items-center justify-center gap-4 mb-4">
+                          <p className="text-7xl font-bold bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">
                             {gradingResult.grading_response?.score || gradingResult.result?.grade || 0}
                           </p>
-                          <span className="text-3xl text-gray-400">/10</span>
+                          <span className="text-4xl text-gray-400 font-bold">/10</span>
                         </div>
                         {(gradingResult.grading_response?.score || gradingResult.result?.grade || 0) >= 8 ? (
-                          <div className="mt-3 inline-flex items-center gap-2 bg-green-100 px-4 py-2 rounded-full">
-                            <TrendingUp className="w-4 h-4 text-green-600" />
-                            <span className="text-sm font-semibold text-green-700">Xuất sắc!</span>
+                          <div className="mt-4 inline-flex items-center gap-2 bg-green-100 px-6 py-3 rounded-full shadow-md">
+                            <TrendingUp className="w-5 h-5 text-green-600" />
+                            <span className="text-base font-bold text-green-700">🎉 Xuất sắc!</span>
                           </div>
                         ) : (gradingResult.grading_response?.score || gradingResult.result?.grade || 0) >= 6.5 ? (
-                          <div className="mt-3 inline-flex items-center gap-2 bg-blue-100 px-4 py-2 rounded-full">
-                            <CheckCircle2 className="w-4 h-4 text-blue-600" />
-                            <span className="text-sm font-semibold text-blue-700">Khá tốt!</span>
+                          <div className="mt-4 inline-flex items-center gap-2 bg-blue-100 px-6 py-3 rounded-full shadow-md">
+                            <CheckCircle2 className="w-5 h-5 text-blue-600" />
+                            <span className="text-base font-bold text-blue-700">👍 Khá tốt!</span>
                           </div>
                         ) : (
-                          <div className="mt-3 inline-flex items-center gap-2 bg-yellow-100 px-4 py-2 rounded-full">
-                            <TrendingDown className="w-4 h-4 text-yellow-600" />
-                            <span className="text-sm font-semibold text-yellow-700">Cần cố gắng thêm</span>
+                          <div className="mt-4 inline-flex items-center gap-2 bg-yellow-100 px-6 py-3 rounded-full shadow-md">
+                            <TrendingDown className="w-5 h-5 text-yellow-600" />
+                            <span className="text-base font-bold text-yellow-700">💪 Cần cố gắng thêm</span>
                           </div>
                         )}
                       </div>
@@ -217,21 +239,21 @@ const PracticePage = () => {
 
                     {/* Correct/Incorrect Status for Non-Van Subjects */}
                     {gradingResult.grading_response?.isCorrect !== undefined && (
-                      <div className={`${gradingResult.grading_response.isCorrect ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'} p-5 rounded-xl border`}>
-                        <div className="flex items-start gap-3">
+                      <div className={`${gradingResult.grading_response.isCorrect ? 'bg-green-50 border-green-300' : 'bg-red-50 border-red-300'} p-6 rounded-2xl border-2 shadow-md`}>
+                        <div className="flex items-start gap-4">
                           {gradingResult.grading_response.isCorrect ? (
                             <>
-                              <CheckCircle2 className="w-6 h-6 text-green-600 mt-0.5 flex-shrink-0" />
+                              <CheckCircle2 className="w-8 h-8 text-green-600 mt-0.5 flex-shrink-0" />
                               <div>
-                                <h3 className="font-bold text-green-900 mb-1">Câu trả lời đúng!</h3>
+                                <h3 className="font-bold text-green-900 mb-2 text-lg">✅ Câu trả lời đúng!</h3>
                                 <p className="text-sm text-green-700">Bài làm của bạn hoàn toàn chính xác.</p>
                               </div>
                             </>
                           ) : (
                             <>
-                              <XCircle className="w-6 h-6 text-red-600 mt-0.5 flex-shrink-0" />
+                              <XCircle className="w-8 h-8 text-red-600 mt-0.5 flex-shrink-0" />
                               <div>
-                                <h3 className="font-bold text-red-900 mb-1">Câu trả lời chưa chính xác</h3>
+                                <h3 className="font-bold text-red-900 mb-2 text-lg">❌ Câu trả lời chưa chính xác</h3>
                                 <p className="text-sm text-red-700">Hãy xem lại nhận xét bên dưới để cải thiện.</p>
                               </div>
                             </>
@@ -242,12 +264,12 @@ const PracticePage = () => {
 
                     {/* Comments */}
                     {(gradingResult.grading_response?.comments || gradingResult.result?.comments) && (
-                      <div className="bg-blue-50 p-5 rounded-xl border border-blue-200">
-                        <div className="flex items-start gap-3 mb-3">
-                          <Lightbulb className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
-                          <h3 className="font-bold text-gray-900">Nhận xét chung</h3>
+                      <div className="bg-blue-50 p-6 rounded-2xl border-2 border-blue-300 shadow-md">
+                        <div className="flex items-start gap-4 mb-4">
+                          <Lightbulb className="w-6 h-6 text-blue-600 mt-0.5 flex-shrink-0" />
+                          <h3 className="font-bold text-gray-900 text-lg">💡 Nhận xét chung</h3>
                         </div>
-                        <p className="text-gray-800 leading-relaxed pl-8">
+                        <p className="text-gray-800 leading-relaxed pl-10 text-base">
                           {gradingResult.grading_response?.comments || gradingResult.result?.comments}
                         </p>
                       </div>
@@ -316,22 +338,22 @@ const PracticePage = () => {
                     )}
 
                     {/* Action Buttons */}
-                    <div className="flex gap-3 pt-4">
+                    <div className="flex gap-4 pt-6">
                       <button
                         onClick={() => {
                           setStudentAnswer('');
                           setGradingResult(null);
                         }}
-                        className="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 rounded-lg font-semibold hover:shadow-lg transition-all flex items-center justify-center gap-2"
+                        className="flex-1 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 text-white py-4 rounded-xl font-bold hover:shadow-2xl transition-all duration-300 transform hover:scale-105 flex items-center justify-center gap-2 text-lg"
                       >
-                        <Send className="w-5 h-5" />
-                        Làm lại bài mới
+                        <Send className="w-6 h-6" />
+                        🔄 Làm lại bài mới
                       </button>
                       <button
                         onClick={() => router.back()}
-                        className="flex-1 bg-gray-100 text-gray-700 py-3 rounded-lg font-semibold hover:bg-gray-200 transition-all"
+                        className="flex-1 bg-gray-600 text-white py-4 rounded-xl font-bold hover:bg-gray-700 hover:shadow-xl transition-all duration-300 text-lg"
                       >
-                        Quay về
+                        ← Quay về
                       </button>
                     </div>
                   </div>
@@ -354,59 +376,62 @@ const PracticePage = () => {
 
           {/* Sidebar - Suggestions */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 sticky top-6">
-              <div className="flex items-center gap-2 mb-4">
-                <Lightbulb className="w-5 h-5 text-yellow-600" />
-                <h3 className="font-bold text-gray-900">Gợi ý cải thiện</h3>
+            <div className="bg-white rounded-2xl shadow-xl border-2 border-yellow-200 p-6 sticky top-6">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="bg-gradient-to-br from-yellow-400 to-orange-500 p-3 rounded-xl shadow-md">
+                  <Lightbulb className="w-6 h-6 text-white" />
+                </div>
+                <h3 className="font-bold text-gray-900 text-lg">💡 Gợi ý cải thiện</h3>
               </div>
 
               {practiceData.improve_suggestion ? (
-                <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-100">
+                <div className="bg-gradient-to-br from-yellow-50 to-orange-50 p-5 rounded-xl border-2 border-yellow-200 shadow-inner">
                   <p className="text-sm text-gray-800 leading-relaxed whitespace-pre-wrap">
                     {practiceData.improve_suggestion}
                   </p>
                 </div>
               ) : (
-                <p className="text-sm text-gray-500">Chưa có gợi ý</p>
+                <p className="text-sm text-gray-500 italic">Chưa có gợi ý</p>
               )}
 
-              <div className="mt-6 pt-6 border-t border-gray-200">
-                <h4 className="font-semibold text-gray-900 mb-3 text-sm">
-                  {isVanSubject ? 'Lưu ý khi làm bài văn' : 'Lưu ý'}
+              <div className="mt-6 pt-6 border-t-2 border-gray-200">
+                <h4 className="font-bold text-gray-900 mb-4 text-base flex items-center gap-2">
+                  <Sparkles className="w-5 h-5 text-purple-500" />
+                  {isVanSubject ? '📝 Lưu ý khi làm bài văn' : '📌 Lưu ý'}
                 </h4>
-                <ul className="space-y-2 text-sm text-gray-600">
+                <ul className="space-y-3 text-sm text-gray-700">
                   {isVanSubject ? (
                     <>
-                      <li className="flex items-start gap-2">
-                        <Sparkles className="w-4 h-4 text-blue-600 mt-0.5 flex-shrink-0" />
-                        <span>Trình bày mạch lạc, có mở bài - thân bài - kết bài</span>
+                      <li className="flex items-start gap-3 bg-purple-50 p-3 rounded-lg border border-purple-100">
+                        <Sparkles className="w-5 h-5 text-purple-600 mt-0.5 flex-shrink-0" />
+                        <span className="font-medium">Trình bày mạch lạc, có mở bài - thân bài - kết bài</span>
                       </li>
-                      <li className="flex items-start gap-2">
-                        <Sparkles className="w-4 h-4 text-blue-600 mt-0.5 flex-shrink-0" />
-                        <span>Dẫn chứng cụ thể từ văn bản</span>
+                      <li className="flex items-start gap-3 bg-blue-50 p-3 rounded-lg border border-blue-100">
+                        <Sparkles className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
+                        <span className="font-medium">Dẫn chứng cụ thể từ văn bản</span>
                       </li>
-                      <li className="flex items-start gap-2">
-                        <Sparkles className="w-4 h-4 text-blue-600 mt-0.5 flex-shrink-0" />
-                        <span>Sử dụng ngôn ngữ phù hợp, có biện pháp tu từ</span>
+                      <li className="flex items-start gap-3 bg-green-50 p-3 rounded-lg border border-green-100">
+                        <Sparkles className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
+                        <span className="font-medium">Sử dụng ngôn ngữ phù hợp, có biện pháp tu từ</span>
                       </li>
-                      <li className="flex items-start gap-2">
-                        <Sparkles className="w-4 h-4 text-blue-600 mt-0.5 flex-shrink-0" />
-                        <span>Thể hiện quan điểm cá nhân</span>
+                      <li className="flex items-start gap-3 bg-pink-50 p-3 rounded-lg border border-pink-100">
+                        <Sparkles className="w-5 h-5 text-pink-600 mt-0.5 flex-shrink-0" />
+                        <span className="font-medium">Thể hiện quan điểm cá nhân</span>
                       </li>
                     </>
                   ) : (
                     <>
-                      <li className="flex items-start gap-2">
-                        <Sparkles className="w-4 h-4 text-blue-600 mt-0.5 flex-shrink-0" />
-                        <span>Đọc kỹ đề bài</span>
+                      <li className="flex items-start gap-3 bg-blue-50 p-3 rounded-lg border border-blue-100">
+                        <Sparkles className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
+                        <span className="font-medium">Đọc kỹ đề bài</span>
                       </li>
-                      <li className="flex items-start gap-2">
-                        <Sparkles className="w-4 h-4 text-blue-600 mt-0.5 flex-shrink-0" />
-                        <span>Trình bày rõ ràng</span>
+                      <li className="flex items-start gap-3 bg-purple-50 p-3 rounded-lg border border-purple-100">
+                        <Sparkles className="w-5 h-5 text-purple-600 mt-0.5 flex-shrink-0" />
+                        <span className="font-medium">Trình bày rõ ràng</span>
                       </li>
-                      <li className="flex items-start gap-2">
-                        <Sparkles className="w-4 h-4 text-blue-600 mt-0.5 flex-shrink-0" />
-                        <span>Kiểm tra lại trước khi nộp</span>
+                      <li className="flex items-start gap-3 bg-green-50 p-3 rounded-lg border border-green-100">
+                        <Sparkles className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
+                        <span className="font-medium">Kiểm tra lại trước khi nộp</span>
                       </li>
                     </>
                   )}

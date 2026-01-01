@@ -247,33 +247,38 @@ export default function ScheduleManagementPage() {
   return (
     <div className="min-h-screen bg-gray-50 p-6">
       {/* Header */}
-      <div className="mb-6">
+      <div className="mb-8">
         <Button 
           onClick={() => router.back()} 
           variant="ghost" 
-          className="mb-4"
+          className="mb-4 hover:bg-gray-100"
         >
           <ArrowLeft className="w-4 h-4 mr-2" />
           Quay lại
         </Button>
         
-        <div className="bg-white rounded-xl p-6 shadow-sm">
+        <div className="bg-white rounded-lg p-8 shadow-sm border border-gray-200">
           <div className="flex items-start justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">
-                Quản lý lịch dạy học
-              </h1>
-              <div className="flex items-center gap-4 text-gray-600">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-12 h-12 bg-blue-50 rounded-lg flex items-center justify-center">
+                  <Calendar className="w-6 h-6 text-blue-600" />
+                </div>
+                <h1 className="text-3xl font-bold text-gray-900">
+                  Quản lý lịch dạy học
+                </h1>
+              </div>
+              <div className="flex items-center gap-6 text-gray-600 ml-15">
                 <div className="flex items-center gap-2">
-                  <BookOpen className="w-5 h-5" />
-                  <span className="text-lg">{classData?.class_code}</span>
+                  <BookOpen className="w-5 h-5 text-blue-600" />
+                  <span className="text-base font-medium">{classData?.class_code}</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Calendar className="w-5 h-5" />
-                  <span>{classData?.class_year}</span>
+                  <Calendar className="w-5 h-5 text-blue-600" />
+                  <span className="text-base">{classData?.class_year}</span>
                 </div>
               </div>
-              <p className="text-sm text-gray-500 mt-3">
+              <p className="text-sm text-gray-500 mt-4 ml-15 bg-blue-50 px-4 py-2 rounded-lg border border-blue-200 inline-block">
                 💡 Nhấp vào ô trống trong thời khóa biểu để thêm lịch dạy
               </p>
             </div>
@@ -282,14 +287,14 @@ export default function ScheduleManagementPage() {
       </div>
 
       {/* Current Schedule */}
-      <div className="bg-white rounded-xl p-6 shadow-sm overflow-x-auto">
-        <h2 className="text-xl font-bold text-gray-900 mb-4">Thời khóa biểu hiện tại</h2>
+      <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200 overflow-x-auto">
+        <h2 className="text-xl font-bold text-gray-900 mb-6">Thời khóa biểu hiện tại</h2>
         
         {time_slot && time_slot.length > 0 ? (
           <div className="min-w-[1200px]">
-            <table className="w-full border-collapse border border-gray-300">
+            <table className="w-full border-collapse">
               <thead>
-                <tr className="bg-gradient-to-r from-blue-600 to-blue-700">
+                <tr className="bg-blue-600">
                   <th className="border border-gray-300 px-4 py-3 text-white font-semibold text-center w-[100px]">
                     TIẾT
                   </th>
@@ -312,8 +317,8 @@ export default function ScheduleManagementPage() {
                     <tr key={period} className="hover:bg-gray-50">
                       <td className="border border-gray-300 px-4 py-3 text-center font-semibold text-gray-700 bg-gray-50">
                         <div className="flex flex-col items-center">
-                          <span className="text-sm">TIẾT</span>
-                          <span className="text-lg">{period}</span>
+                          <span className="text-xs text-gray-500">TIẾT</span>
+                          <span className="text-lg font-bold">{period}</span>
                         </div>
                       </td>
                       
@@ -335,12 +340,12 @@ export default function ScheduleManagementPage() {
                           <td 
                             key={`${day}-${period}`} 
                             className={`border border-gray-300 px-3 py-2 text-center align-top transition-all duration-200 ${
-                              !hasSchedule ? 'cursor-pointer hover:bg-blue-50 hover:border-blue-400 hover:shadow-sm' : ''
+                              !hasSchedule ? 'cursor-pointer hover:bg-blue-50 hover:border-blue-300 hover:shadow-sm' : 'bg-white'
                             }`}
                             onClick={() => handleCellClick(day, period, hasSchedule)}
                           >
                             {scheduleItem ? (
-                              <div className="space-y-1" onClick={(e) => e.stopPropagation()}>
+                              <div className="space-y-1.5" onClick={(e) => e.stopPropagation()}>
                                 <div className="font-semibold text-blue-700 text-sm">
                                   {scheduleItem.subject || 'N/A'}
                                 </div>
@@ -350,30 +355,32 @@ export default function ScheduleManagementPage() {
                                 <div className="text-xs text-gray-500">
                                   {scheduleItem.timeSlot?.startTime} - {scheduleItem.timeSlot?.endTime}
                                 </div>
-                                <div className="inline-block px-2 py-0.5 bg-purple-100 text-purple-700 rounded text-xs">
+                                <div className="inline-block px-2 py-1 bg-purple-50 text-purple-700 rounded text-xs border border-purple-200">
                                   {scheduleItem.semester}
                                 </div>
                                 <Button
                                   size="sm"
                                   variant="ghost"
-                                  className="mt-1 h-6 w-6 p-0 text-red-500 hover:bg-red-50 hover:text-red-700"
+                                  className="mt-1 h-7 w-7 p-0 text-red-500 hover:bg-red-50 hover:text-red-700 border border-transparent hover:border-red-200"
                                   onClick={() => alert('Chức năng xóa đang phát triển')}
                                 >
-                                  <Trash2 className="w-3 h-3" />
+                                  <Trash2 className="w-3.5 h-3.5" />
                                 </Button>
                               </div>
                             ) : (
-                              <div className="text-xs text-gray-400 py-2 hover:text-blue-600 transition-colors min-h-[60px] flex items-center justify-center">
+                              <div className="text-xs text-gray-400 py-2 hover:text-blue-600 transition-colors min-h-[70px] flex items-center justify-center">
                                 {periodSlot ? (
-                                  <div className="space-y-1">
-                                    <div className="text-gray-500">{periodSlot.startTime} - {periodSlot.endTime}</div>
-                                    <div className="flex items-center justify-center gap-1 text-blue-500">
-                                      <Plus className="w-4 h-4" />
-                                      <span className="text-xs font-medium">Thêm lịch</span>
+                                  <div className="space-y-1.5">
+                                    <div className="text-gray-500 text-xs">{periodSlot.startTime} - {periodSlot.endTime}</div>
+                                    <div className="flex items-center justify-center gap-1.5 text-blue-600 font-medium">
+                                      <div className="w-6 h-6 bg-blue-50 rounded flex items-center justify-center border border-blue-200">
+                                        <Plus className="w-4 h-4" />
+                                      </div>
+                                      <span className="text-xs">Thêm lịch</span>
                                     </div>
                                   </div>
                                 ) : (
-                                  <div className="text-gray-300">—</div>
+                                  <div className="text-gray-300 text-base">—</div>
                                 )}
                               </div>
                             )}
@@ -400,13 +407,13 @@ export default function ScheduleManagementPage() {
         setIsDialogOpen(open);
         if (!open) setSelectedCell(null);
       }}>
-        <DialogContent className="max-w-2xl">
+        <DialogContent className="max-w-2xl border border-gray-200">
           <DialogHeader>
-            <DialogTitle>Thêm lịch dạy mới</DialogTitle>
-            <DialogDescription>
+            <DialogTitle className="text-2xl">Thêm lịch dạy mới</DialogTitle>
+            <DialogDescription className="text-base">
               {selectedCell ? (
                 <span>
-                  Thêm lịch dạy cho <strong>{getDayDisplayName(selectedCell.day)} - Tiết {selectedCell.period}</strong> - Lớp {classData?.class_code}
+                  Thêm lịch dạy cho <strong className="text-blue-600">{getDayDisplayName(selectedCell.day)} - Tiết {selectedCell.period}</strong> - Lớp {classData?.class_code}
                 </span>
               ) : (
                 <span>Điền thông tin để thêm lịch dạy cho lớp {classData?.class_code}</span>
@@ -414,7 +421,7 @@ export default function ScheduleManagementPage() {
             </DialogDescription>
           </DialogHeader>
 
-          <form onSubmit={handleSubmit} className="space-y-4 mt-4">
+          <form onSubmit={handleSubmit} className="space-y-5 mt-4">
             {/* Subject Selection */}
             <div className="space-y-2">
               <Label htmlFor="subject">Môn học *</Label>
@@ -508,18 +515,19 @@ export default function ScheduleManagementPage() {
             </div>
 
             {/* Action Buttons */}
-            <div className="flex justify-end gap-3 pt-4">
+            <div className="flex justify-end gap-3 pt-6 border-t border-gray-200">
               <Button
                 type="button"
                 variant="outline"
                 onClick={() => setIsDialogOpen(false)}
                 disabled={isSubmitting}
+                className="border-gray-300 hover:bg-gray-50"
               >
                 Hủy
               </Button>
               <Button
                 type="submit"
-                className="bg-blue-600 hover:bg-blue-700 text-white"
+                className="bg-blue-600 hover:bg-blue-700 text-white border border-blue-700 shadow-sm"
                 disabled={isSubmitting}
               >
                 {isSubmitting ? (

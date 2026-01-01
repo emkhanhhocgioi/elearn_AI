@@ -144,18 +144,21 @@ const ScheduleTab = () => {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-fade-in">
       {/* Header */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+      <div className="bg-gradient-to-br from-white to-blue-50 rounded-2xl shadow-lg border-2 border-blue-100 p-6">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-              <Calendar className="w-6 h-6 text-blue-600" />
-              Lịch Học
+            <h2 className="text-3xl font-bold flex items-center gap-3">
+              <div className="p-2 bg-gradient-to-br from-blue-600 to-blue-700 rounded-xl shadow-lg">
+                <Calendar className="w-7 h-7 text-white" />
+              </div>
+              <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Lịch Học</span>
             </h2>
             {classInfo && (
-              <p className="text-sm text-gray-600 mt-1">
-                Lớp: <span className="font-medium">{classInfo.class_code}</span> - Năm học: <span className="font-medium">{classInfo.class_year}</span>
+              <p className="text-sm text-gray-600 mt-2 ml-14 flex items-center gap-2">
+                <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full font-semibold">Lớp: {classInfo.class_code}</span>
+                <span className="px-3 py-1 bg-purple-100 text-purple-700 rounded-full font-semibold">Năm học: {classInfo.class_year}</span>
               </p>
             )}
           </div>
@@ -164,7 +167,7 @@ const ScheduleTab = () => {
           <div className="flex items-center gap-3">
             <button
               onClick={goToPreviousWeek}
-              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              className="p-3 hover:bg-blue-100 bg-white rounded-xl transition-all shadow-sm border border-gray-200 hover:scale-110"
               aria-label="Tuần trước"
             >
               <ChevronLeft className="w-5 h-5 text-gray-600" />
@@ -173,7 +176,7 @@ const ScheduleTab = () => {
             {!isCurrentWeek && (
               <button
                 onClick={goToCurrentWeek}
-                className="px-4 py-2 text-sm font-medium text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                className="px-5 py-2.5 text-sm font-bold text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-xl transition-all border-2 border-blue-200"
               >
                 Hôm nay
               </button>
@@ -181,7 +184,7 @@ const ScheduleTab = () => {
             
             <button
               onClick={goToNextWeek}
-              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              className="p-3 hover:bg-blue-100 bg-white rounded-xl transition-all shadow-sm border border-gray-200 hover:scale-110"
               aria-label="Tuần sau"
             >
               <ChevronRight className="w-5 h-5 text-gray-600" />
@@ -190,20 +193,20 @@ const ScheduleTab = () => {
         </div>
 
         {/* Current Week Display */}
-        <div className="flex items-center gap-2 text-sm text-gray-600">
-          <Calendar className="w-4 h-4" />
-          <span>
+        <div className="flex items-center gap-2 text-sm text-gray-600 ml-14 bg-white rounded-xl px-4 py-2 border border-gray-200 inline-flex">
+          <Calendar className="w-4 h-4 text-blue-600" />
+          <span className="font-medium">
             Tuần từ {formatDate(weekDates[0])} đến {formatDate(weekDates[6])}
           </span>
         </div>
       </div>
 
       {/* Schedule Table */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+      <div className="bg-white rounded-2xl shadow-lg border-2 border-gray-200 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full border-collapse min-w-[1000px]">
             <thead>
-              <tr className="bg-gradient-to-r from-blue-600 to-blue-700">
+              <tr className="bg-gradient-to-r from-blue-600 via-blue-700 to-purple-600">
                 <th className="px-4 py-3 text-left text-white font-semibold border-r border-blue-500 w-32">
                   <div className="flex items-center gap-2">
                     <Clock className="w-4 h-4" />

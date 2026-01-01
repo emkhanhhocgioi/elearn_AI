@@ -178,15 +178,20 @@ export default function ClassesTab() {
   }
 
   return (
-    <div>
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-bold text-gray-900">Classes Management</h2>
-        <div className="flex gap-2">
+    <div className="space-y-6 animate-fadeIn">
+      {/* Header Section */}
+      <div className="bg-gradient-to-r from-indigo-600 to-purple-600 rounded-2xl p-8 shadow-xl">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-3xl font-bold text-white mb-2">Classes Management</h2>
+            <p className="text-indigo-100">Organize and manage class schedules and assignments</p>
+          </div>
+          <div className="flex gap-2">
    
           <Dialog open={isOpen} onOpenChange={setIsOpen}>
             <DialogTrigger asChild>
-              <Button className="bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-blue-700">
-                <Plus className="w-4 h-4" />
+              <Button className="bg-white text-indigo-600 px-6 py-3 rounded-xl flex items-center gap-2 hover:bg-indigo-50 shadow-lg hover:shadow-xl transition-all duration-300 font-semibold hover:scale-105">
+                <Plus className="w-5 h-5" />
                 Create New Class
               </Button>
             </DialogTrigger>
@@ -243,11 +248,14 @@ export default function ClassesTab() {
                       <SelectValue placeholder="-- Chọn giáo viên --" />
                     </SelectTrigger>
                     <SelectContent>
-                     {teachers.map((teacher) => (
+                    {teachers
+                    .filter(teacher => teacher.isClassTeacher === false)
+                    .map((teacher) => (
                         <SelectItem key={teacher._id} value={teacher._id}>
-                          {teacher.name}
+                        {teacher.name}
                         </SelectItem>
-                      ))}
+                    ))}
+
                     </SelectContent>
                   </Select>
                 </div>
@@ -273,26 +281,27 @@ export default function ClassesTab() {
             </DialogContent>
           </Dialog>
         </div>
+        </div>
       </div>
 
       {/* Filters */}
-      <div className="bg-white rounded-xl p-4 mb-6 shadow-sm">
+      <div className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100 hover:shadow-xl transition-shadow duration-300">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="flex items-center gap-2 bg-gray-50 rounded-lg px-4 py-2">
-            <Search className="w-4 h-4 text-gray-400" />
+          <div className="flex items-center gap-3 bg-gradient-to-r from-gray-50 to-purple-50 rounded-xl px-5 py-3 border border-gray-200 focus-within:border-purple-400 focus-within:ring-4 focus-within:ring-purple-100 transition-all duration-300">
+            <Search className="w-5 h-5 text-purple-500" />
             <input
               type="text"
               placeholder="Search by code, subject, or teacher..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="flex-1 bg-transparent outline-none text-sm"
+              className="flex-1 bg-transparent outline-none text-sm placeholder-gray-400"
             />
           </div>
           
           <select
             value={filterStatus}
             onChange={(e) => setFilterStatus(e.target.value)}
-            className="bg-gray-50 rounded-lg px-4 py-2 text-sm border border-gray-200 outline-none"
+            className="bg-gradient-to-r from-gray-50 to-purple-50 rounded-xl px-5 py-3 text-sm border border-gray-200 outline-none focus:border-purple-400 focus:ring-4 focus:ring-purple-100 transition-all duration-300 cursor-pointer"
           >
             <option value="all">All Status</option>
             <option value="active">Active</option>
@@ -302,28 +311,36 @@ export default function ClassesTab() {
       </div>
 
       {/* Classes Table */}
-      <div className="bg-white rounded-xl overflow-hidden shadow-sm">
+      <div className="bg-white rounded-2xl overflow-hidden shadow-xl border border-gray-100">
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-gray-50 border-b border-gray-200">
+            <thead className="bg-gradient-to-r from-gray-50 to-purple-50 border-b-2 border-purple-100">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Class Code</th>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Subject</th>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Teacher</th>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Year</th>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Students</th>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Avg. Grade</th>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Status</th>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Actions</th>
+                <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Class Code</th>
+                <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Subject</th>
+                <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Teacher</th>
+                <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Year</th>
+                <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Students</th>
+                <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Avg. Grade</th>
+                <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Status</th>
+                <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
               {fetchLoading ? (
-                <tr>
-                  <td colSpan={8} className="px-6 py-8 text-center text-gray-500">
-                    Loading classes...
-                  </td>
-                </tr>
+                // Skeleton loader
+                Array.from({ length: 5 }).map((_, index) => (
+                  <tr key={index} className="animate-pulse">
+                    <td className="px-6 py-4"><div className="h-4 bg-gray-200 rounded w-28"></div></td>
+                    <td className="px-6 py-4"><div className="h-4 bg-gray-200 rounded w-24"></div></td>
+                    <td className="px-6 py-4"><div className="h-4 bg-gray-200 rounded w-32"></div></td>
+                    <td className="px-6 py-4"><div className="h-4 bg-gray-200 rounded w-24"></div></td>
+                    <td className="px-6 py-4"><div className="h-4 bg-gray-200 rounded w-16"></div></td>
+                    <td className="px-6 py-4"><div className="h-4 bg-gray-200 rounded w-12"></div></td>
+                    <td className="px-6 py-4"><div className="h-6 bg-gray-200 rounded-full w-20"></div></td>
+                    <td className="px-6 py-4"><div className="h-8 bg-gray-200 rounded w-20"></div></td>
+                  </tr>
+                ))
               ) : classes.filter(cls => {
                 const matchesSearch = 
                   cls.class_code.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -333,8 +350,16 @@ export default function ClassesTab() {
                 return matchesSearch && matchesStatus;
               }).length === 0 ? (
                 <tr>
-                  <td colSpan={8} className="px-6 py-8 text-center text-gray-500">
-                    No classes found
+                  <td colSpan={8} className="px-6 py-16">
+                    <div className="flex flex-col items-center justify-center text-gray-400">
+                      <div className="w-20 h-20 bg-gradient-to-br from-purple-100 to-indigo-100 rounded-full flex items-center justify-center mb-4">
+                        <svg className="w-10 h-10 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                        </svg>
+                      </div>
+                      <p className="text-lg font-semibold text-gray-600 mb-1">No classes found</p>
+                      <p className="text-sm text-gray-400">Try adjusting your search or create a new class</p>
+                    </div>
                   </td>
                 </tr>
               ) : (
@@ -346,9 +371,9 @@ export default function ClassesTab() {
                   const matchesStatus = filterStatus === 'all' || (cls.status || 'active') === filterStatus;
                   return matchesSearch && matchesStatus;
                 }).map((cls) => (
-                  <tr key={cls._id} className="hover:bg-gray-50 transition-colors cursor-pointer">
+                  <tr key={cls._id} className="hover:bg-gradient-to-r hover:from-purple-50 hover:to-indigo-50 transition-all duration-200 group">
                     <td className="px-6 py-4" onClick={() => router.push(`/admin/class/${cls._id}`)}>
-                      <p className="text-sm font-medium text-gray-900">{cls.class_code}</p>
+                      <p className="text-sm font-semibold text-gray-900 cursor-pointer group-hover:text-purple-600 transition-colors">{cls.class_code}</p>
                     </td>
                     <td className="px-6 py-4" onClick={() => router.push(`/admin/class/${cls._id}`)}>
                       <p className="text-sm text-gray-600">{cls.class_subject}</p>
@@ -384,9 +409,9 @@ export default function ClassesTab() {
                             setIsEnrollDialogOpen(true);
                           }}
                           title="Thêm học sinh"
-                          className="p-2 hover:bg-blue-100 rounded-lg text-blue-600 transition-colors"
+                          className="p-2.5 hover:bg-blue-100 rounded-xl text-blue-600 transition-all duration-300 hover:scale-110 hover:shadow-md"
                         >
-                          <Users className="w-4 h-4" />
+                          <Users className="w-5 h-5" />
                         </button>
                         <button 
                           onClick={(e) => {
@@ -394,7 +419,7 @@ export default function ClassesTab() {
                             handleDeleteClass(cls._id);
                           }}
                           disabled={deleteLoading === cls._id}
-                          className="p-2 hover:bg-red-100 rounded-lg text-red-600 transition-colors"
+                          className="p-2.5 hover:bg-red-100 rounded-xl text-red-600 transition-all duration-300 hover:scale-110 hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
                           title="Xóa lớp"
                         >
                           {deleteLoading === cls._id ? (
@@ -414,20 +439,44 @@ export default function ClassesTab() {
       </div>
 
       {/* Statistics Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
-        <div className="bg-white rounded-xl p-6 shadow-sm">
-          <h3 className="text-sm font-semibold text-gray-500 mb-2">Total Classes</h3>
-          <p className="text-3xl font-bold text-gray-900">{classes.length}</p>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="bg-gradient-to-br from-purple-500 to-indigo-600 rounded-2xl p-6 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 transform">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-sm font-semibold text-purple-100 uppercase tracking-wide">Total Classes</h3>
+            <div className="w-10 h-10 bg-white bg-opacity-20 rounded-lg flex items-center justify-center">
+              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+              </svg>
+            </div>
+          </div>
+          <p className="text-4xl font-bold text-white">{classes.length}</p>
+          <p className="text-purple-100 text-sm mt-2">Active classes in system</p>
         </div>
-        <div className="bg-white rounded-xl p-6 shadow-sm">
-          <h3 className="text-sm font-semibold text-gray-500 mb-2">Total Students</h3>
-          <p className="text-3xl font-bold text-gray-900">{classes.reduce((sum, cls) => sum + cls.class_student_count, 0)}</p>
+        <div className="bg-gradient-to-br from-blue-500 to-cyan-600 rounded-2xl p-6 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 transform">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-sm font-semibold text-blue-100 uppercase tracking-wide">Total Students</h3>
+            <div className="w-10 h-10 bg-white bg-opacity-20 rounded-lg flex items-center justify-center">
+              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+              </svg>
+            </div>
+          </div>
+          <p className="text-4xl font-bold text-white">{classes.reduce((sum, cls) => sum + cls.class_student_count, 0)}</p>
+          <p className="text-blue-100 text-sm mt-2">Enrolled across all classes</p>
         </div>
-        <div className="bg-white rounded-xl p-6 shadow-sm">
-          <h3 className="text-sm font-semibold text-gray-500 mb-2">Avg. Class Grade</h3>
-          <p className="text-3xl font-bold text-gray-900">
+        <div className="bg-gradient-to-br from-green-500 to-emerald-600 rounded-2xl p-6 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 transform">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-sm font-semibold text-green-100 uppercase tracking-wide">Avg. Class Grade</h3>
+            <div className="w-10 h-10 bg-white bg-opacity-20 rounded-lg flex items-center justify-center">
+              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+              </svg>
+            </div>
+          </div>
+          <p className="text-4xl font-bold text-white">
             {classes.length > 0 ? (classes.reduce((sum, cls) => sum + cls.class_avarage_grade, 0) / classes.length).toFixed(1) : '0.0'}
           </p>
+          <p className="text-green-100 text-sm mt-2">Overall class performance</p>
         </div>
       </div>
 

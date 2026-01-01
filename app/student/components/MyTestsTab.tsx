@@ -177,18 +177,26 @@ const MyTestsTab = () => {
   };
 
   return (
-    <div>
+    <div className="space-y-6 animate-fade-in">
       <div className="mb-6">
-        <h2 className="text-2xl font-bold text-gray-900">Bài tập của tôi</h2>
-        <p className="text-gray-600 mt-1">Theo dõi các bài tập và điểm số của bạn</p>
+        <h2 className="text-3xl font-bold bg-gradient-to-r from-[#0F172A] to-[#2563EB] bg-clip-text text-transparent leading-tight">Bài Tập Của Tôi</h2>
+        <p className="text-gray-600 mt-2 leading-relaxed flex items-center gap-2">
+          <span className="inline-flex items-center justify-center w-6 h-6 bg-blue-100 text-blue-600 rounded-full text-xs font-bold">{tests.length}</span>
+          Theo dõi các bài tập và điểm số của bạn
+        </p>
       </div>
 
       {/* Timeline Section */}
       {getUpcomingTests().length > 0 && (
-        <div className="bg-white rounded-xl p-6 mb-4 shadow-sm">
-          <div className="flex items-center gap-2 mb-4">
-            <Calendar className="w-5 h-5 text-blue-600" />
-            <h3 className="text-lg font-semibold text-gray-900">Bài tập sắp hết hạn</h3>
+        <div className="bg-gradient-to-br from-white to-blue-50 rounded-2xl p-6 mb-6 shadow-lg border-2 border-blue-100">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="p-3 bg-gradient-to-br from-[#2563EB] to-[#1d4ed8] rounded-xl shadow-lg">
+              <Calendar className="w-6 h-6 text-white" />
+            </div>
+            <div>
+              <h3 className="text-xl font-bold text-[#0F172A]">Bài Tập Sắp Hết Hạn</h3>
+              <p className="text-sm text-gray-600">Ưu tiên hoàn thành các bài này trước</p>
+            </div>
           </div>
           <div className="space-y-4">
             {getUpcomingTests().map((test, index) => (
@@ -200,7 +208,7 @@ const MyTestsTab = () => {
                 
                 <div className={`flex items-start gap-4 p-4 rounded-lg border-2 ${getTimelineBorderColor(test.daysUntilClose)} transition-all hover:shadow-md`}>
                   {/* Timeline dot */}
-                  <div className={`flex-shrink-0 w-6 h-6 rounded-full ${getTimelineColor(test.daysUntilClose)} flex items-center justify-center`}>
+                  <div className={`flex-shrink-0 w-6 h-6 rounded-full ${getTimelineColor(test.daysUntilClose)} flex items-center justify-center shadow-sm`}>
                     <div className="w-2 h-2 bg-white rounded-full"></div>
                   </div>
                   
@@ -208,10 +216,10 @@ const MyTestsTab = () => {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-start justify-between gap-4">
                       <div className="flex-1">
-                        <h4 className="text-sm font-semibold text-gray-900 mb-1">{test.title}</h4>
+                        <h4 className="text-sm font-bold text-[#0F172A] mb-1.5 leading-relaxed">{test.title}</h4>
                         <div className="flex flex-wrap items-center gap-3 text-xs text-gray-600">
                           <span className="flex items-center gap-1">
-                            <span className="font-medium">{test.subject}</span>
+                            <span className="font-semibold">{test.subject}</span>
                           </span>
                           <span className="flex items-center gap-1">
                             <Clock className="w-3 h-3" />
@@ -222,11 +230,11 @@ const MyTestsTab = () => {
                       
                       {/* Days remaining badge */}
                       <div className="flex items-center gap-3">
-                        <div className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                          test.daysUntilClose <= 1 ? 'bg-red-100 text-red-700' :
-                          test.daysUntilClose <= 3 ? 'bg-orange-100 text-orange-700' :
-                          test.daysUntilClose <= 7 ? 'bg-yellow-100 text-yellow-700' :
-                          'bg-blue-100 text-blue-700'
+                        <div className={`px-3 py-1.5 rounded-full text-xs font-bold ${
+                          test.daysUntilClose <= 1 ? 'bg-red-100 text-red-700 border border-red-200' :
+                          test.daysUntilClose <= 3 ? 'bg-orange-100 text-orange-700 border border-orange-200' :
+                          test.daysUntilClose <= 7 ? 'bg-yellow-100 text-yellow-700 border border-yellow-200' :
+                          'bg-blue-100 text-blue-700 border border-blue-200'
                         }`}>
                           {test.daysUntilClose === 0 ? 'Hôm nay' :
                            test.daysUntilClose === 1 ? 'Ngày mai' :
@@ -235,7 +243,7 @@ const MyTestsTab = () => {
                         
                         <button
                           onClick={() => router.push(`/student/test/${test.id}`)}
-                          className="flex items-center gap-1 bg-blue-600 text-white text-xs px-3 py-1.5 rounded-full hover:bg-blue-700 transition-colors"
+                          className="flex items-center gap-1 bg-[#2563EB] text-white text-xs px-4 py-2 rounded-lg hover:bg-[#1d4ed8] transition-all duration-200 shadow-sm focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:ring-offset-2"
                         >
                           Làm bài
                           <ChevronRight className="w-3 h-3" />
@@ -251,16 +259,18 @@ const MyTestsTab = () => {
       )}
 
       {/* Filter Section */}
-      <div className="bg-white rounded-xl p-4 mb-4 shadow-sm">
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2 text-gray-700">
-            <Filter className="w-5 h-5" />
-            <span className="font-medium">Lọc theo môn:</span>
+      <div className="bg-white rounded-2xl p-6 mb-6 shadow-lg border border-gray-200">
+        <div className="flex items-center gap-4 flex-wrap">
+          <div className="flex items-center gap-3 text-[#0F172A]">
+            <div className="p-2 bg-blue-100 rounded-lg">
+              <Filter className="w-5 h-5 text-blue-600" />
+            </div>
+            <span className="font-bold text-lg">Lọc theo môn:</span>
           </div>
           <select
             value={selectedSubject}
             onChange={(e) => setSelectedSubject(e.target.value)}
-            className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="flex-1 min-w-[200px] px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-transparent text-[#0F172A] font-medium transition-all hover:border-[#2563EB] bg-white shadow-sm"
           >
             {THCS_SUBJECTS.map((subject) => (
               <option key={subject} value={subject}>
@@ -268,36 +278,36 @@ const MyTestsTab = () => {
               </option>
             ))}
           </select>
-          <span className="text-sm text-gray-500">
-            Hiển thị {filteredTests.length} / {tests.length} bài kiểm tra
+          <span className="px-4 py-2 bg-gradient-to-r from-blue-50 to-purple-50 text-blue-700 text-sm font-bold rounded-full border border-blue-200">
+            Hiển thị <span className="text-[#2563EB]">{filteredTests.length}</span> / {tests.length} bài kiểm tra
           </span>
         </div>
       </div>
 
-      <div className="bg-white rounded-xl overflow-hidden shadow-sm">
+      <div className="bg-white rounded-2xl overflow-hidden shadow-lg border border-gray-200">
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-gray-50 border-b border-gray-200">
+            <thead className="bg-gradient-to-r from-[#F1F5F9] to-[#E2E8F0] border-b-2 border-gray-300">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Tiêu đề</th>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Môn học</th>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Học viên</th>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Trạng thái</th>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Điểm TB</th>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Hạn nộp</th>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Thao tác</th>
+                <th className="px-6 py-4 text-left text-xs font-bold text-[#0F172A] uppercase tracking-wide">Tiêu đề</th>
+                <th className="px-6 py-4 text-left text-xs font-bold text-[#0F172A] uppercase tracking-wide">Môn học</th>
+                <th className="px-6 py-4 text-left text-xs font-bold text-[#0F172A] uppercase tracking-wide">Học viên</th>
+                <th className="px-6 py-4 text-left text-xs font-bold text-[#0F172A] uppercase tracking-wide">Trạng thái</th>
+                <th className="px-6 py-4 text-left text-xs font-bold text-[#0F172A] uppercase tracking-wide">Điểm TB</th>
+                <th className="px-6 py-4 text-left text-xs font-bold text-[#0F172A] uppercase tracking-wide">Hạn nộp</th>
+                <th className="px-6 py-4 text-left text-xs font-bold text-[#0F172A] uppercase tracking-wide">Thao tác</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
               {isLoading ? (
                 <tr>
-                  <td colSpan={7} className="px-6 py-8 text-center text-gray-500">
+                  <td colSpan={7} className="px-6 py-12 text-center text-gray-500 text-sm">
                     Đang tải...
                   </td>
                 </tr>
               ) : filteredTests.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="px-6 py-8 text-center text-gray-500">
+                  <td colSpan={7} className="px-6 py-12 text-center text-gray-500 text-sm">
                     {selectedSubject === 'Tất cả môn' 
                       ? 'Không có bài kiểm tra nào' 
                       : `Không có bài kiểm tra môn ${selectedSubject}`}
@@ -305,18 +315,18 @@ const MyTestsTab = () => {
                 </tr>
               ) : (
                 filteredTests.map((test) => (
-                  <tr key={test.id} className="hover:bg-gray-50">
+                  <tr key={test.id} className="hover:bg-[#F1F5F9] transition-colors">
                     <td className="px-6 py-4">
-                      <p className="text-sm font-medium text-gray-900">{test.title}</p>
+                      <p className="text-sm font-semibold text-[#0F172A] leading-relaxed">{test.title}</p>
                       {test.daysUntilClose !== undefined && test.daysUntilClose >= 0 && (
-                        <div className="flex items-center gap-1 text-xs text-gray-500 mt-1">
+                        <div className="flex items-center gap-1 text-xs text-gray-500 mt-1.5">
                           <Clock className="w-3 h-3" />
                           Còn {test.daysUntilClose} ngày
                         </div>
                       )}
                     </td>
                     <td className="px-6 py-4">
-                      <p className="text-sm text-gray-600">{test.subject}</p>
+                      <p className="text-sm text-gray-700 font-medium">{test.subject}</p>
                     </td>
                     <td className="px-6 py-4">
                       <p className="text-sm text-gray-600">{test.participants} học viên</p>
@@ -325,7 +335,7 @@ const MyTestsTab = () => {
                       {getStatusBadge(test.status)}
                     </td>
                     <td className="px-6 py-4">
-                      <span className={`text-sm font-medium ${
+                      <span className={`text-sm font-bold ${
                         test.score ? (
                           test.score >= 80 ? 'text-green-600' :
                           test.score >= 60 ? 'text-yellow-600' :
@@ -336,7 +346,7 @@ const MyTestsTab = () => {
                       </span>
                     </td>
                     <td className="px-6 py-4">
-                      <p className={`text-sm ${test.daysUntilClose !== undefined ? getCloseDateColor(test.daysUntilClose) : 'text-gray-600'}`}>
+                      <p className={`text-sm font-medium ${test.daysUntilClose !== undefined ? getCloseDateColor(test.daysUntilClose) : 'text-gray-600'}`}>
                         {test.closeDate}
                       </p>
                     </td>
@@ -345,7 +355,7 @@ const MyTestsTab = () => {
                         test.isSubmited === false  && (
                            <button 
                         onClick={() => router.push(`/student/test/${test.id}`)}
-                        className="bg-blue-100 text-blue-600 text-xs px-3 py-1.5 rounded-full hover:bg-blue-200"
+                        className="bg-[#2563EB] text-white text-xs px-4 py-2 rounded-lg hover:bg-[#1d4ed8] transition-all duration-200 shadow-sm focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:ring-offset-2 font-medium"
                       > 
                         Làm bài
                       </button>
@@ -355,7 +365,7 @@ const MyTestsTab = () => {
                         test.isSubmited === true  && (
                            <button 
                         onClick={() => router.push(`/student/test/grading/${test.id}`)}
-                        className="bg-green-100 text-green-600 text-xs px-3 py-1.5 rounded-full hover:bg-green-200"
+                        className="bg-green-50 text-green-700 text-xs px-4 py-2 rounded-lg hover:bg-green-100 transition-all duration-200 border border-green-200 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 font-medium"
                       > 
                         Xem kết quả
                       </button>

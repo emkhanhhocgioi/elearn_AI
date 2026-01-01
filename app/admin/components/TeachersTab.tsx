@@ -174,13 +174,21 @@ export default function TeachersTab() {
 
 
   return (
-    <div>
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-bold text-gray-900">Teachers Management</h2>
-        <Dialog open={isOpen} onOpenChange={setIsOpen}>
+    <div className="space-y-6 animate-fadeIn">
+      {/* Header Section */}
+      <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl p-8 shadow-xl">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-3xl font-bold text-white mb-2">Teachers Management</h2>
+            <p className="text-blue-100">Manage and oversee all teacher accounts</p>
+          </div>
+          <Dialog open={isOpen} onOpenChange={setIsOpen}>
           <DialogTrigger asChild>
-            <Button onClick={handleOpenDialog} className="bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-blue-700">
-              <Plus className="w-4 h-4" />
+            <Button 
+              onClick={handleOpenDialog} 
+              className="bg-white text-blue-600 px-6 py-3 rounded-xl flex items-center gap-2 hover:bg-blue-50 shadow-lg hover:shadow-xl transition-all duration-300 font-semibold hover:scale-105"
+            >
+              <Plus className="w-5 h-5" />
               Add New Teacher
             </Button>
           </DialogTrigger>
@@ -353,26 +361,27 @@ export default function TeachersTab() {
             </DialogFooter>
           </DialogContent>
         </Dialog>
+        </div>
       </div>
 
       {/* Filters */}
-      <div className="bg-white rounded-xl p-4 mb-6 shadow-sm">
+      <div className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100 hover:shadow-xl transition-shadow duration-300">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="flex items-center gap-2 bg-gray-50 rounded-lg px-4 py-2">
-            <Search className="w-4 h-4 text-gray-400" />
+          <div className="flex items-center gap-3 bg-gradient-to-r from-gray-50 to-blue-50 rounded-xl px-5 py-3 border border-gray-200 focus-within:border-blue-400 focus-within:ring-4 focus-within:ring-blue-100 transition-all duration-300">
+            <Search className="w-5 h-5 text-blue-500" />
             <input
               type="text"
               placeholder="Search by name, email, or subject..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="flex-1 bg-transparent outline-none text-sm"
+              className="flex-1 bg-transparent outline-none text-sm placeholder-gray-400"
             />
           </div>
           
           <select
             value={filterStatus}
             onChange={(e) => setFilterStatus(e.target.value)}
-            className="bg-gray-50 rounded-lg px-4 py-2 text-sm border border-gray-200 outline-none"
+            className="bg-gradient-to-r from-gray-50 to-blue-50 rounded-xl px-5 py-3 text-sm border border-gray-200 outline-none focus:border-blue-400 focus:ring-4 focus:ring-blue-100 transition-all duration-300 cursor-pointer"
           >
             <option value="all">All Teachers</option>
           </select>
@@ -380,48 +389,68 @@ export default function TeachersTab() {
       </div>
 
       {/* Teachers Table */}
-      <div className="bg-white rounded-xl overflow-hidden shadow-sm">
+      <div className="bg-white rounded-2xl overflow-hidden shadow-xl border border-gray-100">
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-gray-50 border-b border-gray-200">
+            <thead className="bg-gradient-to-r from-gray-50 to-blue-50 border-b-2 border-blue-100">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Teacher</th>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Email</th>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Subject</th>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Gender</th>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Age</th>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Experience</th>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Actions</th>
+                <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Teacher</th>
+                <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Email</th>
+                <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Subject</th>
+                <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Gender</th>
+                <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Age</th>
+                <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Experience</th>
+                <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
               {fetchLoading ? (
-                <tr>
-                  <td colSpan={7} className="px-6 py-8 text-center text-gray-500">
-                    Loading teachers...
-                  </td>
-                </tr>
+                // Skeleton loader
+                Array.from({ length: 5 }).map((_, index) => (
+                  <tr key={index} className="animate-pulse">
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 bg-gray-200 rounded-full"></div>
+                        <div className="h-4 bg-gray-200 rounded w-32"></div>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4"><div className="h-4 bg-gray-200 rounded w-40"></div></td>
+                    <td className="px-6 py-4"><div className="h-4 bg-gray-200 rounded w-24"></div></td>
+                    <td className="px-6 py-4"><div className="h-4 bg-gray-200 rounded w-16"></div></td>
+                    <td className="px-6 py-4"><div className="h-4 bg-gray-200 rounded w-12"></div></td>
+                    <td className="px-6 py-4"><div className="h-4 bg-gray-200 rounded w-20"></div></td>
+                    <td className="px-6 py-4"><div className="h-4 bg-gray-200 rounded w-16"></div></td>
+                  </tr>
+                ))
               ) : filteredTeachers.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="px-6 py-8 text-center text-gray-500">
-                    No teachers found
+                  <td colSpan={7} className="px-6 py-16">
+                    <div className="flex flex-col items-center justify-center text-gray-400">
+                      <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+                        <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                        </svg>
+                      </div>
+                      <p className="text-lg font-semibold text-gray-600 mb-1">No teachers found</p>
+                      <p className="text-sm text-gray-400">Try adjusting your search criteria</p>
+                    </div>
                   </td>
                 </tr>
               ) : (
                 filteredTeachers.map((teacher) => (
                   <tr 
                     key={teacher._id} 
-                    className="hover:bg-gray-50 transition-colors cursor-pointer"
+                    className="hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 transition-all duration-200 cursor-pointer group"
                     onClick={() => router.push(`/admin/teacher/${teacher._id}`)}
                   >
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                          <span className="text-sm font-bold text-blue-600">
+                        <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center shadow-md group-hover:shadow-lg group-hover:scale-110 transition-all duration-300">
+                          <span className="text-base font-bold text-white">
                             {teacher.name.charAt(0)}
                           </span>
                         </div>
-                        <p className="text-sm font-medium text-gray-900">{teacher.name}</p>
+                        <p className="text-sm font-semibold text-gray-900 group-hover:text-blue-600 transition-colors">{teacher.name}</p>
                       </div>
                     </td>
                     <td className="px-6 py-4">
@@ -451,26 +480,51 @@ export default function TeachersTab() {
       </div>
 
       {/* Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
-        <div className="bg-white rounded-xl p-6 shadow-sm">
-          <h3 className="text-sm font-semibold text-gray-500 mb-2">Total Teachers</h3>
-          <p className="text-3xl font-bold text-gray-900">{teachers.length}</p>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl p-6 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 transform">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-sm font-semibold text-blue-100 uppercase tracking-wide">Total Teachers</h3>
+            <div className="w-10 h-10 bg-white bg-opacity-20 rounded-lg flex items-center justify-center">
+              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+              </svg>
+            </div>
+          </div>
+          <p className="text-4xl font-bold text-white">{teachers.length}</p>
+          <p className="text-blue-100 text-sm mt-2">Active teachers in system</p>
         </div>
-        <div className="bg-white rounded-xl p-6 shadow-sm">
-          <h3 className="text-sm font-semibold text-gray-500 mb-2">Avg. Experience</h3>
-          <p className="text-3xl font-bold text-blue-600">
+        <div className="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl p-6 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 transform">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-sm font-semibold text-indigo-100 uppercase tracking-wide">Avg. Experience</h3>
+            <div className="w-10 h-10 bg-white bg-opacity-20 rounded-lg flex items-center justify-center">
+              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
+              </svg>
+            </div>
+          </div>
+          <p className="text-4xl font-bold text-white">
             {teachers.length > 0 && teachers.some(t => t.yearsOfExperience)
               ? (teachers.reduce((sum, t) => sum + (t.yearsOfExperience || 0), 0) / teachers.filter(t => t.yearsOfExperience).length).toFixed(1)
-              : '0.0'} năm
+              : '0.0'}
+            <span className="text-2xl ml-2">năm</span>
           </p>
+          <p className="text-indigo-100 text-sm mt-2">Average years of teaching</p>
         </div>
-        <div className="bg-white rounded-xl p-6 shadow-sm">
-          <h3 className="text-sm font-semibold text-gray-500 mb-2">Avg. Age</h3>
-          <p className="text-3xl font-bold text-green-600">
+        <div className="bg-gradient-to-br from-green-500 to-emerald-600 rounded-2xl p-6 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 transform">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-sm font-semibold text-green-100 uppercase tracking-wide">Avg. Age</h3>
+            <div className="w-10 h-10 bg-white bg-opacity-20 rounded-lg flex items-center justify-center">
+              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+              </svg>
+            </div>
+          </div>
+          <p className="text-4xl font-bold text-white">
             {teachers.length > 0 && teachers.some(t => t.age)
               ? (teachers.reduce((sum, t) => sum + (t.age || 0), 0) / teachers.filter(t => t.age).length).toFixed(0)
               : '0'}
           </p>
+          <p className="text-green-100 text-sm mt-2">Average teacher age</p>
         </div>
       </div>
     </div>

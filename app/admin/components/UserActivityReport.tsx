@@ -1,6 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { Download, Users, Eye, X } from 'lucide-react';
+import { Download, Users, Eye, X ,Activity} from 'lucide-react';
 import { fetchUserActivityLogs, exportUserActivityLogsToCSV, fetchUserActivityById } from '../api/report';
 
 interface UserActivity {
@@ -130,25 +130,30 @@ export default function UserActivityReport() {
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
-        <h3 className="text-lg font-bold text-gray-900">User Activity Logs</h3>
+        <h3 className="text-2xl font-bold text-gray-900 flex items-center gap-3">
+          <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl flex items-center justify-center shadow-lg">
+            <Activity className="w-6 h-6 text-white" />
+          </div>
+          User Activity Logs
+        </h3>
         <button 
           onClick={handleExportCSV}
-          className="bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-blue-700 transition-colors"
+          className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-6 py-3 rounded-xl flex items-center gap-2 hover:from-purple-700 hover:to-pink-700 transition-all duration-300 font-semibold hover:scale-105 shadow-lg hover:shadow-xl"
         >
-          <Download className="w-4 h-4" />
+          <Download className="w-5 h-5" />
           Export CSV
         </button>
       </div>
 
-      <div className="bg-white rounded-xl p-6 shadow-sm">
+      <div className="bg-white rounded-2xl p-8 shadow-xl border border-gray-100">
         {/* Filters */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8 p-6 bg-gradient-to-br from-gray-50 to-purple-50 rounded-xl border-2 border-purple-100">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Role</label>
+            <label className="block text-sm font-bold text-gray-900 mb-2">Role</label>
             <select
               value={filters.role}
               onChange={(e) => handleFilterChange('role', e.target.value)}
-              className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full border-2 border-gray-300 rounded-xl px-4 py-3 text-sm outline-none focus:ring-4 focus:ring-purple-200 focus:border-purple-400 cursor-pointer transition-all duration-300"
             >
               <option value="">All Roles</option>
               <option value="student">Student</option>
@@ -157,64 +162,66 @@ export default function UserActivityReport() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Action</label>
+            <label className="block text-sm font-bold text-gray-900 mb-2">Action</label>
             <input
               type="text"
               value={filters.action}
               onChange={(e) => handleFilterChange('action', e.target.value)}
               placeholder="Filter by action"
-              className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full border-2 border-gray-300 rounded-xl px-4 py-3 text-sm outline-none focus:ring-4 focus:ring-purple-200 focus:border-purple-400 transition-all duration-300"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Start Date</label>
+            <label className="block text-sm font-bold text-gray-900 mb-2">Start Date</label>
             <input
               type="date"
               value={filters.startDate}
               onChange={(e) => handleFilterChange('startDate', e.target.value)}
-              className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full border-2 border-gray-300 rounded-xl px-4 py-3 text-sm outline-none focus:ring-4 focus:ring-purple-200 focus:border-purple-400 cursor-pointer transition-all duration-300"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">End Date</label>
+            <label className="block text-sm font-bold text-gray-900 mb-2">End Date</label>
             <input
               type="date"
               value={filters.endDate}
               onChange={(e) => handleFilterChange('endDate', e.target.value)}
-              className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full border-2 border-gray-300 rounded-xl px-4 py-3 text-sm outline-none focus:ring-4 focus:ring-purple-200 focus:border-purple-400 cursor-pointer transition-all duration-300"
             />
           </div>
         </div>
 
         {/* Activity Table */}
         {loading ? (
-          <div className="text-center py-12">
-            <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-            <p className="mt-2 text-gray-600">Loading activities...</p>
+          <div className="text-center py-16">
+            <div className="inline-block animate-spin rounded-full h-16 w-16 border-4 border-purple-500 border-t-transparent mb-4"></div>
+            <p className="text-lg font-medium text-gray-600">Loading activities...</p>
           </div>
         ) : error ? (
-          <div className="text-center py-12 text-red-600">
-            <p>Error: {error}</p>
+          <div className="text-center py-16 bg-gradient-to-br from-red-50 to-pink-50 rounded-xl">
+            <p className="text-lg font-semibold text-red-600">Error: {error}</p>
           </div>
         ) : activities.length === 0 ? (
-          <div className="text-center py-12 text-gray-500">
-            <Users className="w-12 h-12 mx-auto mb-3 opacity-50" />
-            <p>No activities found</p>
+          <div className="text-center py-16 bg-gradient-to-br from-gray-50 to-purple-50 rounded-xl">
+            <div className="w-20 h-20 bg-gradient-to-br from-purple-100 to-pink-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Users className="w-10 h-10 text-purple-500" />
+            </div>
+            <p className="text-lg font-semibold text-gray-600">No activities found</p>
           </div>
         ) : (
           <>
-            <div className="overflow-x-auto">
+            <div className="overflow-x-auto rounded-xl border-2 border-gray-100">
               <table className="w-full">
-                <thead className="bg-gray-50 border-b border-gray-200">
+                <thead className="bg-gradient-to-r from-purple-50 to-pink-50 border-b-2 border-purple-100">
                   <tr>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Related</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Time</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                    <th className="px-4 py-4 text-left text-xs font-bold text-gray-900 uppercase tracking-wider">User</th>
+                    <th className="px-4 py-4 text-left text-xs font-bold text-gray-900 uppercase tracking-wider">Role</th>
+                    <th className="px-4 py-4 text-left text-xs font-bold text-gray-900 uppercase tracking-wider">Action</th>
+                    <th className="px-4 py-4 text-left text-xs font-bold text-gray-900 uppercase tracking-wider">Related</th>
+                    <th className="px-4 py-4 text-left text-xs font-bold text-gray-900 uppercase tracking-wider">Time</th>
+                    <th className="px-4 py-4 text-left text-xs font-bold text-gray-900 uppercase tracking-wider">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
@@ -224,7 +231,7 @@ export default function UserActivityReport() {
                     const userEmail = user?.email || 'N/A';
                     
                     return (
-                      <tr key={activity._id} className="hover:bg-gray-50">
+                      <tr key={activity._id} className="hover:bg-gradient-to-r hover:from-purple-50 hover:to-pink-50 transition-all duration-200">
                         <td className="px-4 py-4 whitespace-nowrap">
                           <div>
                             <div className="text-sm font-medium text-gray-900">{userName}</div>
@@ -256,9 +263,9 @@ export default function UserActivityReport() {
                         <td className="px-4 py-4 whitespace-nowrap text-sm">
                           <button
                             onClick={() => handleViewDetail(activity._id)}
-                            className="text-blue-600 hover:text-blue-800 flex items-center gap-1"
+                            className="text-purple-600 hover:text-purple-800 flex items-center gap-2 font-semibold hover:scale-110 transition-all duration-300"
                           >
-                            <Eye className="w-4 h-4" />
+                            <Eye className="w-5 h-5" />
                             View
                           </button>
                         </td>

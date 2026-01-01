@@ -118,21 +118,21 @@ export default function LessonDetailPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-50">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 sticky top-0 z-10 shadow-sm">
+      <div className="bg-white/80 backdrop-blur-lg border-b border-gray-200 sticky top-0 z-10 shadow-lg">
         <div className="max-w-5xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <button
                 onClick={() => router.back()}
-                className="p-2 hover:bg-gray-100 rounded-lg transition"
+                className="p-2.5 hover:bg-purple-50 rounded-xl transition-all duration-200 hover:scale-105 group"
               >
-                <ArrowLeft className="w-5 h-5 text-gray-600" />
+                <ArrowLeft className="w-5 h-5 text-gray-600 group-hover:text-purple-600 transition-colors" />
               </button>
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">Lesson Details</h1>
-                <p className="text-sm text-gray-500">View and manage lesson information</p>
+                <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-purple-600 via-blue-600 to-indigo-600 bg-clip-text text-transparent">Chi tiết Bài học</h1>
+                <p className="text-sm text-gray-500 mt-1">Xem và quản lý thông tin bài học</p>
               </div>
             </div>
             
@@ -141,16 +141,16 @@ export default function LessonDetailPage() {
                 <>
                   <button
                     onClick={() => setIsEditing(true)}
-                    className="bg-blue-600 text-white px-5 py-2.5 rounded-lg hover:bg-blue-700 transition font-semibold"
+                    className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-5 py-2.5 rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all shadow-md hover:shadow-lg hover:scale-105 font-semibold"
                   >
-                    Edit Lesson
+                    Chỉnh sửa Bài học
                   </button>
                   <button
                     onClick={handleDelete}
-                    className="bg-red-600 text-white px-5 py-2.5 rounded-lg hover:bg-red-700 transition font-semibold flex items-center gap-2"
+                    className="bg-gradient-to-r from-red-600 to-pink-600 text-white px-5 py-2.5 rounded-xl hover:from-red-700 hover:to-pink-700 transition-all shadow-md hover:shadow-lg hover:scale-105 font-semibold flex items-center gap-2"
                   >
                     <Trash2 className="w-4 h-4" />
-                    Delete
+                    Xóa
                   </button>
                 </>
               ) : (
@@ -162,17 +162,17 @@ export default function LessonDetailPage() {
                       setFile(null);
                       setFilePreview(lesson.lessonMetadata || '');
                     }}
-                    className="bg-gray-200 text-gray-700 px-5 py-2.5 rounded-lg hover:bg-gray-300 transition font-semibold"
+                    className="bg-gray-200 text-gray-700 px-5 py-2.5 rounded-xl hover:bg-gray-300 transition-all font-semibold"
                   >
-                    Cancel
+                    Hủy
                   </button>
                   <button
                     onClick={handleUpdate}
                     disabled={saving}
-                    className="bg-green-600 text-white px-5 py-2.5 rounded-lg hover:bg-green-700 transition font-semibold flex items-center gap-2 disabled:opacity-50"
+                    className="bg-gradient-to-r from-green-600 to-emerald-600 text-white px-5 py-2.5 rounded-xl hover:from-green-700 hover:to-emerald-700 transition-all shadow-md hover:shadow-lg hover:scale-105 font-semibold flex items-center gap-2 disabled:opacity-50"
                   >
                     <Save className="w-4 h-4" />
-                    {saving ? 'Saving...' : 'Save Changes'}
+                    {saving ? 'Đang lưu...' : 'Lưu Thay đổi'}
                   </button>
                 </>
               )}
@@ -182,43 +182,43 @@ export default function LessonDetailPage() {
       </div>
 
       {/* Main Content */}
-      <div className="max-w-5xl mx-auto px-6 py-8">
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8">
+        <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-gray-100 p-6 sm:p-8">
           {/* Info Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-4 border border-blue-200">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-8">
+            <div className="bg-gradient-to-br from-blue-100 to-indigo-100 rounded-xl p-5 border border-blue-200 shadow-md hover:shadow-lg transition-all hover:scale-105">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-blue-600 rounded-lg">
+                <div className="p-2.5 bg-blue-600 rounded-xl shadow-md">
                   <BookOpen className="w-5 h-5 text-white" />
                 </div>
                 <div>
-                  <p className="text-xs text-blue-600 font-semibold">Subject</p>
+                  <p className="text-xs text-blue-700 font-semibold">Môn học</p>
                   <p className="text-lg font-bold text-blue-900">{lesson.subject}</p>
                 </div>
               </div>
             </div>
 
-            <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg p-4 border border-purple-200">
+            <div className="bg-gradient-to-br from-purple-100 to-pink-100 rounded-xl p-5 border border-purple-200 shadow-md hover:shadow-lg transition-all hover:scale-105">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-purple-600 rounded-lg">
+                <div className="p-2.5 bg-purple-600 rounded-xl shadow-md">
                   <User className="w-5 h-5 text-white" />
                 </div>
                 <div>
-                  <p className="text-xs text-purple-600 font-semibold">Teacher</p>
+                  <p className="text-xs text-purple-700 font-semibold">Giáo viên</p>
                   <p className="text-lg font-bold text-purple-900">{lesson.teacherId?.name || 'N/A'}</p>
                 </div>
               </div>
             </div>
 
-            <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-lg p-4 border border-green-200">
+            <div className="bg-gradient-to-br from-green-100 to-emerald-100 rounded-xl p-5 border border-green-200 shadow-md hover:shadow-lg transition-all hover:scale-105">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-green-600 rounded-lg">
+                <div className="p-2.5 bg-green-600 rounded-xl shadow-md">
                   <Clock className="w-5 h-5 text-white" />
                 </div>
                 <div>
-                  <p className="text-xs text-green-600 font-semibold">Created</p>
+                  <p className="text-xs text-green-700 font-semibold">Ngày tạo</p>
                   <p className="text-sm font-bold text-green-900">
-                    {new Date(lesson.createDate).toLocaleDateString()}
+                    {new Date(lesson.createDate).toLocaleDateString('vi-VN')}
                   </p>
                 </div>
               </div>
@@ -228,18 +228,18 @@ export default function LessonDetailPage() {
           {/* Lesson Title */}
           <div className="mb-6">
             <label className="block text-sm font-semibold text-gray-700 mb-2">
-              Lesson Title
+              Tiêu đề Bài học
             </label>
             {isEditing ? (
               <input
                 type="text"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="Enter lesson title"
+                className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all bg-gray-50 hover:bg-white"
+                placeholder="Nhập tiêu đề bài học"
               />
             ) : (
-              <div className="bg-gray-50 px-4 py-3 rounded-lg border border-gray-200">
+              <div className="bg-gradient-to-r from-gray-50 to-slate-50 px-4 py-3 rounded-xl border border-gray-200">
                 <p className="text-gray-900 font-medium">{lesson.title}</p>
               </div>
             )}

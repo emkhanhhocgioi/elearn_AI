@@ -140,39 +140,44 @@ export default function StudentListPage() {
   return (
     <div className="min-h-screen bg-gray-50 p-6">
       {/* Header */}
-      <div className="mb-6">
+      <div className="mb-8">
         <Button 
           onClick={() => router.back()} 
           variant="ghost" 
-          className="mb-4"
+          className="mb-4 hover:bg-gray-100"
         >
           <ArrowLeft className="w-4 h-4 mr-2" />
           Quay lại
         </Button>
         
-        <div className="bg-white rounded-xl p-6 shadow-sm">
-          <div className="flex items-start justify-between mb-4">
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">
-                Danh sách học sinh
-              </h1>
-              <p className="text-gray-600">
-                Tổng số: <span className="font-semibold text-blue-600">{filteredStudents.length}</span> học sinh
-              </p>
+        <div className="bg-white rounded-lg p-8 shadow-sm border border-gray-200">
+          <div className="flex items-start justify-between mb-6">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 bg-blue-50 rounded-lg flex items-center justify-center">
+                <Users className="w-6 h-6 text-blue-600" />
+              </div>
+              <div>
+                <h1 className="text-3xl font-bold text-gray-900 mb-2">
+                  Danh sách học sinh
+                </h1>
+                <p className="text-gray-600">
+                  Tổng số: <span className="font-semibold text-blue-600">{filteredStudents.length}</span> học sinh
+                </p>
+              </div>
             </div>
             
             <div className="flex gap-3">
               <Button 
                 onClick={handleExport}
                 variant="outline"
-                className="flex items-center gap-2"
+                className="flex items-center gap-2 border-gray-300 hover:bg-gray-50"
               >
                 <Download className="w-4 h-4" />
                 Xuất danh sách
               </Button>
               <Button 
                 onClick={() => router.push(`/admin/class/${classId}/addstudent`)}
-                className="bg-blue-600 hover:bg-blue-700 flex items-center gap-2"
+                className="bg-blue-600 hover:bg-blue-700 flex items-center gap-2 border border-blue-700 shadow-sm"
               >
                 <UserPlus className="w-4 h-4" />
                 Thêm học sinh
@@ -195,10 +200,10 @@ export default function StudentListPage() {
       </div>
 
       {/* Student Table */}
-      <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
         {filteredStudents.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-12 px-4">
-            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+          <div className="flex flex-col items-center justify-center py-16 px-4">
+            <div className="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center mb-4">
               <UserPlus className="w-8 h-8 text-gray-400" />
             </div>
             <h3 className="text-lg font-semibold text-gray-900 mb-2">
@@ -212,7 +217,7 @@ export default function StudentListPage() {
             {!searchTerm && (
               <Button 
                 onClick={() => router.push(`/admin/class/${classId}/addstudent`)}
-                className="bg-blue-600 hover:bg-blue-700"
+                className="bg-blue-600 hover:bg-blue-700 border border-blue-700 shadow-sm"
               >
                 <UserPlus className="w-4 h-4 mr-2" />
                 Thêm học sinh ngay
@@ -223,24 +228,24 @@ export default function StudentListPage() {
           <div className="overflow-x-auto">
             <Table>
               <TableHeader>
-                <TableRow className="bg-gray-50">
-                  <TableHead className="font-semibold">STT</TableHead>
-                  <TableHead className="font-semibold">Mã ghi danh</TableHead>
-                  <TableHead className="font-semibold">Họ và tên</TableHead>
-                  <TableHead className="font-semibold">Email</TableHead>
-                  <TableHead className="font-semibold">Liên hệ phụ huynh</TableHead>
-                  <TableHead className="font-semibold">Ngày sinh</TableHead>
-                  <TableHead className="font-semibold">Ngày tham gia</TableHead>
-                  <TableHead className="font-semibold">Học lực</TableHead>
-                  <TableHead className="font-semibold text-right">Thao tác</TableHead>
+                <TableRow className="bg-gray-50 border-b border-gray-200">
+                  <TableHead className="font-semibold text-gray-700">STT</TableHead>
+                  <TableHead className="font-semibold text-gray-700">Mã ghi danh</TableHead>
+                  <TableHead className="font-semibold text-gray-700">Họ và tên</TableHead>
+                  <TableHead className="font-semibold text-gray-700">Email</TableHead>
+                  <TableHead className="font-semibold text-gray-700">Liên hệ phụ huynh</TableHead>
+                  <TableHead className="font-semibold text-gray-700">Ngày sinh</TableHead>
+                  <TableHead className="font-semibold text-gray-700">Ngày tham gia</TableHead>
+                  <TableHead className="font-semibold text-gray-700">Học lực</TableHead>
+                  <TableHead className="font-semibold text-gray-700 text-right">Thao tác</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {filteredStudents.map((student, index) => (
-                  <TableRow key={student._id} className="hover:bg-gray-50">
+                  <TableRow key={student._id} className="hover:bg-gray-50 border-b border-gray-100">
                     <TableCell className="font-medium">{index + 1}</TableCell>
                     <TableCell>
-                      <span className="font-mono text-sm bg-blue-50 text-blue-700 px-2 py-1 rounded">
+                      <span className="font-mono text-sm bg-blue-50 text-blue-700 px-3 py-1 rounded border border-blue-200">
                         {student.enrollmentId || 'N/A'}
                       </span>
                     </TableCell>
@@ -250,10 +255,10 @@ export default function StudentListPage() {
                           <img 
                             src={student.avatar} 
                             alt={student.name}
-                            className="w-8 h-8 rounded-full object-cover"
+                            className="w-10 h-10 rounded-lg object-cover border border-gray-200"
                           />
                         ) : (
-                          <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold text-sm">
+                          <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center text-blue-700 font-semibold text-base border border-blue-200">
                             {student.name.charAt(0).toUpperCase()}
                           </div>
                         )}
@@ -305,7 +310,7 @@ export default function StudentListPage() {
                         variant="ghost"
                         size="sm"
                         onClick={() => router.push(`/admin/student/${student._id}`)}
-                        className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                        className="text-blue-600 hover:text-blue-700 hover:bg-blue-50 border border-transparent hover:border-blue-200"
                       >
                         Chi tiết
                       </Button>

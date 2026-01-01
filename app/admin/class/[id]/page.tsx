@@ -204,38 +204,38 @@ export default function ClassDetailPage() {
   return (
     <div className="min-h-screen bg-gray-50 p-6">
       {/* Header */}
-      <div className="mb-6">
+      <div className="mb-8">
         <Button 
           onClick={() => router.back()} 
           variant="ghost" 
-          className="mb-4"
+          className="mb-4 hover:bg-gray-100"
         >
           <ArrowLeft className="w-4 h-4 mr-2" />
           Quay lại
         </Button>
         
-        <div className="bg-white rounded-xl p-6 shadow-sm">
+        <div className="bg-white rounded-lg p-8 shadow-sm border border-gray-200">
           <div className="flex items-start justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">
+              <h1 className="text-4xl font-bold text-gray-900 mb-3">
                 {classData.class_code}
               </h1>
-              <div className="flex items-center gap-4 text-gray-600">
+              <div className="flex items-center gap-6 text-gray-600">
                 <div className="flex items-center gap-2">
-                  <BookOpen className="w-5 h-5" />
-                  <span className="text-lg">{classData.class_subject}</span>
+                  <BookOpen className="w-5 h-5 text-blue-600" />
+                  <span className="text-base">{classData.class_subject}</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Calendar className="w-5 h-5" />
-                  <span>{classData.class_year}</span>
+                  <Calendar className="w-5 h-5 text-blue-600" />
+                  <span className="text-base">{classData.class_year}</span>
                 </div>
               </div>
             </div>
             
-            <span className={`px-4 py-2 rounded-full text-sm font-medium ${
+            <span className={`px-4 py-2 rounded-lg text-sm font-semibold ${
               classData.status === 'active' 
-                ? 'bg-green-100 text-green-700' 
-                : 'bg-gray-100 text-gray-700'
+                ? 'bg-green-50 text-green-700 border border-green-200' 
+                : 'bg-gray-50 text-gray-700 border border-gray-200'
             }`}>
               {classData.status === 'active' ? 'Đang hoạt động' : 'Không hoạt động'}
             </span>
@@ -244,144 +244,159 @@ export default function ClassDetailPage() {
       </div>
 
       {/* Statistics Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
-        <div className="bg-white rounded-xl p-6 shadow-sm">
-          <div className="flex items-center justify-between mb-2">
-            <h3 className="text-sm font-medium text-gray-500">Số học sinh</h3>
-            <Users className="w-5 h-5 text-blue-600" />
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 bg-blue-50 rounded-lg flex items-center justify-center">
+              <Users className="w-6 h-6 text-blue-600" />
+            </div>
+            <div>
+              <h3 className="text-sm font-medium text-gray-600">Số học sinh</h3>
+              <p className="text-2xl font-bold text-gray-900 mt-1">{classData.class_student_count}</p>
+            </div>
           </div>
-          <p className="text-3xl font-bold text-gray-900">{classData.class_student_count}</p>
         </div>
 
-        <div className="bg-white rounded-xl p-6 shadow-sm">
-          <div className="flex items-center justify-between mb-2">
-            <h3 className="text-sm font-medium text-gray-500">Điểm trung bình</h3>
-            <TrendingUp className="w-5 h-5 text-green-600" />
+        <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 bg-green-50 rounded-lg flex items-center justify-center">
+              <TrendingUp className="w-6 h-6 text-green-600" />
+            </div>
+            <div>
+              <h3 className="text-sm font-medium text-gray-600">Điểm trung bình</h3>
+              <p className="text-2xl font-bold text-gray-900 mt-1">{classData.class_avarage_grade.toFixed(1)}</p>
+            </div>
           </div>
-          <p className="text-3xl font-bold text-gray-900">{classData.class_avarage_grade.toFixed(1)}</p>
         </div>
 
-        <div className="bg-white rounded-xl p-6 shadow-sm">
-          <div className="flex items-center justify-between mb-2">
-            <h3 className="text-sm font-medium text-gray-500">Giáo viên chủ nhiệm</h3>
-            <Users className="w-5 h-5 text-purple-600" />
+        <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 bg-purple-50 rounded-lg flex items-center justify-center">
+              <Users className="w-6 h-6 text-purple-600" />
+            </div>
+            <div className="flex-1">
+              <h3 className="text-sm font-medium text-gray-600">GVCN</h3>
+              <p className="text-base font-semibold text-gray-900 mt-1 truncate">{classData.teacher_name || 'Chưa có'}</p>
+            </div>
           </div>
-          <p className="text-lg font-semibold text-gray-900">{classData.teacher_name || 'Hiện tại chưa có giáo viên chủ nhiệm'}</p>
         </div>
 
-        <div className="bg-white rounded-xl p-6 shadow-sm">
-          <div className="flex items-center justify-between mb-2">
-            <h3 className="text-sm font-medium text-gray-500">Năm học</h3>
-            <Calendar className="w-5 h-5 text-orange-600" />
+        <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 bg-orange-50 rounded-lg flex items-center justify-center">
+              <Calendar className="w-6 h-6 text-orange-600" />
+            </div>
+            <div>
+              <h3 className="text-sm font-medium text-gray-600">Năm học</h3>
+              <p className="text-base font-semibold text-gray-900 mt-1">{classData.class_year}</p>
+            </div>
           </div>
-          <p className="text-lg font-semibold text-gray-900">
-            {classData.class_year}
-          </p>
         </div>
       </div>
 
       {/* Action Buttons */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
-        <Button 
-     
-          className="bg-blue-600 hover:bg-blue-700 text-white p-6 h-auto flex flex-col items-start gap-2"
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+        <button 
+          className="bg-blue-600 hover:bg-blue-700 text-white p-6 rounded-lg shadow-sm border border-blue-700 transition-all hover:shadow-md flex items-start gap-4 text-left"
           onClick={() => router.push(`/admin/class/${classId}/addstudent`)}
         >
-          <UserPlus className="w-6 h-6" />
-          <div className="text-left">
-            <div className="font-semibold text-lg">Thêm học sinh</div>
-            <div className="text-sm opacity-90">Đăng ký học sinh vào lớp</div>
+          <div className="w-12 h-12 bg-blue-500 rounded-lg flex items-center justify-center flex-shrink-0">
+            <UserPlus className="w-6 h-6" />
           </div>
-        </Button>
-        <Button 
-          className="bg-green-600 hover:bg-green-700 text-white p-6 h-auto flex flex-col items-start gap-2"
+          <div>
+            <div className="font-semibold text-lg mb-1">Thêm học sinh</div>
+            <div className="text-sm text-blue-100">Đăng ký học sinh vào lớp</div>
+          </div>
+        </button>
+        
+        <button 
+          className="bg-green-600 hover:bg-green-700 text-white p-6 rounded-lg shadow-sm border border-green-700 transition-all hover:shadow-md flex items-start gap-4 text-left"
           onClick={() => router.push(`/admin/class/${classId}/studentlist`)}
         >
-          <FileText className="w-6 h-6" />
-          <div className="text-left">
-            <div className="font-semibold text-lg">Danh sách học sinh</div>
-            <div className="text-sm opacity-90">Xem và quản lý học sinh</div>
+          <div className="w-12 h-12 bg-green-500 rounded-lg flex items-center justify-center flex-shrink-0">
+            <FileText className="w-6 h-6" />
           </div>
-        </Button>
+          <div>
+            <div className="font-semibold text-lg mb-1">Danh sách học sinh</div>
+            <div className="text-sm text-green-100">Xem và quản lý học sinh</div>
+          </div>
+        </button>
 
-        <Button 
-          className="bg-purple-600 hover:bg-purple-700 text-white p-6 h-auto flex flex-col items-start gap-2"
+        <button 
+          className="bg-orange-600 hover:bg-orange-700 text-white p-6 rounded-lg shadow-sm border border-orange-700 transition-all hover:shadow-md flex items-start gap-4 text-left"
           onClick={() => alert('Chức năng đang phát triển')}
         >
-          <BarChart3 className="w-6 h-6" />
-          <div className="text-left">
-            <div className="font-semibold text-lg">Thống kê điểm</div>
-            <div className="text-sm opacity-90">Xem báo cáo và thống kê</div>
+          <div className="w-12 h-12 bg-orange-500 rounded-lg flex items-center justify-center flex-shrink-0">
+            <BookOpen className="w-6 h-6" />
           </div>
-        </Button>
-
-        <Button 
-          className="bg-orange-600 hover:bg-orange-700 text-white p-6 h-auto flex flex-col items-start gap-2"
-          onClick={() => alert('Chức năng đang phát triển')}
-        >
-          <BookOpen className="w-6 h-6" />
-          <div className="text-left">
-            <div className="font-semibold text-lg">Tài liệu học tập</div>
-            <div className="text-sm opacity-90">Quản lý tài liệu và bài giảng</div>
+          <div>
+            <div className="font-semibold text-lg mb-1">Tài liệu học tập</div>
+            <div className="text-sm text-orange-100">Quản lý tài liệu và bài giảng</div>
           </div>
-        </Button>
+        </button>
 
-        <Button 
-          className="bg-yellow-600 hover:bg-yellow-700 text-white p-6 h-auto flex flex-col items-start gap-2"
+        <button 
+          className="bg-amber-600 hover:bg-amber-700 text-white p-6 rounded-lg shadow-sm border border-amber-700 transition-all hover:shadow-md flex items-start gap-4 text-left"
           onClick={() => router.push(`/admin/class/${classId}/edit`)}
         >
-          <Edit className="w-6 h-6" />
-          <div className="text-left">
-            <div className="font-semibold text-lg">Chỉnh sửa thông tin</div>
-            <div className="text-sm opacity-90">Cập nhật thông tin lớp học</div>
+          <div className="w-12 h-12 bg-amber-500 rounded-lg flex items-center justify-center flex-shrink-0">
+            <Edit className="w-6 h-6" />
           </div>
-        </Button>
+          <div>
+            <div className="font-semibold text-lg mb-1">Chỉnh sửa thông tin</div>
+            <div className="text-sm text-amber-100">Cập nhật thông tin lớp học</div>
+          </div>
+        </button>
 
-        <Button 
-          className="bg-red-600 hover:bg-red-700 text-white p-6 h-auto flex flex-col items-start gap-2"
+        <button 
+          className="bg-red-600 hover:bg-red-700 text-white p-6 rounded-lg shadow-sm border border-red-700 transition-all hover:shadow-md flex items-start gap-4 text-left"
           onClick={() => alert('Chức năng đang phát triển')}
         >
-          <Trash2 className="w-6 h-6" />
-          <div className="text-left">
-            <div className="font-semibold text-lg">Xóa lớp học</div>
-            <div className="text-sm opacity-90">Xóa lớp học khỏi hệ thống</div>
+          <div className="w-12 h-12 bg-red-500 rounded-lg flex items-center justify-center flex-shrink-0">
+            <Trash2 className="w-6 h-6" />
           </div>
-        </Button>
+          <div>
+            <div className="font-semibold text-lg mb-1">Xóa lớp học</div>
+            <div className="text-sm text-red-100">Xóa lớp học khỏi hệ thống</div>
+          </div>
+        </button>
 
-        <Button 
-          className="bg-indigo-600 hover:bg-indigo-700 text-white p-6 h-auto flex flex-col items-start gap-2"
+        <button 
+          className="bg-indigo-600 hover:bg-indigo-700 text-white p-6 rounded-lg shadow-sm border border-indigo-700 transition-all hover:shadow-md flex items-start gap-4 text-left"
           onClick={handleViewSchedule}
         >
-          <Clock className="w-6 h-6" />
-          <div className="text-left">
-            <div className="font-semibold text-lg">Lịch dạy học</div>
-            <div className="text-sm opacity-90">Xem và quản lý thời khóa biểu</div>
+          <div className="w-12 h-12 bg-indigo-500 rounded-lg flex items-center justify-center flex-shrink-0">
+            <Clock className="w-6 h-6" />
           </div>
-        </Button>
+          <div>
+            <div className="font-semibold text-lg mb-1">Lịch dạy học</div>
+            <div className="text-sm text-indigo-100">Xem và quản lý thời khóa biểu</div>
+          </div>
+        </button>
       </div>
 
       {/* Class Information Details */}
-      <div className="bg-white rounded-xl p-6 shadow-sm mb-6">
-        <h2 className="text-xl font-bold text-gray-900 mb-4">Thông tin chi tiết</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="border-b pb-3">
-            <p className="text-sm text-gray-500 mb-1">Mã lớp</p>
+      <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200 mb-8">
+        <h2 className="text-xl font-bold text-gray-900 mb-6">Thông tin chi tiết</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="pb-4 border-b border-gray-100">
+            <p className="text-sm font-medium text-gray-500 mb-2">Mã lớp</p>
             <p className="text-base font-semibold text-gray-900">{classData.class_code}</p>
           </div>
-          <div className="border-b pb-3">
-            <p className="text-sm text-gray-500 mb-1">Năm học</p>
+          <div className="pb-4 border-b border-gray-100">
+            <p className="text-sm font-medium text-gray-500 mb-2">Năm học</p>
             <p className="text-base font-semibold text-gray-900">{classData.class_year}</p>
           </div>
-          <div className="border-b pb-3">
-            <p className="text-sm text-gray-500 mb-1">Giáo viên chủ nhiệm</p>
-            <p className="text-base font-semibold text-gray-900">{classData.teacher_name || 'Hiện tại chưa có giáo viên chủ nhiệm'}</p>
+          <div className="pb-4 border-b border-gray-100">
+            <p className="text-sm font-medium text-gray-500 mb-2">Giáo viên chủ nhiệm</p>
+            <p className="text-base font-semibold text-gray-900">{classData.teacher_name || 'Chưa có GVCN'}</p>
           </div>
-          <div className="border-b pb-3">
-            <p className="text-sm text-gray-500 mb-1">Tổng số học sinh</p>
+          <div className="pb-4 border-b border-gray-100">
+            <p className="text-sm font-medium text-gray-500 mb-2">Tổng số học sinh</p>
             <p className="text-base font-semibold text-gray-900">{classData.class_student_count} học sinh</p>
           </div>
-          <div className="border-b pb-3">
-            <p className="text-sm text-gray-500 mb-1">Trạng thái</p>
+          <div className="pb-4 border-b border-gray-100">
+            <p className="text-sm font-medium text-gray-500 mb-2">Trạng thái</p>
             <p className="text-base font-semibold text-gray-900">
               {classData.status === 'active' ? 'Đang hoạt động' : 'Không hoạt động'}
             </p>
@@ -391,19 +406,23 @@ export default function ClassDetailPage() {
 
       {/* Subject Teachers Table */}
       {classData.subjectTeacher && (
-        <div className="bg-white rounded-xl p-6 shadow-sm">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-bold text-gray-900">Giáo viên bộ môn</h2>
-            <UserCog className="w-6 h-6 text-blue-600" />
+        <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center">
+                <UserCog className="w-5 h-5 text-blue-600" />
+              </div>
+              <h2 className="text-xl font-bold text-gray-900">Giáo viên bộ môn</h2>
+            </div>
           </div>
           <div className="overflow-x-auto">
             <Table>
               <TableHeader>
-                <TableRow>
-                  <TableHead className="w-[100px]">STT</TableHead>
-                  <TableHead>Môn học</TableHead>
-                  <TableHead>Giáo viên</TableHead>
-                  <TableHead className="text-right">Hành động</TableHead>
+                <TableRow className="border-b border-gray-200">
+                  <TableHead className="w-[80px] font-semibold text-gray-700">STT</TableHead>
+                  <TableHead className="font-semibold text-gray-700">Môn học</TableHead>
+                  <TableHead className="font-semibold text-gray-700">Giáo viên</TableHead>
+                  <TableHead className="text-right font-semibold text-gray-700">Hành động</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -568,7 +587,7 @@ export default function ClassDetailPage() {
                                 <TableCell>
                                   <div className="flex items-center gap-2">
                                     <Users className="w-4 h-4 text-gray-500" />
-                                    <span>{schedule.teacher?.name || 'N/A'}</span>
+                                    <p>{schedule.teacher?.name || 'N/A'}</p>
                                   </div>
                                 </TableCell>
                                 <TableCell className="text-gray-600 text-sm">

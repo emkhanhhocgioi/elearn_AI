@@ -101,59 +101,65 @@ export default function ClassDetailPage() {
   }, [classId]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
+    <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <div className="bg-white border-b border-gray-200 sticky top-0 z-10 shadow-sm">
-        <div className="max-w-7xl mx-auto px-6 py-4">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <button
                 onClick={() => router.back()}
-                className="p-2 hover:bg-gray-100 rounded-lg transition"
+                className="p-2.5 hover:bg-blue-50 rounded-xl transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:ring-offset-2 group"
+                aria-label="Go back"
               >
-                <ArrowLeft className="w-5 h-5 text-gray-600" />
+                <ArrowLeft className="w-5 h-5 text-gray-600 group-hover:text-[#2563EB] transition-colors" />
               </button>
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">{classInfo.class_code}</h1>
-                <p className="text-sm text-gray-500">Year: {classInfo.class_year}</p>
+                <h1 className="text-2xl sm:text-3xl font-bold text-blue-600 leading-tight">{classInfo.class_code}</h1>
+                <div className="flex items-center gap-2 mt-1.5">
+                  <Calendar className="w-4 h-4 text-gray-500" />
+                  <p className="text-sm font-medium text-gray-600">Năm học: {classInfo.class_year}</p>
+                </div>
               </div>
             </div>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 sm:gap-3">
               <button 
                 onClick={() => setEmailDialogOpen(true)}
-                className="bg-gradient-to-r from-green-600 to-green-700 text-white px-5 py-2.5 rounded-lg flex items-center gap-2 hover:from-green-700 hover:to-green-800 transition shadow-md hover:shadow-lg"
+                className="bg-green-600 text-white px-4 sm:px-5 py-2.5 rounded-lg flex items-center gap-2 hover:bg-green-700 transition-colors shadow-sm font-semibold focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
               >
                 <Mail className="w-5 h-5" />
-                <span className="font-semibold">Send Email</span>
+                <span className="hidden sm:inline">Gửi Email</span>
               </button>
               {activeTab === 'lessons' ? (
                 <button 
                   onClick={() => router.push(`/teacher/class/${classId}/add-lesson?subject=${subject}`)}
-                  className="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-5 py-2.5 rounded-lg flex items-center gap-2 hover:from-blue-700 hover:to-blue-800 transition shadow-md hover:shadow-lg"
+                  className="bg-purple-600 text-white px-4 sm:px-5 py-2.5 rounded-lg flex items-center gap-2 hover:bg-purple-700 transition-colors shadow-sm font-semibold focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2"
                 >
                   <Plus className="w-5 h-5" />
-                  <span className="font-semibold">Add Lesson</span>
+                  <span className="hidden sm:inline">Thêm bài học</span>
+                  <span className="sm:hidden">Thêm</span>
                 </button>
               ) : (
                 <button 
                   onClick={() => router.push(`/teacher/class/${classId}/add-test/?subject=${subject}`)}
-                  className="bg-gradient-to-r from-purple-600 to-purple-700 text-white px-5 py-2.5 rounded-lg flex items-center gap-2 hover:from-purple-700 hover:to-purple-800 transition shadow-md hover:shadow-lg"
+                  className="bg-blue-600 text-white px-4 sm:px-5 py-2.5 rounded-lg flex items-center gap-2 hover:bg-blue-700 transition-colors shadow-sm font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                 >
                   <Plus className="w-5 h-5" />
-                  <span className="font-semibold">Create Test</span>
+                  <span className="hidden sm:inline">Tạo bài kiểm tra</span>
+                  <span className="sm:hidden">Tạo</span>
                 </button>
               )}
             </div>
           </div>
 
           {/* Tab Navigation */}
-          <div className="flex gap-4 mt-6 border-b border-gray-200">
+          <div className="flex gap-4 sm:gap-6 mt-6 border-b border-gray-200">
             <button
               onClick={() => setActiveTab('tests')}
-              className={`pb-3 px-4 font-semibold transition-all ${
+              className={`pb-3 px-3 font-semibold transition-all duration-200 relative ${
                 activeTab === 'tests'
-                  ? 'text-purple-600 border-b-2 border-purple-600'
-                  : 'text-gray-500 hover:text-gray-700'
+                  ? 'text-[#2563EB] border-b-3 border-[#2563EB]'
+                  : 'text-gray-500 hover:text-[#0F172A]'
               }`}
             >
               <div className="flex items-center gap-2">
@@ -163,10 +169,10 @@ export default function ClassDetailPage() {
             </button>
             <button
               onClick={() => setActiveTab('lessons')}
-              className={`pb-3 px-4 font-semibold transition-all ${
+              className={`pb-3 px-2 font-semibold transition-all ${
                 activeTab === 'lessons'
-                  ? 'text-blue-600 border-b-2 border-blue-600'
-                  : 'text-gray-500 hover:text-gray-700'
+                  ? 'text-[#2563EB] border-b-2 border-[#2563EB]'
+                  : 'text-gray-500 hover:text-[#0F172A]'
               }`}
             >
               <div className="flex items-center gap-2">
@@ -182,23 +188,23 @@ export default function ClassDetailPage() {
       <div className="max-w-7xl mx-auto px-6 py-8">
         {activeTab === 'tests' ? (
           <>
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-              <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-8">
+              <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-gray-500 mb-1">Total Tests</p>
-                    <p className="text-3xl font-bold text-gray-900">{tests.length}</p>
+                    <p className="text-sm text-gray-600 mb-1.5 font-medium">Total Tests</p>
+                    <p className="text-3xl font-bold text-[#0F172A]">{tests.length}</p>
                   </div>
-                  <div className="p-3 bg-purple-100 rounded-lg">
-                    <FileText className="w-6 h-6 text-purple-600" />
+                  <div className="p-3 bg-blue-100 rounded-lg">
+                    <FileText className="w-6 h-6 text-[#2563EB]" />
                   </div>
                 </div>
               </div>
 
-              <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+              <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-gray-500 mb-1">Active Tests</p>
+                    <p className="text-sm text-gray-600 mb-1.5 font-medium">Bài kiểm tra đang diễn ra</p>
                     <p className="text-3xl font-bold text-green-600">
                       {tests.filter(t => t.status === 'ongoing').length}
                     </p>
@@ -209,26 +215,26 @@ export default function ClassDetailPage() {
                 </div>
               </div>
 
-              <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+              <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-gray-500 mb-1">Avg Completion</p>
-                    <p className="text-3xl font-bold text-blue-600">
+                    <p className="text-sm text-gray-600 mb-1.5 font-medium">Tỉ lệ hoàn thành TB</p>
+                    <p className="text-3xl font-bold text-[#2563EB]">
                       {tests.length > 0 && tests.reduce((acc, t) => acc + t.participants, 0) > 0
                         ? Math.round((tests.reduce((acc, t) => acc + t.submittedCount, 0) / tests.reduce((acc, t) => acc + t.participants, 0)) * 100)
                         : 0}%
                     </p>
                   </div>
                   <div className="p-3 bg-blue-100 rounded-lg">
-                    <BarChart3 className="w-6 h-6 text-blue-600" />
+                    <BarChart3 className="w-6 h-6 text-[#2563EB]" />
                   </div>
                 </div>
               </div>
 
-              <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+              <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-gray-500 mb-1">Avg Score</p>
+                    <p className="text-sm text-gray-600 mb-1.5 font-medium">Điểm trung bình</p>
                     <p className="text-3xl font-bold text-orange-600">
                       {tests.length > 0 ? Math.round(tests.reduce((acc, t) => acc + t.avg_score, 0) / tests.length) : 0}%
                     </p>
@@ -242,23 +248,23 @@ export default function ClassDetailPage() {
           </>
         ) : (
           <>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-              <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-8">
+              <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-gray-500 mb-1">Total Lessons</p>
-                    <p className="text-3xl font-bold text-gray-900">{lessons.length}</p>
+                    <p className="text-sm text-gray-600 mb-1.5 font-medium">Total Lessons</p>
+                    <p className="text-3xl font-bold text-[#0F172A]">{lessons.length}</p>
                   </div>
                   <div className="p-3 bg-blue-100 rounded-lg">
-                    <BookOpen className="w-6 h-6 text-blue-600" />
+                    <BookOpen className="w-6 h-6 text-[#2563EB]" />
                   </div>
                 </div>
               </div>
 
-              <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+              <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-gray-500 mb-1">Published</p>
+                    <p className="text-sm text-gray-600 mb-1.5 font-medium">Đã xuất bản</p>
                     <p className="text-3xl font-bold text-green-600">
                       {lessons.filter(l => l.status === 'published').length}
                     </p>
@@ -269,10 +275,10 @@ export default function ClassDetailPage() {
                 </div>
               </div>
 
-              <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+              <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-gray-500 mb-1">Draft</p>
+                    <p className="text-sm text-gray-600 mb-1.5 font-medium">Bản nháp</p>
                     <p className="text-3xl font-bold text-orange-600">
                       {lessons.filter(l => l.status === 'draft').length}
                     </p>
@@ -288,23 +294,23 @@ export default function ClassDetailPage() {
 
         {/* Tests List */}
         {activeTab === 'tests' && (
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100">
-            <div className="p-6 border-b border-gray-100">
-              <h2 className="text-xl font-bold text-gray-900">Tests Management</h2>
-              <p className="text-sm text-gray-500 mt-1">Create, edit, and manage tests for this class</p>
+          <div className="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden">
+            <div className="p-6 border-b border-gray-100 bg-gray-50">
+              <h2 className="text-xl font-bold text-[#0F172A] leading-tight">Quản lý Bài kiểm tra</h2>
+              <p className="text-sm text-gray-600 mt-1.5 leading-relaxed">Tạo, chỉnh sửa và quản lý các bài kiểm tra cho lớp học</p>
             </div>
 
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-gradient-to-r from-purple-50 to-purple-100 border-b-2 border-purple-200">
+                <thead className="bg-gradient-to-r from-gray-50 to-slate-50 border-b border-gray-200">
                   <tr>
-                    <th className="px-6 py-4 text-left text-xs font-bold text-purple-900 uppercase tracking-wider">Test Title</th>
-                    <th className="px-6 py-4 text-left text-xs font-bold text-purple-900 uppercase tracking-wider">Status</th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Tên bài kiểm tra</th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Trạng thái</th>
                   
-                    <th className="px-6 py-4 text-left text-xs font-bold text-purple-900 uppercase tracking-wider">Submissions</th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Bài nộp</th>
                 
-                    <th className="px-6 py-4 text-left text-xs font-bold text-purple-900 uppercase tracking-wider">Due Date</th>
-                    <th className="px-6 py-4 text-left text-xs font-bold text-purple-900 uppercase tracking-wider">Actions</th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Hạn nộp</th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Hành động</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200">
@@ -313,17 +319,17 @@ export default function ClassDetailPage() {
                       <tr 
                         key={test._id} 
                         onClick={() => router.push(`/teacher/class/test/${test._id}/?subject=${subject}`)}
-                        className="hover:bg-purple-50/50 transition cursor-pointer"
+                        className="hover:bg-gray-50 transition-colors cursor-pointer"
                       >
                         <td className="px-6 py-4">
-                          <p className="text-sm font-semibold text-gray-900">{test.testtitle}</p>
+                          <p className="text-sm font-semibold text-[#0F172A] leading-relaxed">{test.testtitle}</p>
                           <div className="flex items-center gap-2 mt-1">
                             <FileText className="w-3 h-3 text-gray-400" />
                             <span className="text-xs text-gray-500">{test.questions_count} questions</span>
                           </div>
                         </td>
                         <td className="px-6 py-4">
-                          <span className={`px-3 py-1 rounded-full text-xs font-bold ${
+                          <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold ${
                             test.status === 'ongoing' ? 'bg-green-100 text-green-700' :
                             test.status === 'closed' ? 'bg-gray-100 text-gray-700' :
                             'bg-blue-100 text-blue-700'
@@ -334,10 +340,10 @@ export default function ClassDetailPage() {
                       
                         <td className="px-6 py-4">
                           <div className="flex items-center gap-3">
-                            <span className="text-sm font-bold text-gray-900">{test.submittedCount}/{test.participants}</span>
+                            <span className="text-sm font-bold text-[#0F172A]">{test.submittedCount}/{test.participants}</span>
                             <div className="w-20 bg-gray-200 rounded-full h-2">
                               <div
-                                className="bg-gradient-to-r from-purple-600 to-purple-400 h-2 rounded-full transition-all"
+                                className="bg-[#2563EB] h-2 rounded-full transition-all"
                                 style={{ width: `${test.participants > 0 ? (test.submittedCount / test.participants) * 100 : 0}%` }}
                               ></div>
                             </div>
@@ -366,7 +372,8 @@ export default function ClassDetailPage() {
                                 }
                                 
                               }}
-                              className="p-2 hover:bg-red-100 rounded-lg transition text-red-600 hover:text-red-700"
+                              className="p-2 hover:bg-red-50 rounded-lg transition-colors text-red-600 hover:text-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-1"
+                              aria-label="Delete test"
                             >
                               <Trash2 className="w-4 h-4" />
                             </button>
@@ -393,22 +400,22 @@ export default function ClassDetailPage() {
 
         {/* Lessons List */}
         {activeTab === 'lessons' && (
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100">
-            <div className="p-6 border-b border-gray-100">
-              <h2 className="text-xl font-bold text-gray-900">Lessons Management</h2>
-              <p className="text-sm text-gray-500 mt-1">Create, edit, and manage lessons for this class</p>
+          <div className="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden">
+            <div className="p-6 border-b border-gray-100 bg-gray-50">
+              <h2 className="text-xl font-bold text-[#0F172A] leading-tight">Quản lý Bài học</h2>
+              <p className="text-sm text-gray-600 mt-1.5 leading-relaxed">Tạo, chỉnh sửa và quản lý các bài học cho lớp học</p>
             </div>
 
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-gradient-to-r from-blue-50 to-blue-100 border-b-2 border-blue-200">
+                <thead className="bg-gradient-to-r from-gray-50 to-slate-50 border-b border-gray-200">
                   <tr>
-                    <th className="px-6 py-4 text-left text-xs font-bold text-blue-900 uppercase tracking-wider">Lesson Title</th>
-                    <th className="px-6 py-4 text-left text-xs font-bold text-blue-900 uppercase tracking-wider">Subject</th>
-                    <th className="px-6 py-4 text-left text-xs font-bold text-blue-900 uppercase tracking-wider">Status</th>
-                    <th className="px-6 py-4 text-left text-xs font-bold text-blue-900 uppercase tracking-wider">File</th>
-                    <th className="px-6 py-4 text-left text-xs font-bold text-blue-900 uppercase tracking-wider">Created Date</th>
-                    <th className="px-6 py-4 text-left text-xs font-bold text-blue-900 uppercase tracking-wider">Actions</th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Tên bài học</th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Môn học</th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Trạng thái</th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Tệp</th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Ngày tạo</th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Hành động</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200">
@@ -416,21 +423,21 @@ export default function ClassDetailPage() {
                     lessons.map((lesson) => (
                       <tr 
                         key={lesson._id} 
-                        className="hover:bg-blue-50/50 transition cursor-pointer"
+                        className="hover:bg-gray-50 transition-colors cursor-pointer"
                         onClick={() => router.push(`/teacher/class/lesson/${lesson._id}`)}
                       >
                         <td className="px-6 py-4">
-                          <p className="text-sm font-semibold text-gray-900">{lesson.title}</p>
+                          <p className="text-sm font-semibold text-[#0F172A] leading-relaxed">{lesson.title}</p>
                           <div className="flex items-center gap-2 mt-1">
                             <BookOpen className="w-3 h-3 text-gray-400" />
                             <span className="text-xs text-gray-500">Lesson #{lesson._id?.slice(-6)}</span>
                           </div>
                         </td>
                         <td className="px-6 py-4">
-                          <span className="text-sm font-medium text-gray-700">{lesson.subject || subject}</span>
+                          <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-700">{lesson.subject || subject}</span>
                         </td>
                         <td className="px-6 py-4">
-                          <span className={`px-3 py-1 rounded-full text-xs font-bold ${
+                          <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold ${
                             lesson.status === 'published' ? 'bg-green-100 text-green-700' :
                             'bg-orange-100 text-orange-700'
                           }`}>
@@ -443,7 +450,7 @@ export default function ClassDetailPage() {
                               href={lesson.lessonMetadata} 
                               target="_blank" 
                               rel="noopener noreferrer"
-                              className="text-blue-600 hover:text-blue-800 flex items-center gap-1"
+                              className="text-[#2563EB] hover:text-blue-700 flex items-center gap-1.5 hover:underline transition-colors focus:outline-none focus:underline"
                               onClick={(e) => e.stopPropagation()}
                             >
                               <FileText className="w-4 h-4" />
@@ -466,7 +473,8 @@ export default function ClassDetailPage() {
                                 e.stopPropagation();
                                 router.push(`/teacher/class/lesson/${lesson._id}`);
                               }}
-                              className="p-2 hover:bg-blue-100 rounded-lg transition text-blue-600 hover:text-blue-700"
+                              className="p-2 hover:bg-blue-50 rounded-lg transition-colors text-gray-600 hover:text-[#2563EB] focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:ring-offset-1"
+                              aria-label="Edit lesson"
                             >
                               <Edit2 className="w-4 h-4" />
                             </button>
@@ -483,7 +491,8 @@ export default function ClassDetailPage() {
                                   }
                                 }
                               }}
-                              className="p-2 hover:bg-red-100 rounded-lg transition text-red-600 hover:text-red-700"
+                              className="p-2 hover:bg-red-50 rounded-lg transition-colors text-red-600 hover:text-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-1"
+                              aria-label="Delete lesson"
                             >
                               <Trash2 className="w-4 h-4" />
                             </button>
@@ -511,16 +520,16 @@ export default function ClassDetailPage() {
 
       {/* Email Dialog */}
       {emailDialogOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
           <div className="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="p-6 border-b border-gray-200 flex items-center justify-between sticky top-0 bg-white">
+            <div className="p-6 border-b border-gray-200 flex items-center justify-between sticky top-0 bg-white rounded-t-xl">
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-green-100 rounded-lg">
                   <Mail className="w-6 h-6 text-green-600" />
                 </div>
                 <div>
-                  <h2 className="text-2xl font-bold text-gray-900">Send Email to Class</h2>
-                  <p className="text-sm text-gray-500 mt-1">Send message to all students in {classInfo.class_code}</p>
+                  <h2 className="text-2xl font-bold text-[#0F172A] leading-tight">Send Email to Class</h2>
+                  <p className="text-sm text-gray-600 mt-1">Send message to all students in {classInfo.class_code}</p>
                 </div>
               </div>
               <button
@@ -529,7 +538,8 @@ export default function ClassDetailPage() {
                   setEmailSubject('');
                   setEmailMessage('');
                 }}
-                className="p-2 hover:bg-gray-100 rounded-lg transition"
+                className="p-2 hover:bg-[#F1F5F9] rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2"
+                aria-label="Close dialog"
               >
                 <X className="w-5 h-5 text-gray-600" />
               </button>
@@ -538,7 +548,7 @@ export default function ClassDetailPage() {
             <div className="p-6 space-y-6">
               {/* Subject Input */}
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                <label className="block text-sm font-semibold text-[#0F172A] mb-2">
                   Email Subject *
                 </label>
                 <input
@@ -546,14 +556,14 @@ export default function ClassDetailPage() {
                   value={emailSubject}
                   onChange={(e) => setEmailSubject(e.target.value)}
                   placeholder="Enter email subject..."
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition bg-white text-[#0F172A] placeholder:text-gray-400"
                   disabled={sendingEmail}
                 />
               </div>
 
               {/* Message Input */}
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                <label className="block text-sm font-semibold text-[#0F172A] mb-2">
                   Message *
                 </label>
                 <textarea
@@ -561,32 +571,32 @@ export default function ClassDetailPage() {
                   onChange={(e) => setEmailMessage(e.target.value)}
                   placeholder="Enter your message..."
                   rows={8}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition resize-none"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition resize-none bg-white text-[#0F172A] placeholder:text-gray-400 leading-relaxed"
                   disabled={sendingEmail}
                 />
               </div>
 
               {/* Info Box */}
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+              <div className="bg-blue-50 border-l-4 border-[#2563EB] rounded-lg p-4">
                 <div className="flex items-start gap-3">
-                  <Users className="w-5 h-5 text-blue-600 mt-0.5" />
+                  <Users className="w-5 h-5 text-[#2563EB] mt-0.5" />
                   <div>
-                    <p className="text-sm font-semibold text-blue-900">Recipients</p>
-                    <p className="text-sm text-blue-700 mt-1">This email will be sent to all students enrolled in class {classInfo.class_code} for subject {subject}.</p>
+                    <p className="text-sm font-semibold text-[#0F172A]">Recipients</p>
+                    <p className="text-sm text-gray-600 mt-1 leading-relaxed">This email will be sent to all students enrolled in class {classInfo.class_code} for subject {subject}.</p>
                   </div>
                 </div>
               </div>
             </div>
 
             {/* Footer Actions */}
-            <div className="p-6 border-t border-gray-200 flex items-center justify-end gap-3 sticky bottom-0 bg-white">
+            <div className="p-6 border-t border-gray-200 flex items-center justify-end gap-3 sticky bottom-0 bg-white rounded-b-xl">
               <button
                 onClick={() => {
                   setEmailDialogOpen(false);
                   setEmailSubject('');
                   setEmailMessage('');
                 }}
-                className="px-6 py-2.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition font-semibold"
+                className="px-6 py-2.5 border-2 border-gray-300 text-[#0F172A] rounded-lg hover:bg-[#F1F5F9] transition-colors font-semibold focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2"
                 disabled={sendingEmail}
               >
                 Cancel
@@ -623,7 +633,7 @@ export default function ClassDetailPage() {
                   }
                 }}
                 disabled={sendingEmail || !emailSubject.trim() || !emailMessage.trim()}
-                className="bg-gradient-to-r from-green-600 to-green-700 text-white px-6 py-2.5 rounded-lg hover:from-green-700 hover:to-green-800 transition shadow-md hover:shadow-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                className="bg-green-600 text-white px-6 py-2.5 rounded-lg hover:bg-green-700 transition-colors shadow-sm font-semibold disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-green-600 focus:ring-offset-2"
               >
                 {sendingEmail ? (
                   <>

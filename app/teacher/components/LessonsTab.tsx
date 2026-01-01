@@ -99,20 +99,23 @@ export default function LessonsTab() {
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-bold text-gray-900">My Lessons ({lessons.length})</h2>
-        <button className="bg-purple-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-purple-700">
+        <div>
+          <h2 className="text-2xl font-bold text-[#0F172A] leading-tight">My Lessons</h2>
+          <p className="text-sm text-gray-500 mt-1">{lessons.length} total lessons</p>
+        </div>
+        <button className="bg-[#2563EB] text-white px-5 py-2.5 rounded-lg flex items-center gap-2 hover:bg-blue-700 transition-colors shadow-sm focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:ring-offset-2">
           <Plus className="w-4 h-4" />
           Create New Lesson
         </button>
       </div>
 
-      <div className="bg-white rounded-xl overflow-hidden shadow-sm">
+      <div className="bg-white rounded-lg overflow-hidden shadow-sm border border-gray-100">
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-gray-50 border-b border-gray-200">
+            <thead className="bg-[#F1F5F9] border-b border-gray-200">
               <tr>
                 <th 
-                  className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase cursor-pointer hover:bg-gray-100"
+                  className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider cursor-pointer hover:bg-gray-200 transition-colors"
                   onClick={() => handleSort('title')}
                 >
                   <div className="flex items-center gap-2">
@@ -121,7 +124,7 @@ export default function LessonsTab() {
                   </div>
                 </th>
                 <th 
-                  className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase cursor-pointer hover:bg-gray-100"
+                  className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider cursor-pointer hover:bg-gray-200 transition-colors"
                   onClick={() => handleSort('subject')}
                 >
                   <div className="flex items-center gap-2">
@@ -129,9 +132,9 @@ export default function LessonsTab() {
                     <ArrowUpDown className="w-4 h-4" />
                   </div>
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">File Type</th>
+                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">File Type</th>
                 <th 
-                  className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase cursor-pointer hover:bg-gray-100"
+                  className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider cursor-pointer hover:bg-gray-200 transition-colors"
                   onClick={() => handleSort('createDate')}
                 >
                   <div className="flex items-center gap-2">
@@ -139,34 +142,35 @@ export default function LessonsTab() {
                     <ArrowUpDown className="w-4 h-4" />
                   </div>
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Material</th>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Actions</th>
+                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Material</th>
+                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
               {sortedLessons.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="px-6 py-8 text-center text-gray-500">
-                    No lessons found. Create your first lesson!
+                  <td colSpan={6} className="px-6 py-12 text-center text-gray-500">
+                    <FileText className="w-12 h-12 mx-auto mb-3 text-gray-300" />
+                    <p className="text-sm">No lessons found. Create your first lesson!</p>
                   </td>
                 </tr>
               ) : (
                 sortedLessons.map((lesson) => (
-                  <tr key={lesson._id} className="hover:bg-gray-50">
+                  <tr key={lesson._id} className="hover:bg-[#F1F5F9] transition-colors">
                     <td className="px-6 py-4">
-                      <p className="text-sm font-medium text-gray-900">{lesson.title}</p>
+                      <p className="text-sm font-medium text-[#0F172A] leading-relaxed">{lesson.title}</p>
                     </td>
                     <td className="px-6 py-4">
-                      <p className="text-sm text-gray-900">{lesson.subject}</p>
+                      <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-medium bg-blue-100 text-[#2563EB]">{lesson.subject}</span>
                     </td>
                     <td className="px-6 py-4">
-                      <div className="flex items-center gap-1 text-sm text-gray-600">
+                      <div className="flex items-center gap-1.5 text-sm text-gray-600">
                         <FileText className="w-4 h-4" />
                         {lesson.fileType ? lesson.fileType.split('/')[1]?.toUpperCase() : 'N/A'}
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <p className="text-xs text-gray-500">{formatDate(lesson.createDate)}</p>
+                      <p className="text-sm text-gray-500">{formatDate(lesson.createDate)}</p>
                     </td>
                     <td className="px-6 py-4">
                       {lesson.lessonMetadata && (
@@ -174,7 +178,7 @@ export default function LessonsTab() {
                           href={lesson.lessonMetadata} 
                           target="_blank" 
                           rel="noopener noreferrer"
-                          className="text-xs text-purple-600 hover:text-purple-700 underline"
+                          className="text-sm text-[#2563EB] hover:text-blue-700 hover:underline transition-colors focus:outline-none focus:underline"
                         >
                           View Material
                         </a>
@@ -183,7 +187,7 @@ export default function LessonsTab() {
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-2">
                         <button 
-                          className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                          className="p-2 hover:bg-blue-50 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:ring-offset-1"
                           title="Edit lesson"
                           onClick={() => {
                             // TODO: Implement edit functionality (navigate to edit page or open modal)
@@ -193,7 +197,7 @@ export default function LessonsTab() {
                           <Edit className="w-4 h-4 text-gray-600" />
                         </button>
                         <button 
-                          className="p-2 hover:bg-red-50 rounded-lg transition-colors"
+                          className="p-2 hover:bg-red-50 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-1"
                           title="Delete lesson"
                           onClick={() => handleDelete(lesson._id)}
                         >

@@ -143,8 +143,8 @@ export default function CreateStudentAccounts({ onSuccess }: CreateStudentAccoun
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button className="bg-green-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-green-700">
-          <UserPlus className="w-4 h-4" />
+        <Button className="bg-gradient-to-r from-green-600 to-emerald-600 text-white px-6 py-3 rounded-xl flex items-center gap-2 hover:from-green-700 hover:to-emerald-700 shadow-lg hover:shadow-xl transition-all duration-300 font-semibold hover:scale-105">
+          <UserPlus className="w-5 h-5" />
           Create Student Accounts
         </Button>
       </DialogTrigger>
@@ -158,16 +158,23 @@ export default function CreateStudentAccounts({ onSuccess }: CreateStudentAccoun
 
         <div className="space-y-6">
           {/* Manual Entry */}
-          <div className="space-y-3">
-            <h3 className="font-semibold text-gray-900">Thêm Học Sinh Thủ Công</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div className="space-y-4 p-6 bg-gradient-to-br from-gray-50 to-green-50 rounded-xl border-2 border-green-100">
+            <h3 className="font-bold text-gray-900 text-lg flex items-center gap-2">
+              <div className="w-8 h-8 bg-green-500 rounded-lg flex items-center justify-center">
+                <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+              </div>
+              Thêm Học Sinh Thủ Công
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <input
                 type="text"
                 name="name"
                 placeholder="Họ tên"
                 value={formData.name}
                 onChange={handleInputChange}
-                className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 text-sm"
+                className="px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-4 focus:ring-green-200 focus:border-green-400 text-sm transition-all duration-300"
               />
               <input
                 type="email"
@@ -175,7 +182,7 @@ export default function CreateStudentAccounts({ onSuccess }: CreateStudentAccoun
                 placeholder="Email"
                 value={formData.email}
                 onChange={handleInputChange}
-                className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 text-sm"
+                className="px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-4 focus:ring-green-200 focus:border-green-400 text-sm transition-all duration-300"
               />
               <input
                 type="password"
@@ -183,13 +190,13 @@ export default function CreateStudentAccounts({ onSuccess }: CreateStudentAccoun
                 placeholder="Mật khẩu"
                 value={formData.password}
                 onChange={handleInputChange}
-                className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 text-sm"
+                className="px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-4 focus:ring-green-200 focus:border-green-400 text-sm transition-all duration-300"
               />
               <select
                 name="grade"
                 value={formData.grade}
                 onChange={handleInputChange}
-                className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 text-sm"
+                className="px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-4 focus:ring-green-200 focus:border-green-400 text-sm cursor-pointer transition-all duration-300"
               >
                 <option value="">-- Chọn khối --</option>
                 <option value="6">Khối 6</option>
@@ -204,7 +211,7 @@ export default function CreateStudentAccounts({ onSuccess }: CreateStudentAccoun
                 name="conduct"
                 value={formData.conduct}
                 onChange={handleInputChange}
-                className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 text-sm"
+                className="px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-4 focus:ring-green-200 focus:border-green-400 text-sm cursor-pointer transition-all duration-300"
               >
                 <option value="">-- Chọn hạnh kiểm --</option>
                 <option value="Tốt">Tốt</option>
@@ -215,18 +222,23 @@ export default function CreateStudentAccounts({ onSuccess }: CreateStudentAccoun
             </div>
             <Button
               type="button"
-              className="bg-green-600 hover:bg-green-700"
+              className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105"
               onClick={handleAddStudent}
             >
-              <Plus className="w-4 h-4 mr-2" />
+              <Plus className="w-5 h-5 mr-2" />
               Thêm Học Sinh
             </Button>
           </div>
 
           {/* File Import */}
-          <div className="space-y-3 border-t pt-6">
-            <h3 className="font-semibold text-gray-900">Nhập Từ File Excel</h3>
-            <div className="border-2 border-dashed border-green-300 rounded-lg p-6 text-center">
+          <div className="space-y-4 p-6 bg-gradient-to-br from-gray-50 to-blue-50 rounded-xl border-2 border-blue-100">
+            <h3 className="font-bold text-gray-900 text-lg flex items-center gap-2">
+              <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
+                <Upload className="w-5 h-5 text-white" />
+              </div>
+              Nhập Từ File Excel
+            </h3>
+            <div className="border-2 border-dashed border-blue-300 rounded-xl p-8 text-center bg-white hover:bg-blue-50 transition-colors duration-300">
               <input
                 type="file"
                 accept=".csv,.xlsx,.xls"
@@ -236,13 +248,15 @@ export default function CreateStudentAccounts({ onSuccess }: CreateStudentAccoun
               />
               <label
                 htmlFor="excel-input"
-                className="cursor-pointer flex flex-col items-center gap-2"
+                className="cursor-pointer flex flex-col items-center gap-3"
               >
-                <Upload className="w-8 h-8 text-green-600" />
-                <span className="text-sm font-medium text-gray-900">
+                <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center shadow-lg">
+                  <Upload className="w-8 h-8 text-white" />
+                </div>
+                <span className="text-base font-semibold text-gray-900">
                   Kéo file hoặc click để chọn
                 </span>
-                <span className="text-xs text-gray-500">
+                <span className="text-sm text-gray-500 bg-gray-100 px-4 py-2 rounded-lg">
                   CSV, XLSX, XLS (Cột: name, email, password, grade, conduct)
                 </span>
               </label>
@@ -251,37 +265,45 @@ export default function CreateStudentAccounts({ onSuccess }: CreateStudentAccoun
 
           {/* Students List */}
           {students.length > 0 && (
-            <div className="space-y-3 border-t pt-6">
-              <h3 className="font-semibold text-gray-900">
-                Danh Sách Học Sinh ({students.length})
-              </h3>
-              <div className="overflow-x-auto border border-gray-200 rounded-lg">
+            <div className="space-y-4 p-6 bg-gradient-to-br from-gray-50 to-purple-50 rounded-xl border-2 border-purple-100">
+              <div className="flex items-center justify-between">
+                <h3 className="font-bold text-gray-900 text-lg flex items-center gap-2">
+                  <div className="w-8 h-8 bg-purple-500 rounded-lg flex items-center justify-center">
+                    <span className="text-white font-bold">{students.length}</span>
+                  </div>
+                  Danh Sách Học Sinh
+                </h3>
+                <span className="text-sm text-purple-600 bg-purple-100 px-3 py-1 rounded-full font-semibold">
+                  {students.length} học sinh
+                </span>
+              </div>
+              <div className="overflow-x-auto border-2 border-purple-200 rounded-xl shadow-md">
                 <table className="w-full text-sm">
-                  <thead className="bg-gray-100 border-b border-gray-200">
+                  <thead className="bg-gradient-to-r from-purple-100 to-pink-100 border-b-2 border-purple-200">
                     <tr>
-                      <th className="px-4 py-2 text-left font-semibold text-gray-900">Họ tên</th>
-                      <th className="px-4 py-2 text-left font-semibold text-gray-900">Email</th>
-                      <th className="px-4 py-2 text-left font-semibold text-gray-900">Khối</th>
-                      <th className="px-4 py-2 text-left font-semibold text-gray-900">Hạnh kiểm</th>
-                      <th className="px-4 py-2 text-center font-semibold text-gray-900 w-16">
+                      <th className="px-4 py-3 text-left font-bold text-gray-900">Họ tên</th>
+                      <th className="px-4 py-3 text-left font-bold text-gray-900">Email</th>
+                      <th className="px-4 py-3 text-left font-bold text-gray-900">Khối</th>
+                      <th className="px-4 py-3 text-left font-bold text-gray-900">Hạnh kiểm</th>
+                      <th className="px-4 py-3 text-center font-bold text-gray-900 w-16">
                         Hành động
                       </th>
                     </tr>
                   </thead>
-                  <tbody>
+                  <tbody className="bg-white">
                     {students.map((student, index) => (
-                      <tr key={index} className="border-b border-gray-200 hover:bg-gray-50">
-                        <td className="px-4 py-2 text-gray-900">{student.name}</td>
-                        <td className="px-4 py-2 text-gray-700">{student.email}</td>
-                        <td className="px-4 py-2 text-gray-700">{student.grade || '-'}</td>
-                        <td className="px-4 py-2 text-gray-700">{student.conduct || '-'}</td>
-                        <td className="px-4 py-2 text-center">
+                      <tr key={index} className="border-b border-purple-100 hover:bg-purple-50 transition-colors duration-200">
+                        <td className="px-4 py-3 font-medium text-gray-900">{student.name}</td>
+                        <td className="px-4 py-3 text-gray-700">{student.email}</td>
+                        <td className="px-4 py-3 text-gray-700">{student.grade || '-'}</td>
+                        <td className="px-4 py-3 text-gray-700">{student.conduct || '-'}</td>
+                        <td className="px-4 py-3 text-center">
                           <button
                             onClick={() => handleRemoveStudent(index)}
-                            className="p-1 hover:bg-red-100 rounded text-red-600 hover:text-red-700"
+                            className="p-2 hover:bg-red-100 rounded-lg text-red-600 hover:text-red-700 transition-all duration-300 hover:scale-110"
                             title="Xóa"
                           >
-                            <Trash2 className="w-4 h-4" />
+                            <Trash2 className="w-5 h-5" />
                           </button>
                         </td>
                       </tr>

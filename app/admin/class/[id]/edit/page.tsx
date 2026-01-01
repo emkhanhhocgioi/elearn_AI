@@ -94,28 +94,33 @@ export default function EditClassPage() {
     <div className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-3xl mx-auto">
         {/* Header */}
-        <div className="mb-6">
+        <div className="mb-8">
           <Button 
             onClick={() => router.back()} 
             variant="ghost" 
-            className="mb-4"
+            className="mb-4 hover:bg-gray-100"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
             Quay lại
           </Button>
           
-          <div className="bg-white rounded-xl p-6 shadow-sm">
-            <h1 className="text-3xl font-bold text-gray-900">
-              Chỉnh sửa lớp học
-            </h1>
-            <p className="text-gray-600 mt-2">
+          <div className="bg-white rounded-lg p-8 shadow-sm border border-gray-200">
+            <div className="flex items-center gap-3 mb-3">
+              <div className="w-12 h-12 bg-blue-50 rounded-lg flex items-center justify-center">
+                <Edit className="w-6 h-6 text-blue-600" />
+              </div>
+              <h1 className="text-3xl font-bold text-gray-900">
+                Chỉnh sửa lớp học
+              </h1>
+            </div>
+            <p className="text-gray-600">
               Cập nhật thông tin lớp học
             </p>
           </div>
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="bg-white rounded-xl p-6 shadow-sm">
+        <form onSubmit={handleSubmit} className="bg-white rounded-lg p-8 shadow-sm border border-gray-200">
           <div className="space-y-6">
             {/* Class Code */}
             <div>
@@ -189,11 +194,11 @@ export default function EditClassPage() {
           </div>
 
           {/* Action Buttons */}
-          <div className="flex gap-4 mt-8">
+          <div className="flex gap-4 mt-8 pt-6 border-t border-gray-200">
             <Button
               type="submit"
               disabled={isSaving}
-              className="flex-1 bg-blue-600 hover:bg-blue-700 text-white"
+              className="flex-1 bg-blue-600 hover:bg-blue-700 text-white border border-blue-700 shadow-sm"
             >
               {isSaving ? (
                 <>
@@ -212,7 +217,7 @@ export default function EditClassPage() {
               variant="outline"
               onClick={() => router.back()}
               disabled={isSaving}
-              className="flex-1"
+              className="flex-1 border-gray-300 hover:bg-gray-50"
             >
               Hủy
             </Button>

@@ -191,10 +191,10 @@ export default function NotificationPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-[#F1F5F9] flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Đang tải thông báo...</p>
+          <div className="animate-spin rounded-full h-16 w-16 border-4 border-[#2563EB] border-t-transparent mx-auto mb-4"></div>
+          <p className="text-gray-600 font-medium">Đang tải thông báo...</p>
         </div>
       </div>
     );
@@ -202,13 +202,15 @@ export default function NotificationPage() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
-          <p className="text-red-600 text-lg">{error}</p>
+      <div className="min-h-screen bg-[#F1F5F9] flex items-center justify-center p-6">
+        <div className="text-center max-w-md">
+          <div className="bg-red-50 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-4">
+            <AlertCircle className="w-10 h-10 text-red-500" />
+          </div>
+          <p className="text-red-600 text-lg font-semibold mb-4">{error}</p>
           <button
             onClick={fetchNotifications}
-            className="mt-4 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+            className="px-6 py-2.5 bg-[#2563EB] text-white rounded-lg hover:bg-[#1d4ed8] transition-all duration-200 shadow-sm focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:ring-offset-2 font-medium"
           >
             Thử lại
           </button>
@@ -218,18 +220,18 @@ export default function NotificationPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-6">
+    <div className="min-h-screen bg-[#F1F5F9] p-6">
       <div className="max-w-5xl mx-auto">
         {/* Header */}
-        <div className="bg-white rounded-xl shadow-md p-6 mb-6 border border-gray-100">
+        <div className="bg-white rounded-xl shadow-sm p-6 mb-6 border border-gray-200">
           <div className="flex items-center justify-between flex-wrap gap-4">
             <div className="flex items-center gap-4">
-              <div className="bg-gradient-to-br from-blue-500 to-blue-600 p-3 rounded-xl shadow-lg">
+              <div className="bg-[#2563EB] p-3 rounded-xl shadow-sm">
                 <Bell className="w-8 h-8 text-white" />
               </div>
               <div>
-                <h1 className="text-3xl font-bold text-gray-800">Thông báo</h1>
-                <p className="text-gray-600 text-sm mt-1">
+                <h1 className="text-3xl font-bold text-[#0F172A] leading-tight">Thông báo</h1>
+                <p className="text-gray-600 text-sm mt-2 leading-relaxed">
                   {unreadCount > 0
                     ? `Bạn có ${unreadCount} thông báo chưa đọc`
                     : "Tất cả thông báo đã được đọc"}
@@ -239,20 +241,20 @@ export default function NotificationPage() {
             <div className="flex gap-2 flex-wrap">
               <button
                 onClick={() => setFilter("all")}
-                className={`px-5 py-2.5 rounded-lg font-medium transition-all duration-200 ${
+                className={`px-5 py-2.5 rounded-lg font-semibold transition-all duration-200 ${
                   filter === "all"
-                    ? "bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-md"
-                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                    ? "bg-[#2563EB] text-white shadow-sm"
+                    : "bg-white text-[#0F172A] hover:bg-[#F1F5F9] border border-gray-300"
                 }`}
               >
                 Tất cả <span className="ml-1 text-sm">({notifications.length})</span>
               </button>
               <button
                 onClick={() => setFilter("unread")}
-                className={`px-5 py-2.5 rounded-lg font-medium transition-all duration-200 relative ${
+                className={`px-5 py-2.5 rounded-lg font-semibold transition-all duration-200 relative ${
                   filter === "unread"
-                    ? "bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-md"
-                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                    ? "bg-[#2563EB] text-white shadow-sm"
+                    : "bg-white text-[#0F172A] hover:bg-[#F1F5F9] border border-gray-300"
                 }`}
               >
                 Chưa đọc <span className="ml-1 text-sm">({unreadCount})</span>
@@ -262,10 +264,10 @@ export default function NotificationPage() {
               </button>
               <button
                 onClick={() => setFilter("important")}
-                className={`px-5 py-2.5 rounded-lg font-medium transition-all duration-200 ${
+                className={`px-5 py-2.5 rounded-lg font-semibold transition-all duration-200 ${
                   filter === "important"
-                    ? "bg-gradient-to-r from-red-600 to-red-700 text-white shadow-md"
-                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                    ? "bg-red-600 text-white shadow-sm"
+                    : "bg-white text-[#0F172A] hover:bg-[#F1F5F9] border border-gray-300"
                 }`}
               >
                 Quan trọng <span className="ml-1 text-sm">({importantCount})</span>
@@ -276,16 +278,16 @@ export default function NotificationPage() {
 
         {/* Notifications List */}
         {filteredNotifications.length === 0 ? (
-          <div className="bg-white rounded-xl shadow-md p-16 text-center border border-gray-100">
-            <div className="bg-gray-100 w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6">
+          <div className="bg-white rounded-xl shadow-sm p-16 text-center border border-gray-200">
+            <div className="bg-[#F1F5F9] w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6">
               <Bell className="w-12 h-12 text-gray-400" />
             </div>
-            <h3 className="text-xl font-semibold text-gray-700 mb-2">
+            <h3 className="text-xl font-bold text-[#0F172A] mb-2">
               {filter === "unread" && "Không có thông báo chưa đọc"}
               {filter === "important" && "Không có thông báo quan trọng"}
               {filter === "all" && "Chưa có thông báo nào"}
             </h3>
-            <p className="text-gray-500">
+            <p className="text-gray-600">
               {filter === "all" 
                 ? "Thông báo của bạn sẽ xuất hiện ở đây"
                 : "Hãy kiểm tra lại sau"}
@@ -300,42 +302,42 @@ export default function NotificationPage() {
                 <div
                   key={notification._id}
                   onClick={() => handleNotificationClick(notification)}
-                  className={`bg-white rounded-xl shadow-md border-l-4 ${getNotificationBorderColor(
+                  className={`bg-white rounded-xl shadow-sm border-l-4 ${getNotificationBorderColor(
                     notification.type,
                     notification.important
-                  )} p-6 transition-all duration-200 hover:shadow-lg hover:scale-[1.01] cursor-pointer ${
+                  )} p-6 transition-all duration-200 hover:shadow-md hover:border-[#2563EB] cursor-pointer ${
                     getNotificationBgColor(notification.type, notification.important, isRead)
-                  } border border-gray-100`}
+                  } border border-gray-200`}
                 >
                   <div className="flex gap-4">
                     <div className="flex-shrink-0 mt-1">
                       {getNotificationIcon(notification.type)}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-start justify-between gap-4 mb-2">
+                      <div className="flex items-start justify-between gap-4 mb-3">
                         <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2 flex-wrap">
+                          <div className="flex items-center gap-2 flex-wrap mb-2">
                             <h3
-                              className={`text-lg font-bold ${
-                                !isRead ? "text-gray-900" : "text-gray-600"
+                              className={`text-lg font-bold leading-relaxed ${
+                                !isRead ? "text-[#0F172A]" : "text-gray-600"
                               }`}
                             >
                               {notification.title}
                             </h3>
                             {!isRead && (
-                              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-600 text-white">
+                              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-[#2563EB] text-white">
                                 Mới
                               </span>
                             )}
                             {notification.important && (
-                              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-red-600 text-white">
+                              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-red-600 text-white">
                                 Quan trọng
                               </span>
                             )}
                           </div>
                           {notification.sender && (
-                            <p className="text-sm text-gray-500 mt-1">
-                              Từ: <span className="font-medium text-gray-700">{notification.sender.name}</span>
+                            <p className="text-sm text-gray-600 leading-relaxed">
+                              Từ: <span className="font-semibold text-[#0F172A]">{notification.sender.name}</span>
                             </p>
                           )}
                         </div>
@@ -349,7 +351,7 @@ export default function NotificationPage() {
                       </p>
                       {notification.relatedId && (
                         <div className="mt-4 pt-4 border-t border-gray-200">
-                          <span className="inline-flex items-center text-sm text-blue-600 font-medium hover:text-blue-700">
+                          <span className="inline-flex items-center text-sm text-[#2563EB] font-semibold hover:text-[#1d4ed8]">
                             Nhấn để xem chi tiết →
                           </span>
                         </div>

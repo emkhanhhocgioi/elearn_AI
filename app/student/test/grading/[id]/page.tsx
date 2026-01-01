@@ -252,23 +252,29 @@ const TestGradingPage = () => {
   const canEdit = now < closeDate;
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 py-8">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-6">
           <button
             onClick={() => router.back()}
-            className="flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-4"
+            className="flex items-center gap-2 text-gray-700 hover:text-gray-900 bg-white px-4 py-2 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 font-medium mb-4"
           >
             <ArrowLeft className="w-5 h-5" />
             Quay lại
           </button>
-          <h1 className="text-3xl font-bold text-gray-900">{test.testtitle}</h1>
-          <p className="text-gray-600 mt-1">Kết quả bài kiểm tra</p>
+          <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">{test.testtitle}</h1>
+            <p className="text-gray-600 mt-2 flex items-center gap-2">
+              <Award className="w-5 h-5 text-yellow-500" />
+              Kết quả bài kiểm tra
+            </p>
+          </div>
         </div>
 
         {/* Test Info Card */}
-        <div className="bg-white rounded-xl shadow-sm p-6 mb-6">
+        <div className="bg-white rounded-2xl shadow-lg p-6 mb-6 border border-gray-100">
+          <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wide mb-4">Thông tin bài kiểm tra</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <div className="flex items-start gap-3">
               <FileText className="w-5 h-5 text-blue-600 mt-0.5" />
@@ -310,38 +316,43 @@ const TestGradingPage = () => {
         </div>
 
         {/* Score Card */}
-        <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl shadow-lg p-8 mb-6 text-white">
+        <div className="bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 rounded-2xl shadow-2xl p-8 mb-6 text-white border-4 border-white">
           <div className="flex items-center justify-between">
             <div className="flex-1">
-              <div className="flex items-center gap-3 mb-4">
-                <Award className="w-8 h-8" />
-                <h2 className="text-2xl font-bold">Kết quả của bạn</h2>
-                {canEdit && (
-                  <span className="text-xs bg-white/20 px-3 py-1 rounded-full">
-                    Có thể chỉnh sửa đến {closeDate.toLocaleDateString('vi-VN')}
-                  </span>
-                )}
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <p className="text-blue-100 text-sm mb-1">Số câu đúng</p>
-                  <p className="text-3xl font-bold">{correctAnswers}/{totalQuestions}</p>
+              <div className="flex items-center gap-3 mb-6">
+                <div className="bg-white/20 backdrop-blur-sm p-3 rounded-xl">
+                  <Award className="w-8 h-8" />
                 </div>
                 <div>
-                  <p className="text-blue-100 text-sm mb-1">Tỷ lệ chính xác</p>
-                  <p className="text-3xl font-bold">
+                  <h2 className="text-3xl font-bold">Kết quả của bạn</h2>
+                  {canEdit && (
+                    <span className="text-xs bg-white/20 backdrop-blur-sm px-4 py-1.5 rounded-full mt-1 inline-block">
+                      ⏰ Có thể chỉnh sửa đến {closeDate.toLocaleDateString('vi-VN')}
+                    </span>
+                  )}
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-6">
+                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4">
+                  <p className="text-blue-100 text-sm mb-2 font-medium">Số câu đúng</p>
+                  <p className="text-4xl font-bold">{correctAnswers}/{totalQuestions}</p>
+                </div>
+                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4">
+                  <p className="text-blue-100 text-sm mb-2 font-medium">Tỷ lệ chính xác</p>
+                  <p className="text-4xl font-bold">
                     {totalQuestions > 0 ? Math.round((correctAnswers / totalQuestions) * 100) : 0}%
                   </p>
                 </div>
               </div>
             </div>
-            <div className="text-center bg-white rounded-xl p-6 shadow-lg">
-              <p className="text-gray-600 text-sm mb-2">Điểm số</p>
-              <p className={`text-5xl font-bold ${getScoreColor(finalGrade)}`}>
+            <div className="text-center bg-white rounded-2xl p-8 shadow-2xl ml-6">
+              <p className="text-gray-600 text-sm mb-2 font-semibold">Điểm số</p>
+              <p className={`text-6xl font-bold ${getScoreColor(finalGrade)}`}>
                 {finalGrade.toFixed(1)}
               </p>
-              <p className="text-gray-500 text-xs mt-1">
-                {answer.teacherGrade ? 'Điểm giáo viên' : 'Điểm AI'}
+              <div className="w-16 h-1 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full mx-auto my-3"></div>
+              <p className="text-gray-500 text-xs font-medium">
+                {answer.teacherGrade ? '👨‍🏫 Điểm giáo viên' : '🤖 Điểm AI'}
               </p>
             </div>
           </div>
@@ -349,12 +360,16 @@ const TestGradingPage = () => {
 
         {/* Teacher Comments */}
         {answer.teacherComments && (
-          <div className="bg-yellow-50 border-l-4 border-yellow-400 rounded-lg p-6 mb-6">
-            <div className="flex items-start gap-3">
-              <FileText className="w-5 h-5 text-yellow-600 mt-0.5" />
-              <div>
-                <h3 className="font-semibold text-gray-900 mb-2">Nhận xét của giáo viên</h3>
-                <p className="text-gray-700">{answer.teacherComments}</p>
+          <div className="bg-gradient-to-r from-yellow-50 to-orange-50 border-2 border-yellow-300 rounded-2xl p-6 mb-6 shadow-lg">
+            <div className="flex items-start gap-4">
+              <div className="bg-yellow-400 p-3 rounded-xl shadow-md">
+                <FileText className="w-6 h-6 text-white" />
+              </div>
+              <div className="flex-1">
+                <h3 className="font-bold text-gray-900 mb-3 text-lg flex items-center gap-2">
+                  👨‍🏫 Nhận xét của giáo viên
+                </h3>
+                <p className="text-gray-800 leading-relaxed bg-white p-4 rounded-xl border border-yellow-200">{answer.teacherComments}</p>
               </div>
             </div>
           </div>
@@ -362,7 +377,12 @@ const TestGradingPage = () => {
 
         {/* Questions and Answers */}
         <div className="space-y-6">
-          <h3 className="text-xl font-bold text-gray-900">Chi tiết câu trả lời</h3>
+          <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+            <h3 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent flex items-center gap-2">
+              <CheckCircle className="w-7 h-7 text-blue-600" />
+              Chi tiết câu trả lời
+            </h3>
+          </div>
           
           {questions.map((question, index) => {
             const studentAnswer = answer.answers.find(a => a.questionID === question._id);
@@ -370,62 +390,73 @@ const TestGradingPage = () => {
             return (
               <div
                 key={question._id}
-                className={`bg-white rounded-xl shadow-sm p-6 border-2 ${
-                  studentAnswer?.isCorrect ? 'border-green-200' : 'border-red-200'
+                className={`bg-white rounded-2xl shadow-lg p-6 border-2 transition-all duration-300 hover:shadow-xl ${
+                  studentAnswer?.isCorrect 
+                    ? 'border-green-300 bg-gradient-to-br from-green-50 to-white' 
+                    : 'border-red-300 bg-gradient-to-br from-red-50 to-white'
                 }`}
               >
                 {/* Question Header */}
                 <div className="flex items-start justify-between mb-4">
-                  <div className="flex items-start gap-3 flex-1">
-                    <div className={`w-8 h-8 rounded-full flex items-center justify-center font-semibold text-white ${
-                      studentAnswer?.isCorrect ? 'bg-green-500' : 'bg-red-500'
+                  <div className="flex items-start gap-4 flex-1">
+                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center font-bold text-white text-lg shadow-md ${
+                      studentAnswer?.isCorrect 
+                        ? 'bg-gradient-to-br from-green-500 to-green-600' 
+                        : 'bg-gradient-to-br from-red-500 to-red-600'
                     }`}>
                       {index + 1}
                     </div>
                     <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-2">
+                      <div className="flex items-center gap-2 mb-3">
                         {getDifficultyBadge(question.difficult)}
-                        <span className="text-xs text-gray-500">
-                          {question.grade} điểm
+                        <span className="bg-yellow-100 text-yellow-700 text-xs px-3 py-1 rounded-full font-bold">
+                          ⭐ {question.grade} điểm
                         </span>
                       </div>
-                      <p className="text-gray-900 font-medium">{question.question}</p>
+                      <p className="text-gray-900 font-medium text-lg leading-relaxed">{question.question}</p>
                     </div>
                   </div>
-                  {studentAnswer?.isCorrect ? (
-                    <CheckCircle className="w-6 h-6 text-green-500 flex-shrink-0" />
-                  ) : (
-                    <XCircle className="w-6 h-6 text-red-500 flex-shrink-0" />
-                  )}
+                  <div className={`flex items-center gap-2 px-4 py-2 rounded-full font-bold text-sm shadow-md ${
+                    studentAnswer?.isCorrect 
+                      ? 'bg-green-100 text-green-700' 
+                      : 'bg-red-100 text-red-700'
+                  }`}>
+                    {studentAnswer?.isCorrect ? (
+                      <>
+                        <CheckCircle className="w-5 h-5" />
+                        Đúng
+                      </>
+                    ) : (
+                      <>
+                        <XCircle className="w-5 h-5" />
+                        Sai
+                      </>
+                    )}
+                  </div>
                 </div>
 
                 {/* Question Image */}
                 {question.metadata && question.metadata !== 'none' && (
-                  <div className="mb-4">
+                  <div className="mb-4 rounded-xl overflow-hidden border-2 border-gray-200 bg-gray-50">
                     <img
                       src={question.metadata}
                       alt="Question illustration"
-                      className="max-w-full h-auto rounded-lg border border-gray-200"
+                      className="max-w-full h-auto rounded-lg"
                     />
                   </div>
                 )}
 
                 {/* Student Answer */}
-                <div className={`mt-4 p-4 rounded-lg ${
-                  studentAnswer?.isCorrect ? 'bg-green-50' : 'bg-red-50'
+                <div className={`mt-4 p-5 rounded-xl border-2 ${
+                  studentAnswer?.isCorrect 
+                    ? 'bg-green-50 border-green-200' 
+                    : 'bg-red-50 border-red-200'
                 }`}>
-                  <div className="flex items-start gap-2 mb-2">
-                    <span className={`text-sm font-semibold ${
-                      studentAnswer?.isCorrect ? 'text-green-700' : 'text-red-700'
+                  <div className="flex items-start gap-2 mb-3">
+                    <span className={`text-sm font-bold ${
+                      studentAnswer?.isCorrect ? 'text-green-800' : 'text-red-800'
                     }`}>
-                      Câu trả lời của bạn:
-                    </span>
-                    <span className={`text-xs px-2 py-0.5 rounded-full ${
-                      studentAnswer?.isCorrect 
-                        ? 'bg-green-200 text-green-800' 
-                        : 'bg-red-200 text-red-800'
-                    }`}>
-                      {studentAnswer?.isCorrect ? 'Đúng' : 'Sai'}
+                      📝 Câu trả lời của bạn:
                     </span>
                   </div>
                   
@@ -514,16 +545,16 @@ const TestGradingPage = () => {
         </div>
 
         {/* Bottom Actions */}
-        <div className="mt-8 flex justify-center gap-4">
+        <div className="mt-8 flex justify-center gap-4 pb-8">
           {canEdit && !isEditMode && (
             <button
               onClick={() => setIsEditMode(true)}
-              className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
+              className="px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:shadow-xl transition-all duration-300 transform hover:scale-105 flex items-center gap-2 font-bold"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
               </svg>
-              Chỉnh sửa đáp án
+              ✏️ Chỉnh sửa đáp án
             </button>
           )}
           
@@ -542,14 +573,14 @@ const TestGradingPage = () => {
                     setEditedAnswers(initialAnswers);
                   }
                 }}
-                className="px-6 py-3 border border-red-300 rounded-lg font-semibold text-red-700 hover:bg-red-50 transition-colors"
+                className="px-8 py-4 border-2 border-red-300 rounded-xl font-bold text-red-700 hover:bg-red-50 transition-all duration-300"
               >
-                Hủy
+                ❌ Hủy
               </button>
               <button
                 onClick={saveEditedAnswers}
                 disabled={isSubmitting}
-                className="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center gap-2 disabled:bg-gray-400 disabled:cursor-not-allowed"
+                className="px-8 py-4 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-xl hover:shadow-xl transition-all duration-300 flex items-center gap-2 disabled:bg-gray-400 disabled:cursor-not-allowed font-bold"
               >
                 {isSubmitting ? (
                   <>
@@ -559,7 +590,7 @@ const TestGradingPage = () => {
                 ) : (
                   <>
                     <CheckCircle className="w-5 h-5" />
-                    Lưu thay đổi
+                    💾 Lưu thay đổi
                   </>
                 )}
               </button>
@@ -568,9 +599,9 @@ const TestGradingPage = () => {
           
           <button
             onClick={() => router.push('/student')}
-            className="px-6 py-3 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
+            className="px-8 py-4 bg-gradient-to-r from-gray-600 to-gray-700 text-white rounded-xl hover:shadow-xl transition-all duration-300 font-bold"
           >
-            Về trang chủ
+            🏠 Về trang chủ
           </button>
         </div>
       </div>

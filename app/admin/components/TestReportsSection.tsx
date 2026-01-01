@@ -155,39 +155,46 @@ export default function TestReportsSection() {
 
   return (
     <div>
-      <div className="bg-white rounded-xl p-6 shadow-sm mb-8">
-        <h3 className="text-lg font-bold text-gray-900 mb-4">Class Test Reports</h3>
+      <div className="bg-white rounded-2xl p-8 shadow-xl border border-gray-100">
+        <h3 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-3">
+          <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg">
+            <FileText className="w-6 h-6 text-white" />
+          </div>
+          Class Test Reports
+        </h3>
         
         {/* Search and Controls */}
         <div className="mb-6 flex items-center gap-4">
           <div className="flex-1 relative">
-            <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+            <Search className="w-5 h-5 absolute left-4 top-1/2 transform -translate-y-1/2 text-blue-500" />
             <input
               type="text"
               placeholder="Search by class code, year, or teacher..."
               value={classSearch}
               onChange={(e) => setClassSearch(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl text-sm outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-400 transition-all duration-300"
             />
           </div>
         </div>
 
         {/* Classes Table */}
         {loadingClasses ? (
-          <div className="text-center py-12">
-            <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-            <p className="mt-2 text-gray-600">Loading classes...</p>
+          <div className="text-center py-16">
+            <div className="inline-block animate-spin rounded-full h-16 w-16 border-4 border-blue-500 border-t-transparent mb-4"></div>
+            <p className="text-lg font-medium text-gray-600">Loading classes...</p>
           </div>
         ) : paginatedClasses.length === 0 ? (
-          <div className="text-center py-12 text-gray-500">
-            <FileText className="w-12 h-12 mx-auto mb-3 opacity-50" />
-            <p>No classes found</p>
+          <div className="text-center py-16 bg-gradient-to-br from-gray-50 to-blue-50 rounded-xl">
+            <div className="w-20 h-20 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <FileText className="w-10 h-10 text-blue-500" />
+            </div>
+            <p className="text-lg font-semibold text-gray-600">No classes found</p>
           </div>
         ) : (
           <>
-            <div className="overflow-x-auto">
+            <div className="overflow-x-auto rounded-xl border-2 border-gray-100">
               <table className="w-full">
-                <thead className="bg-gray-50">
+                <thead className="bg-gradient-to-r from-blue-50 to-indigo-50">
                   <tr>
                     <th 
                       onClick={() => handleClassSort('class_code')}
@@ -222,7 +229,7 @@ export default function TestReportsSection() {
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
                   {paginatedClasses.map((cls) => (
-                    <tr key={cls._id} className="hover:bg-gray-50">
+                    <tr key={cls._id} className="hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 transition-all duration-200">
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-sm font-medium text-gray-900">{cls.class_code}</div>
                       </td>
@@ -237,9 +244,9 @@ export default function TestReportsSection() {
                       <td className="px-6 py-4 whitespace-nowrap">
                         <button
                           onClick={() => handleViewTestReport(cls._id)}
-                          className="bg-blue-600 text-white px-3 py-1.5 rounded-lg text-sm flex items-center gap-1 hover:bg-blue-700 transition-colors"
+                          className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-4 py-2.5 rounded-xl text-sm font-semibold flex items-center gap-2 hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 hover:scale-105 hover:shadow-lg"
                         >
-                          <Eye className="w-4 h-4" />
+                          <Eye className="w-5 h-5" />
                           View Report
                         </button>
                       </td>
@@ -250,15 +257,15 @@ export default function TestReportsSection() {
             </div>
 
             {/* Pagination */}
-            <div className="mt-6 flex items-center justify-between">
-              <div className="text-sm text-gray-500">
-                Showing {((classPage - 1) * classLimit) + 1} to {Math.min(classPage * classLimit, filteredClasses.length)} of {filteredClasses.length} classes
+            <div className="mt-6 flex items-center justify-between p-4 bg-gradient-to-r from-gray-50 to-blue-50 rounded-xl">
+              <div className="text-sm font-medium text-gray-700">
+                Showing <span className="font-bold text-blue-600">{((classPage - 1) * classLimit) + 1}</span> to <span className="font-bold text-blue-600">{Math.min(classPage * classLimit, filteredClasses.length)}</span> of <span className="font-bold text-blue-600">{filteredClasses.length}</span> classes
               </div>
               <div className="flex gap-2">
                 <button
                   onClick={() => setClassPage(Math.max(1, classPage - 1))}
                   disabled={classPage === 1}
-                  className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+                  className="px-4 py-2 border-2 border-gray-300 rounded-xl text-sm font-semibold disabled:opacity-50 disabled:cursor-not-allowed hover:bg-blue-50 hover:border-blue-300 transition-all duration-300 hover:scale-105"
                 >
                   Previous
                 </button>
@@ -267,10 +274,10 @@ export default function TestReportsSection() {
                     <button
                       key={page}
                       onClick={() => setClassPage(page)}
-                      className={`px-3 py-1.5 border rounded-lg text-sm ${
+                      className={`px-4 py-2 border-2 rounded-xl text-sm font-semibold transition-all duration-300 hover:scale-105 ${
                         page === classPage
-                          ? 'bg-blue-600 text-white border-blue-600'
-                          : 'border-gray-300 hover:bg-gray-50'
+                          ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white border-blue-600 shadow-md'
+                          : 'border-gray-300 hover:bg-blue-50 hover:border-blue-300'
                       }`}
                     >
                       {page}
@@ -280,7 +287,7 @@ export default function TestReportsSection() {
                 <button
                   onClick={() => setClassPage(Math.min(totalClassPages, classPage + 1))}
                   disabled={classPage === totalClassPages}
-                  className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+                  className="px-4 py-2 border-2 border-gray-300 rounded-xl text-sm font-semibold disabled:opacity-50 disabled:cursor-not-allowed hover:bg-blue-50 hover:border-blue-300 transition-all duration-300 hover:scale-105"
                 >
                   Next
                 </button>

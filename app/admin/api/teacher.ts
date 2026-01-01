@@ -25,6 +25,10 @@ export interface Teacher {
   phoneNumber?: string;
   email: string;
   yearsOfExperience?: number;
+  isClassTeacher: boolean;
+  createdAt: string;
+  updatedAt: string;
+
 }
 export interface CreateTeacherDTO {
   name: string;

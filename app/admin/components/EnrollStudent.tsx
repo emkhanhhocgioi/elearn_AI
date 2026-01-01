@@ -128,21 +128,21 @@ export default function EnrollStudent({ classCode,  isOpen: externalIsOpen, onOp
 
         <div className="flex-1 overflow-hidden flex flex-col gap-4">
           {/* Search Bar */}
-          <div className="flex items-center gap-2 bg-gray-50 rounded-lg px-4 py-2 border border-gray-200">
-            <Search className="w-4 h-4 text-gray-400" />
+          <div className="flex items-center gap-3 bg-gradient-to-r from-gray-50 to-green-50 rounded-xl px-5 py-3 border-2 border-gray-200 focus-within:border-green-400 focus-within:ring-4 focus-within:ring-green-100 transition-all duration-300">
+            <Search className="w-5 h-5 text-green-500" />
             <input
               type="text"
               placeholder="Tìm kiếm theo tên hoặc email..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="flex-1 bg-transparent outline-none text-sm"
+              className="flex-1 bg-transparent outline-none text-sm placeholder-gray-400"
             />
             {searchTerm && (
               <button
                 onClick={() => setSearchTerm('')}
-                className="p-1 hover:bg-gray-200 rounded transition-colors"
+                className="p-1.5 hover:bg-green-100 rounded-lg transition-all duration-300 hover:scale-110"
               >
-                <X className="w-4 h-4 text-gray-600" />
+                <X className="w-5 h-5 text-gray-600" />
               </button>
             )}
           </div>
@@ -150,53 +150,69 @@ export default function EnrollStudent({ classCode,  isOpen: externalIsOpen, onOp
           {/* Content Area */}
           <div className="flex-1 overflow-y-auto">
             {allStudentsLoading ? (
-              <div className="flex flex-col items-center justify-center h-full">
-                <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mb-3"></div>
-                <p className="text-gray-500">Đang tải danh sách học sinh...</p>
+              <div className="flex flex-col items-center justify-center h-full py-12">
+                <div className="w-16 h-16 border-4 border-green-500 border-t-transparent rounded-full animate-spin mb-4"></div>
+                <p className="text-gray-600 font-medium">Đang tải danh sách học sinh...</p>
               </div>
             ) : filteredStudents.length === 0 ? (
-              <div className="flex flex-col items-center justify-center h-full bg-gray-50 rounded-lg border border-gray-200">
-                <p className="text-gray-500">
+              <div className="flex flex-col items-center justify-center h-full bg-gradient-to-br from-gray-50 to-green-50 rounded-xl border-2 border-gray-200 py-12">
+                <div className="w-20 h-20 bg-gradient-to-br from-green-100 to-emerald-100 rounded-full flex items-center justify-center mb-4">
+                  <svg className="w-10 h-10 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                  </svg>
+                </div>
+                <p className="text-lg font-semibold text-gray-600 mb-1">
                   {searchTerm ? 'Không tìm thấy học sinh phù hợp' : 'Không có học sinh nào'}
                 </p>
+                {searchTerm && (
+                  <p className="text-sm text-gray-400">Thử tìm kiếm với từ khóa khác</p>
+                )}
               </div>
             ) : (
-              <div className="space-y-2 pr-2">
+              <div className="space-y-3 pr-2">
                 {filteredStudents.map((student) => (
                   <div
                     key={student._id}
-                    className="flex items-center justify-between gap-4 p-3 bg-white rounded-lg border border-gray-200 hover:border-blue-300 hover:bg-blue-50 transition-all"
+                    className="flex items-center justify-between gap-4 p-4 bg-white rounded-xl border-2 border-gray-200 hover:border-green-300 hover:bg-gradient-to-r hover:from-green-50 hover:to-emerald-50 transition-all duration-300 hover:shadow-md group"
                   >
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-gray-900 truncate">{student.name || '-'}</p>
-                      <p className="text-xs text-gray-500 truncate">{student.email || '-'}</p>
+                    <div className="flex items-center gap-3 flex-1 min-w-0">
+                      <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-600 rounded-full flex items-center justify-center shadow-md flex-shrink-0">
+                        <span className="text-white font-bold text-lg">
+                          {student.name?.charAt(0) || '?'}
+                        </span>
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-semibold text-gray-900 truncate group-hover:text-green-600 transition-colors">{student.name || '-'}</p>
+                        <p className="text-xs text-gray-500 truncate">{student.email || '-'}</p>
+                      </div>
                     </div>
                     <div className="flex items-center gap-4 text-xs flex-shrink-0">
-                      <div className="text-center">
-                        <p className="text-gray-600">Khối</p>
-                        <p className="font-semibold text-gray-900">{student.grade || '-'}</p>
+                      <div className="text-center bg-blue-50 px-3 py-2 rounded-lg">
+                        <p className="text-gray-500 font-medium">Khối</p>
+                        <p className="font-bold text-blue-600 text-sm">{student.grade || '-'}</p>
                       </div>
-                      <div className="text-center">
-                        <p className="text-gray-600">ĐTB</p>
-                        <p className="font-semibold text-gray-900">{student.averageScore || '0'}</p>
+                      <div className="text-center bg-purple-50 px-3 py-2 rounded-lg">
+                        <p className="text-gray-500 font-medium">ĐTB</p>
+                        <p className="font-bold text-purple-600 text-sm">{student.averageScore || '0'}</p>
                       </div>
                       <button
                         onClick={() => handleEnrollStudent(student._id || '', student.name || '')}
                         disabled={enrollingIds.has(student._id || '')}
-                        className={`px-3 py-1 rounded flex items-center gap-2 justify-center text-sm font-medium transition-colors whitespace-nowrap ${
+                        className={`px-4 py-2.5 rounded-xl flex items-center gap-2 justify-center text-sm font-semibold transition-all duration-300 whitespace-nowrap shadow-md hover:shadow-lg ${
                           enrollingIds.has(student._id || '')
                             ? 'bg-gray-300 text-gray-600 cursor-not-allowed'
-                            : 'bg-green-600 text-white hover:bg-green-700'
+                            : 'bg-gradient-to-r from-green-500 to-emerald-600 text-white hover:from-green-600 hover:to-emerald-700 hover:scale-105'
                         }`}
                         title="Thêm vào lớp"
                       >
                         {enrollingIds.has(student._id || '') ? (
                           <>
                             <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                            Đang thêm...
                           </>
                         ) : (
                           <>
-                            <Check className="w-4 h-4" />
+                            <Check className="w-5 h-5" />
                             Enroll
                           </>
                         )}

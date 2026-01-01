@@ -56,34 +56,34 @@ export default function AddTestPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
+    <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <div className="bg-white border-b border-gray-200 sticky top-0 z-10 shadow-sm">
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center gap-4">
             <button
               onClick={() => router.back()}
-              className="p-2 hover:bg-gray-100 rounded-lg transition"
+              className="p-2 hover:bg-blue-50 rounded-lg transition-colors"
             >
               <ArrowLeft className="w-5 h-5 text-gray-600" />
             </button>
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">Create New Test</h1>
-              <p className="text-sm text-gray-500">Add a new test for your class</p>
+              <h1 className="text-2xl sm:text-3xl font-bold text-blue-600">Tạo Bài kiểm tra Mới</h1>
+              <p className="text-sm text-gray-500 mt-1">Thêm bài kiểm tra mới cho lớp học của bạn</p>
             </div>
           </div>
         </div>
       </div>
 
       {/* Form */}
-      <div className="max-w-3xl mx-auto px-6 py-8">
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8">
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 py-8">
+        <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-6 sm:p-8">
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Test Title */}
             <div>
               <label htmlFor="testtitle" className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
-                <FileText className="w-4 h-4 text-purple-600" />
-                Test Title
+                <FileText className="w-4 h-4 text-blue-600" />
+                Tiêu đề Bài kiểm tra
               </label>
               <input
                 type="text"
@@ -92,16 +92,16 @@ export default function AddTestPage() {
                 value={formData.testtitle}
                 onChange={handleChange}
                 required
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
-                placeholder="e.g., Midterm Exam - Mathematics"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                placeholder="VD: Kiểm tra giữa kỳ - Toán học"
               />
             </div>
 
             {/* Subject */}
             <div>
               <label htmlFor="subject" className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
-                <BookOpen className="w-4 h-4 text-purple-600" />
-                Subject
+                <BookOpen className="w-4 h-4 text-indigo-600" />
+                Môn học
               </label>
               <input
                 type="text"
@@ -111,8 +111,8 @@ export default function AddTestPage() {
                 onChange={handleChange}
                 disabled={true}
                 required
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
-                placeholder="e.g., Mathematics, Physics, Chemistry"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-100 cursor-not-allowed"
+                placeholder="VD: Toán học, Vật lý, Hóa học"
               />
             </div>
 
@@ -120,7 +120,7 @@ export default function AddTestPage() {
             <div>
               <label htmlFor="closedDate" className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
                 <Calendar className="w-4 h-4 text-purple-600" />
-                Close Date
+                Hạn nộp bài
               </label>
               <input
                 type="datetime-local"
@@ -129,33 +129,33 @@ export default function AddTestPage() {
                 value={formData.closedDate}
                 onChange={handleChange}
                 required
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors"
               />
             </div>
 
             {/* Error Message */}
             {error && (
               <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
-                <p className="text-sm text-red-600">{error}</p>
+                <p className="text-sm text-red-600 font-semibold">{error}</p>
               </div>
             )}
 
             {/* Submit Buttons */}
-            <div className="flex items-center gap-4 pt-4">
+            <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-4 pt-4">
               <button
                 type="submit"
                 disabled={loading}
-                className="flex-1 bg-gradient-to-r from-purple-600 to-purple-700 text-white px-6 py-3 rounded-lg flex items-center justify-center gap-2 hover:from-purple-700 hover:to-purple-800 transition shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed font-semibold"
+                className="w-full sm:flex-1 bg-blue-600 text-white px-6 py-3 rounded-lg flex items-center justify-center gap-2 hover:bg-blue-700 transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed font-semibold"
               >
                 <Plus className="w-5 h-5" />
-                {loading ? 'Creating...' : 'Create Test'}
+                {loading ? 'Đang tạo...' : 'Tạo Bài kiểm tra'}
               </button>
               <button
                 type="button"
                 onClick={() => router.back()}
-                className="px-6 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition font-semibold"
+                className="w-full sm:w-auto px-6 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors font-semibold"
               >
-                Cancel
+                Hủy
               </button>
             </div>
           </form>
@@ -163,11 +163,22 @@ export default function AddTestPage() {
 
         {/* Info Card */}
         <div className="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-6">
-          <h3 className="text-sm font-semibold text-blue-900 mb-2">ℹ️ Information</h3>
-          <ul className="text-sm text-blue-700 space-y-1 list-disc list-inside">
-            <li>After creating the test, you can add questions to it</li>
-            <li>The close date determines when students can no longer submit</li>
-            <li>Make sure the participant count matches your class size</li>
+          <h3 className="text-sm font-semibold text-blue-900 mb-3 flex items-center gap-2">
+            <span className="text-xl">ℹ️</span> Thông tin quan trọng
+          </h3>
+          <ul className="text-sm text-blue-700 space-y-2">
+            <li className="flex items-start gap-2">
+              <span className="text-blue-600 font-bold mt-0.5">•</span>
+              <span>Sau khi tạo bài kiểm tra, bạn có thể thêm câu hỏi vào</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="text-blue-600 font-bold mt-0.5">•</span>
+              <span>Hạn nộp xác định thời gian học sinh có thể nộp bài</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="text-blue-600 font-bold mt-0.5">•</span>
+              <span>Đảm bảo số lượng học sinh khớp với sĩ số lớp</span>
+            </li>
           </ul>
         </div>
       </div>

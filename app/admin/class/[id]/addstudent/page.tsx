@@ -1,7 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { ArrowLeft, Plus, Trash2, UserPlus, Save } from 'lucide-react';
+import { ArrowLeft, Plus, Trash2, UserPlus, Save , Users} from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -124,14 +124,14 @@ export default function AddStudentPage() {
   return (
     <div className="min-h-screen bg-gray-50 p-6">
       {/* Header */}
-      <div className="mb-6">
-        <Button onClick={handleBack} variant="ghost" className="mb-4">
+      <div className="mb-8">
+        <Button onClick={handleBack} variant="ghost" className="mb-4 hover:bg-gray-100">
           <ArrowLeft className="w-4 h-4 mr-2" />
           Quay lại
         </Button>
         
-        <div className="bg-white rounded-xl p-6 shadow-sm">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+        <div className="bg-white rounded-lg p-8 shadow-sm border border-gray-200">
+          <h1 className="text-3xl font-bold text-gray-900 mb-3">
             Thêm danh sách học sinh
           </h1>
           <p className="text-gray-600">
@@ -142,8 +142,13 @@ export default function AddStudentPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Left Side - Input Form */}
-        <div className="bg-white rounded-xl p-6 shadow-sm">
-          <h2 className="text-xl font-bold text-gray-900 mb-6">Thông tin học sinh</h2>
+        <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center">
+              <UserPlus className="w-5 h-5 text-blue-600" />
+            </div>
+            <h2 className="text-xl font-bold text-gray-900">Thông tin học sinh</h2>
+          </div>
           
           <div className="space-y-4">
             {/* Họ tên */}
@@ -282,7 +287,7 @@ export default function AddStudentPage() {
             {/* Add Button */}
             <Button 
               onClick={addStudentToList}
-              className="w-full bg-blue-600 hover:bg-blue-700"
+              className="w-full bg-blue-600 hover:bg-blue-700 border border-blue-700 shadow-sm"
             >
               <Plus className="w-4 h-4 mr-2" />
               Thêm vào danh sách
@@ -291,15 +296,20 @@ export default function AddStudentPage() {
         </div>
 
         {/* Right Side - Students Table */}
-        <div className="bg-white rounded-xl p-6 shadow-sm">
+        <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-bold text-gray-900">
-              Danh sách học sinh ({students.length})
-            </h2>
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-green-50 rounded-lg flex items-center justify-center">
+                <Users className="w-5 h-5 text-green-600" />
+              </div>
+              <h2 className="text-xl font-bold text-gray-900">
+                Danh sách học sinh ({students.length})
+              </h2>
+            </div>
             {students.length > 0 && (
               <Button 
                 onClick={handleSubmit}
-                className="bg-green-600 hover:bg-green-700"
+                className="bg-green-600 hover:bg-green-700 border border-green-700 shadow-sm"
               >
                 <Save className="w-4 h-4 mr-2" />
                 Lưu tất cả
@@ -308,27 +318,28 @@ export default function AddStudentPage() {
           </div>
 
           {students.length === 0 ? (
-            <div className="text-center py-12 text-gray-500">
-              <UserPlus className="w-16 h-16 mx-auto mb-4 opacity-50" />
-              <p className="text-lg">Chưa có học sinh nào</p>
-           <p className="text-sm">
-  Điền thông tin bên trái và nhấn Thêm vào danh sách
-</p>
-
+            <div className="text-center py-16 text-gray-500">
+              <div className="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center mx-auto mb-4">
+                <UserPlus className="w-8 h-8 text-gray-400" />
+              </div>
+              <p className="text-lg font-semibold text-gray-700 mb-2">Chưa có học sinh nào</p>
+              <p className="text-sm text-gray-500">
+                Điền thông tin bên trái và nhấn Thêm vào danh sách
+              </p>
             </div>
           ) : (
             <div className="overflow-x-auto">
               <Table>
                 <TableHeader>
-                  <TableRow>
-                    <TableHead className="w-12">#</TableHead>
-                    <TableHead>Họ tên</TableHead>
-                    <TableHead>Email</TableHead>
-                    <TableHead>Ngày sinh</TableHead>
-                    <TableHead>SĐT PH</TableHead>
-                    <TableHead>Học lực</TableHead>
-                    <TableHead>Hạnh kiểm</TableHead>
-                    <TableHead>ĐTB</TableHead>
+                  <TableRow className="border-b border-gray-200 bg-gray-50">
+                    <TableHead className="w-12 font-semibold text-gray-700">#</TableHead>
+                    <TableHead className="font-semibold text-gray-700">Họ tên</TableHead>
+                    <TableHead className="font-semibold text-gray-700">Email</TableHead>
+                    <TableHead className="font-semibold text-gray-700">Ngày sinh</TableHead>
+                    <TableHead className="font-semibold text-gray-700">SĐT PH</TableHead>
+                    <TableHead className="font-semibold text-gray-700">Học lực</TableHead>
+                    <TableHead className="font-semibold text-gray-700">Hạnh kiểm</TableHead>
+                    <TableHead className="font-semibold text-gray-700">ĐTB</TableHead>
                     <TableHead className="w-20"></TableHead>
                   </TableRow>
                 </TableHeader>
@@ -368,7 +379,7 @@ export default function AddStudentPage() {
                           onClick={() => removeStudent(index)}
                           variant="ghost"
                           size="sm"
-                          className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                          className="text-red-600 hover:text-red-700 hover:bg-red-50 border border-transparent hover:border-red-200"
                         >
                           <Trash2 className="w-4 h-4" />
                         </Button>
@@ -384,20 +395,20 @@ export default function AddStudentPage() {
 
       {/* Confirmation Dialog */}
       <AlertDialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
-        <AlertDialogContent>
+        <AlertDialogContent className="border border-gray-200">
           <AlertDialogHeader>
-            <AlertDialogTitle>Xác nhận thêm học sinh</AlertDialogTitle>
-            <AlertDialogDescription>
+            <AlertDialogTitle className="text-xl">Xác nhận thêm học sinh</AlertDialogTitle>
+            <AlertDialogDescription className="text-base">
               Bạn có chắc chắn muốn thêm {students.length} học sinh vào lớp học và tạo tài khoản cho họ?
               Hành động này sẽ tạo tài khoản đăng nhập cho tất cả học sinh.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel disabled={isSubmitting}>Hủy</AlertDialogCancel>
+            <AlertDialogCancel disabled={isSubmitting} className="border border-gray-300">Hủy</AlertDialogCancel>
             <AlertDialogAction 
               onClick={confirmSubmit}
               disabled={isSubmitting}
-              className="bg-green-600 hover:bg-green-700"
+              className="bg-green-600 hover:bg-green-700 border border-green-700"
             >
               {isSubmitting ? 'Đang xử lý...' : 'Xác nhận'}
             </AlertDialogAction>

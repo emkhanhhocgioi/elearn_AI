@@ -83,18 +83,23 @@ const PersonalInfoTab = () => {
   }
 
   return (
-    <div>
+    <div className="animate-fade-in">
       <div className="mb-6 flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">Thông Tin Cá Nhân</h2>
-          <p className="text-gray-600 mt-1">Quản lý hồ sơ và thông tin cá nhân của bạn</p>
+          <h2 className="text-3xl font-bold bg-gradient-to-r from-[#0F172A] to-[#2563EB] bg-clip-text text-transparent leading-tight">Thông Tin Cá Nhân</h2>
+          <p className="text-gray-600 mt-2 leading-relaxed flex items-center gap-2">
+            <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+            </svg>
+            Quản lý hồ sơ và thông tin cá nhân của bạn
+          </p>
         </div>
         {!isEditing && (
           <button
             onClick={() => setIsEditing(true)}
-            className="bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-blue-700"
+            className="bg-gradient-to-r from-[#2563EB] to-[#1d4ed8] text-white px-6 py-3 rounded-xl flex items-center gap-2 hover:shadow-lg hover:scale-105 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:ring-offset-2 font-semibold"
           >
-            <Edit2 className="w-4 h-4" />
+            <Edit2 className="w-5 h-5" />
             Chỉnh Sửa
           </button>
         )}
@@ -103,42 +108,62 @@ const PersonalInfoTab = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Profile Avatar Section */}
         <div className="lg:col-span-1">
-          <div className="bg-white rounded-xl p-6 shadow-sm text-center">
+          <div className="bg-gradient-to-br from-white to-blue-50 rounded-2xl p-6 shadow-lg border-2 border-gray-200 text-center hover:shadow-xl transition-shadow">
             {formData.avatar ? (
-              <img 
-                src={formData.avatar} 
-                alt={formData.fullName}
-                className="w-32 h-32 rounded-full mx-auto mb-4 object-cover"
-              />
+              <div className="relative inline-block">
+                <img 
+                  src={formData.avatar} 
+                  alt={formData.fullName}
+                  className="w-36 h-36 rounded-full mx-auto mb-4 object-cover border-4 border-white shadow-xl ring-4 ring-blue-100"
+                />
+                <div className="absolute bottom-4 right-0 w-10 h-10 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center border-4 border-white shadow-lg">
+                  <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                </div>
+              </div>
             ) : (
-              <div className="w-32 h-32 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full mx-auto mb-4 flex items-center justify-center">
-                <User className="w-16 h-16 text-white" />
+              <div className="relative inline-block">
+                <div className="w-36 h-36 bg-gradient-to-br from-[#2563EB] to-[#1d4ed8] rounded-full mx-auto mb-4 flex items-center justify-center shadow-xl ring-4 ring-blue-100">
+                  <User className="w-20 h-20 text-white" />
+                </div>
+                <div className="absolute bottom-4 right-0 w-10 h-10 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center border-4 border-white shadow-lg">
+                  <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                </div>
               </div>
             )}
-            <h3 className="text-xl font-bold text-gray-900 mb-1">{formData.fullName}</h3>
-            <p className="text-sm text-gray-600 mb-4">{formData.studentId}</p>
-            <div className="space-y-2 text-sm">
-              <p className="text-gray-600">
-                <span className="font-medium text-gray-900">Điểm TB:</span> {formData.averageScore.toFixed(1)}
-              </p>
-              <p className="text-gray-600">
-                <span className="font-medium text-gray-900">Học lực:</span> <span className="text-blue-600">{formData.academicPerformance}</span>
-              </p>
-              <p className="text-gray-600">
-                <span className="font-medium text-gray-900">Hạnh kiểm:</span> <span className="text-green-600">{formData.conduct}</span>
-              </p>
+            <h3 className="text-2xl font-bold text-[#0F172A] mb-2 leading-tight">{formData.fullName}</h3>
+            <p className="text-sm text-gray-500 mb-5 font-medium">{formData.studentId}</p>
+            <div className="space-y-3 text-sm">
+              <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl p-4 border border-blue-200">
+                <p className="text-gray-600 leading-relaxed">
+                  <span className="font-bold text-[#0F172A]">Điểm TB:</span> <span className="text-[#2563EB] font-bold text-xl ml-2">{formData.averageScore.toFixed(1)}</span>
+                </p>
+              </div>
+              <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-4 border border-green-200">
+                <p className="text-gray-600 leading-relaxed">
+                  <span className="font-bold text-[#0F172A]">Học lực:</span> <span className="text-green-600 font-bold ml-2">{formData.academicPerformance}</span>
+                </p>
+              </div>
+              <div className="bg-gradient-to-r from-yellow-50 to-amber-50 rounded-xl p-4 border border-yellow-200">
+                <p className="text-gray-600 leading-relaxed">
+                  <span className="font-bold text-[#0F172A]">Hạnh kiểm:</span> <span className="text-amber-600 font-bold ml-2">{formData.conduct}</span>
+                </p>
+              </div>
             </div>
           </div>
         </div>
 
         {/* Form Section */}
         <div className="lg:col-span-2">
-          <div className="bg-white rounded-xl p-6 shadow-sm">
+          <div className="bg-white rounded-2xl p-6 shadow-lg border border-gray-200">
             <div className="space-y-6">
               {/* Row 1 */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-sm font-medium text-gray-900 mb-2">
+                  <label className="block text-sm font-semibold text-[#0F172A] mb-2">
                     <User className="w-4 h-4 inline mr-2" />
                     Họ và Tên
                   </label>
@@ -148,11 +173,11 @@ const PersonalInfoTab = () => {
                     value={formData.fullName}
                     onChange={handleInputChange}
                     disabled={!isEditing}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-50 disabled:cursor-not-allowed"
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-transparent disabled:bg-[#F1F5F9] disabled:cursor-not-allowed disabled:text-gray-600 transition-all text-[#0F172A]"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-900 mb-2">
+                  <label className="block text-sm font-semibold text-[#0F172A] mb-2">
                     <Mail className="w-4 h-4 inline mr-2" />
                     Email
                   </label>
@@ -162,7 +187,7 @@ const PersonalInfoTab = () => {
                     value={formData.email}
                     onChange={handleInputChange}
                     disabled={!isEditing}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-50 disabled:cursor-not-allowed"
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-transparent disabled:bg-[#F1F5F9] disabled:cursor-not-allowed disabled:text-gray-600 transition-all text-[#0F172A]"
                   />
                 </div>
               </div>
@@ -170,7 +195,7 @@ const PersonalInfoTab = () => {
               {/* Row 2 */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-sm font-medium text-gray-900 mb-2">
+                  <label className="block text-sm font-semibold text-[#0F172A] mb-2">
                     <Phone className="w-4 h-4 inline mr-2" />
                     Số Điện Thoại Phụ Huynh
                   </label>
@@ -180,11 +205,11 @@ const PersonalInfoTab = () => {
                     value={formData.phone}
                     onChange={handleInputChange}
                     disabled={!isEditing}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-50 disabled:cursor-not-allowed"
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-transparent disabled:bg-[#F1F5F9] disabled:cursor-not-allowed disabled:text-gray-600 transition-all text-[#0F172A]"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-900 mb-2">
+                  <label className="block text-sm font-semibold text-[#0F172A] mb-2">
                     <Calendar className="w-4 h-4 inline mr-2" />
                     Ngày Sinh
                   </label>
@@ -194,67 +219,67 @@ const PersonalInfoTab = () => {
                     value={formData.dateOfBirth}
                     onChange={handleInputChange}
                     disabled={!isEditing}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-50 disabled:cursor-not-allowed"
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-transparent disabled:bg-[#F1F5F9] disabled:cursor-not-allowed disabled:text-gray-600 transition-all text-[#0F172A]"
                   />
                 </div>
               </div>
 
               {/* Academic Info */}
-              <div className="border-t border-gray-200 pt-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Thông Tin Học Tập</h3>
+              <div className="border-t border-gray-200 pt-6 mt-6">
+                <h3 className="text-lg font-bold text-[#0F172A] mb-4">Thông Tin Học Tập</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <label className="block text-sm font-medium text-gray-900 mb-2">Mã Học Sinh</label>
+                    <label className="block text-sm font-semibold text-[#0F172A] mb-2">Mã Học Sinh</label>
                     <input
                       type="text"
                       value={formData.studentId}
                       disabled
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-50 cursor-not-allowed text-gray-600"
+                      className="w-full px-4 py-2.5 border border-gray-300 rounded-lg bg-[#F1F5F9] cursor-not-allowed text-gray-600"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-900 mb-2">Mã Lớp</label>
+                    <label className="block text-sm font-semibold text-[#0F172A] mb-2">Mã Lớp</label>
                     <input
                       type="text"
                       value={formData.class}
                       disabled
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-50 cursor-not-allowed text-gray-600"
+                      className="w-full px-4 py-2.5 border border-gray-300 rounded-lg bg-[#F1F5F9] cursor-not-allowed text-gray-600"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-900 mb-2">Học Lực</label>
+                    <label className="block text-sm font-semibold text-[#0F172A] mb-2">Học Lực</label>
                     <input
                       type="text"
                       value={formData.academicPerformance}
                       disabled
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-50 cursor-not-allowed text-gray-600"
+                      className="w-full px-4 py-2.5 border border-gray-300 rounded-lg bg-[#F1F5F9] cursor-not-allowed text-gray-600"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-900 mb-2">Hạnh Kiểm</label>
+                    <label className="block text-sm font-semibold text-[#0F172A] mb-2">Hạnh Kiểm</label>
                     <input
                       type="text"
                       value={formData.conduct}
                       disabled
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-50 cursor-not-allowed text-gray-600"
+                      className="w-full px-4 py-2.5 border border-gray-300 rounded-lg bg-[#F1F5F9] cursor-not-allowed text-gray-600"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-900 mb-2">Điểm Trung Bình</label>
+                    <label className="block text-sm font-semibold text-[#0F172A] mb-2">Điểm Trung Bình</label>
                     <input
                       type="text"
                       value={formData.averageScore.toFixed(1)}
                       disabled
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-50 cursor-not-allowed text-gray-600"
+                      className="w-full px-4 py-2.5 border border-gray-300 rounded-lg bg-[#F1F5F9] cursor-not-allowed text-gray-600"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-900 mb-2">Ngày Tạo</label>
+                    <label className="block text-sm font-semibold text-[#0F172A] mb-2">Ngày Tạo</label>
                     <input
                       type="text"
                       value={formData.createdAt}
                       disabled
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-50 cursor-not-allowed text-gray-600"
+                      className="w-full px-4 py-2.5 border border-gray-300 rounded-lg bg-[#F1F5F9] cursor-not-allowed text-gray-600"
                     />
                   </div>
                 </div>
@@ -265,14 +290,14 @@ const PersonalInfoTab = () => {
                 <div className="border-t border-gray-200 pt-6 flex gap-3 justify-end">
                   <button
                     onClick={handleCancel}
-                    className="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 flex items-center gap-2"
+                    className="px-6 py-2.5 border-2 border-gray-300 text-[#0F172A] rounded-lg hover:bg-[#F1F5F9] flex items-center gap-2 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2"
                   >
                     <X className="w-4 h-4" />
                     Hủy
                   </button>
                   <button
                     onClick={handleSave}
-                    className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center gap-2"
+                    className="px-6 py-2.5 bg-[#2563EB] text-white rounded-lg hover:bg-[#1d4ed8] flex items-center gap-2 transition-all duration-200 shadow-sm focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:ring-offset-2"
                   >
                     <Save className="w-4 h-4" />
                     Lưu Thay Đổi
