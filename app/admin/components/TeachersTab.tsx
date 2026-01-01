@@ -29,6 +29,12 @@ export default function TeachersTab() {
   const [teachers, setTeachers] = useState<APITeacher[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
+  const [filterSubject, setFilterSubject] = useState('all');
+  const [filterGender, setFilterGender] = useState('all');
+  const [filterAge, setFilterAge] = useState('all');
+  const [filterExperience, setFilterExperience] = useState('all');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(10);
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [fetchLoading, setFetchLoading] = useState(true);
@@ -168,8 +174,94 @@ export default function TeachersTab() {
       teacher.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
       teacher.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       teacher.subject.toLowerCase().includes(searchTerm.toLowerCase());
-    return matchesSearch;
+    
+    const matchesSubject = filterSubject === 'all' || teacher.subject === filterSubject;
+    const matchesGender = filterGender === 'all' || teacher.gender === filterGender;
+    
+    let matchesAge = true;
+    if (filterAge !== 'all' && teacher.age) {
+      const age = teacher.age;
+      switch (filterAge) {
+        case '20-30':
+          matchesAge = age >= 20 && age <= 30;
+          break;
+        case '31-40':
+          matchesAge = age >= 31 && age <= 40;
+          break;
+        case '41-50':
+          matchesAge = age >= 41 && age <= 50;
+          break;
+        case '51+':
+          matchesAge = age >= 51;
+          break;
+      }
+    }
+    
+    let matchesExperience = true;
+    if (filterExperience !== 'all' && teacher.yearsOfExperience) {
+      const exp = teacher.yearsOfExperience;
+      switch (filterExperience) {
+        case '0-5':
+          matchesExperience = exp >= 0 && exp <= 5;
+          break;
+        case '6-10':
+          matchesExperience = exp >= 6 && exp <= 10;
+          break;
+        case '11-20':
+          matchesExperience = exp >= 11 && exp <= 20;
+          break;
+        case '20+':
+          matchesExperience = exp >= 20;
+          break;
+      }
+    }
+    
+    return matchesSearch && matchesSubject && matchesGender && matchesAge && matchesExperience;
   });
+
+  // Reset to page 1 when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, filterSubject, filterGender, filterAge, filterExperience]);
+
+  // Pagination calculations
+  const totalPages = Math.ceil(filteredTeachers.length / itemsPerPage);
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentTeachers = filteredTeachers.slice(indexOfFirstItem, indexOfLastItem);
+
+  const handlePageChange = (pageNumber: number) => {
+    setCurrentPage(pageNumber);
+  };
+
+  const renderPaginationButtons = () => {
+    const buttons = [];
+    const maxButtons = 5;
+    let startPage = Math.max(1, currentPage - Math.floor(maxButtons / 2));
+    let endPage = Math.min(totalPages, startPage + maxButtons - 1);
+
+    if (endPage - startPage + 1 < maxButtons) {
+      startPage = Math.max(1, endPage - maxButtons + 1);
+    }
+
+    for (let i = startPage; i <= endPage; i++) {
+      buttons.push(
+        <button
+          key={i}
+          onClick={() => handlePageChange(i)}
+          className={`px-4 py-2 rounded-lg font-medium transition-all duration-200 ${
+            currentPage === i
+              ? 'bg-blue-600 text-white shadow-md'
+              : 'bg-white text-gray-700 hover:bg-blue-50 border border-gray-300'
+          }`}
+        >
+          {i}
+        </button>
+      );
+    }
+
+    return buttons;
+  };
 
 
 
@@ -366,7 +458,7 @@ export default function TeachersTab() {
 
       {/* Filters */}
       <div className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100 hover:shadow-xl transition-shadow duration-300">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="space-y-4">
           <div className="flex items-center gap-3 bg-gradient-to-r from-gray-50 to-blue-50 rounded-xl px-5 py-3 border border-gray-200 focus-within:border-blue-400 focus-within:ring-4 focus-within:ring-blue-100 transition-all duration-300">
             <Search className="w-5 h-5 text-blue-500" />
             <input
@@ -378,13 +470,65 @@ export default function TeachersTab() {
             />
           </div>
           
-          <select
-            value={filterStatus}
-            onChange={(e) => setFilterStatus(e.target.value)}
-            className="bg-gradient-to-r from-gray-50 to-blue-50 rounded-xl px-5 py-3 text-sm border border-gray-200 outline-none focus:border-blue-400 focus:ring-4 focus:ring-blue-100 transition-all duration-300 cursor-pointer"
-          >
-            <option value="all">All Teachers</option>
-          </select>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <select
+              value={filterSubject}
+              onChange={(e) => setFilterSubject(e.target.value)}
+              className="bg-gradient-to-r from-gray-50 to-blue-50 rounded-xl px-5 py-3 text-sm border border-gray-200 outline-none focus:border-blue-400 focus:ring-4 focus:ring-blue-100 transition-all duration-300 cursor-pointer"
+            >
+              <option value="all">Tất cả môn học</option>
+              <option value="Toán">Toán</option>
+              <option value="Ngữ văn">Ngữ văn</option>
+              <option value="Tiếng Anh">Tiếng Anh</option>
+              <option value="Vật lý">Vật lý</option>
+              <option value="Hóa học">Hóa học</option>
+              <option value="Sinh học">Sinh học</option>
+              <option value="Lịch sử">Lịch sử</option>
+              <option value="Địa lý">Địa lý</option>
+              <option value="Giáo dục công dân">Giáo dục công dân</option>
+              <option value="Công nghệ">Công nghệ</option>
+              <option value="Tin học">Tin học</option>
+              <option value="Thể dục">Thể dục</option>
+              <option value="Âm nhạc">Âm nhạc</option>
+              <option value="Mỹ thuật">Mỹ thuật</option>
+              <option value="Khác">Khác</option>
+            </select>
+
+            <select
+              value={filterGender}
+              onChange={(e) => setFilterGender(e.target.value)}
+              className="bg-gradient-to-r from-gray-50 to-blue-50 rounded-xl px-5 py-3 text-sm border border-gray-200 outline-none focus:border-blue-400 focus:ring-4 focus:ring-blue-100 transition-all duration-300 cursor-pointer"
+            >
+              <option value="all">Tất cả giới tính</option>
+              <option value="Nam">Nam</option>
+              <option value="Nữ">Nữ</option>
+              <option value="Khác">Khác</option>
+            </select>
+
+            <select
+              value={filterAge}
+              onChange={(e) => setFilterAge(e.target.value)}
+              className="bg-gradient-to-r from-gray-50 to-blue-50 rounded-xl px-5 py-3 text-sm border border-gray-200 outline-none focus:border-blue-400 focus:ring-4 focus:ring-blue-100 transition-all duration-300 cursor-pointer"
+            >
+              <option value="all">Tất cả độ tuổi</option>
+              <option value="20-30">20-30 tuổi</option>
+              <option value="31-40">31-40 tuổi</option>
+              <option value="41-50">41-50 tuổi</option>
+              <option value="51+">51+ tuổi</option>
+            </select>
+
+            <select
+              value={filterExperience}
+              onChange={(e) => setFilterExperience(e.target.value)}
+              className="bg-gradient-to-r from-gray-50 to-blue-50 rounded-xl px-5 py-3 text-sm border border-gray-200 outline-none focus:border-blue-400 focus:ring-4 focus:ring-blue-100 transition-all duration-300 cursor-pointer"
+            >
+              <option value="all">Tất cả kinh nghiệm</option>
+              <option value="0-5">0-5 năm</option>
+              <option value="6-10">6-10 năm</option>
+              <option value="11-20">11-20 năm</option>
+              <option value="20+">20+ năm</option>
+            </select>
+          </div>
         </div>
       </div>
 
@@ -403,10 +547,10 @@ export default function TeachersTab() {
                 <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-200">
+            <tbody className="divide-y divide-gray-200" style={{ minHeight: '700px' }}>
               {fetchLoading ? (
                 // Skeleton loader
-                Array.from({ length: 5 }).map((_, index) => (
+                Array.from({ length: 10 }).map((_, index) => (
                   <tr key={index} className="animate-pulse">
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
@@ -437,7 +581,7 @@ export default function TeachersTab() {
                   </td>
                 </tr>
               ) : (
-                filteredTeachers.map((teacher) => (
+                currentTeachers.map((teacher) => (
                   <tr 
                     key={teacher._id} 
                     className="hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 transition-all duration-200 cursor-pointer group"
@@ -477,6 +621,34 @@ export default function TeachersTab() {
             </tbody>
           </table>
         </div>
+        
+        {/* Pagination */}
+        {!fetchLoading && filteredTeachers.length > 0 && (
+          <div className="px-6 py-4 bg-gradient-to-r from-gray-50 to-blue-50 border-t border-gray-200">
+            <div className="flex items-center justify-between">
+              <div className="text-sm text-gray-600">
+                Hiển thị {indexOfFirstItem + 1}-{Math.min(indexOfLastItem, filteredTeachers.length)} trong số {filteredTeachers.length} giáo viên
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => handlePageChange(currentPage - 1)}
+                  disabled={currentPage === 1}
+                  className="px-4 py-2 rounded-lg font-medium transition-all duration-200 bg-white text-gray-700 hover:bg-blue-50 border border-gray-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white"
+                >
+                  Trước
+                </button>
+                {renderPaginationButtons()}
+                <button
+                  onClick={() => handlePageChange(currentPage + 1)}
+                  disabled={currentPage === totalPages}
+                  className="px-4 py-2 rounded-lg font-medium transition-all duration-200 bg-white text-gray-700 hover:bg-blue-50 border border-gray-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white"
+                >
+                  Sau
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Summary Cards */}

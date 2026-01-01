@@ -26,7 +26,13 @@ export default function AdminDashboard() {
   const [totalTeachers, setTotalTeachers] = useState(0);
   const [activities, setActivities] = useState<any[]>([]);
   const [currentActivityPage, setCurrentActivityPage] = useState(1);
+  const [profileMenuOpen, setProfileMenuOpen] = useState(false);
   const activitiesPerPage = 10;
+
+  const handleLogout = () => {
+    console.log('Logging out...');
+    // Add your logout logic here
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -112,82 +118,85 @@ export default function AdminDashboard() {
   return (
     <div className="flex min-h-screen bg-[#F1F5F9]">
       {/* Sidebar */}
-      <aside className="hidden lg:flex flex-col w-64 bg-white border-r border-gray-200 fixed h-full">
+      <aside className="hidden lg:flex flex-col w-64 bg-white border-r border-gray-200 fixed h-full shadow-sm">
         <div className="p-6 border-b border-gray-200">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-[#2563EB] rounded-full flex items-center justify-center">
-              <span className="text-white font-bold text-sm">A</span>
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-[#2563EB] rounded-lg flex items-center justify-center shadow-sm">
+              <span className="text-white font-bold text-base">A</span>
             </div>
-            <span className="font-bold text-[#0F172A]">ADMIN PANEL</span>
+            <span className="font-bold text-[#0F172A] text-base tracking-tight">ADMIN PANEL</span>
           </div>
         </div>
 
-        <nav className="flex-1 p-4">
-          <div className="mb-6">
-            <h3 className="text-xs font-semibold text-gray-500 mb-3 px-2">MAIN MENU</h3>
+        <nav className="flex-1 p-4 overflow-y-auto">
+          <div className="mb-8">
+            <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3 px-3">Main Menu</h3>
             <ul className="space-y-1">
               <li 
                 onClick={() => setCurrentPage('dashboard')}
-                className={`flex items-center gap-3 px-4 py-2 rounded-lg cursor-pointer transition-colors ${
-                  currentPage === 'dashboard' ? 'text-[#2563EB] bg-[#F1F5F9]' : 'text-[#0F172A] hover:bg-[#F1F5F9]'
+                className={`flex items-center gap-3 px-4 py-2.5 rounded-lg cursor-pointer transition-all duration-200 ${
+                  currentPage === 'dashboard' ? 'text-white bg-[#2563EB] shadow-sm' : 'text-[#0F172A] hover:bg-[#F1F5F9]'
                 }`}
               >
                 <BarChart3 className="w-5 h-5" />
-                <span className="font-medium">Dashboard</span>
+                <span className="font-medium text-sm">Dashboard</span>
               </li>
               <li 
                 onClick={() => setCurrentPage('users')}
-                className={`flex items-center gap-3 px-4 py-2 rounded-lg cursor-pointer transition-colors ${
-                  currentPage === 'users' ? 'text-[#2563EB] bg-[#F1F5F9]' : 'text-[#0F172A] hover:bg-[#F1F5F9]'
+                className={`flex items-center gap-3 px-4 py-2.5 rounded-lg cursor-pointer transition-all duration-200 ${
+                  currentPage === 'users' ? 'text-white bg-[#2563EB] shadow-sm' : 'text-[#0F172A] hover:bg-[#F1F5F9]'
                 }`}
               >
                 <Users className="w-5 h-5" />
-                <span className="font-medium">Students</span>
+                <span className="font-medium text-sm">Students</span>
               </li>
               <li 
                 onClick={() => setCurrentPage('classes')}
-                className={`flex items-center gap-3 px-4 py-2 rounded-lg cursor-pointer transition-colors ${
-                  currentPage === 'classes' ? 'text-[#2563EB] bg-[#F1F5F9]' : 'text-[#0F172A] hover:bg-[#F1F5F9]'
+                className={`flex items-center gap-3 px-4 py-2.5 rounded-lg cursor-pointer transition-all duration-200 ${
+                  currentPage === 'classes' ? 'text-white bg-[#2563EB] shadow-sm' : 'text-[#0F172A] hover:bg-[#F1F5F9]'
                 }`}
               >
                 <BookOpen className="w-5 h-5" />
-                <span className="font-medium">Classes</span>
+                <span className="font-medium text-sm">Classes</span>
               </li>
               <li 
                 onClick={() => setCurrentPage('teachers')}
-                className={`flex items-center gap-3 px-4 py-2 rounded-lg cursor-pointer transition-colors ${
-                  currentPage === 'teachers' ? 'text-[#2563EB] bg-[#F1F5F9]' : 'text-[#0F172A] hover:bg-[#F1F5F9]'
+                className={`flex items-center gap-3 px-4 py-2.5 rounded-lg cursor-pointer transition-all duration-200 ${
+                  currentPage === 'teachers' ? 'text-white bg-[#2563EB] shadow-sm' : 'text-[#0F172A] hover:bg-[#F1F5F9]'
                 }`}
               >
                 <FileText className="w-5 h-5" />
-                <span className="font-medium">Teachers</span>
+                <span className="font-medium text-sm">Teachers</span>
               </li>
               <li 
                 onClick={() => setCurrentPage('reports')}
-                className={`flex items-center gap-3 px-4 py-2 rounded-lg cursor-pointer transition-colors ${
-                  currentPage === 'reports' ? 'text-[#2563EB] bg-[#F1F5F9]' : 'text-[#0F172A] hover:bg-[#F1F5F9]'
+                className={`flex items-center gap-3 px-4 py-2.5 rounded-lg cursor-pointer transition-all duration-200 ${
+                  currentPage === 'reports' ? 'text-white bg-[#2563EB] shadow-sm' : 'text-[#0F172A] hover:bg-[#F1F5F9]'
                 }`}
               >
                 <BarChart3 className="w-5 h-5" />
-                <span className="font-medium">Reports</span>
+                <span className="font-medium text-sm">Reports</span>
               </li>
             </ul>
           </div>
 
           <div>
-            <h3 className="text-xs font-semibold text-gray-500 mb-3 px-2">SETTINGS</h3>
+            <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3 px-3">Settings</h3>
             <ul className="space-y-1">
-              <li className="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-gray-50 rounded-lg cursor-pointer transition-colors">
+              <li className="flex items-center gap-3 px-4 py-2.5 text-[#0F172A] hover:bg-[#F1F5F9] rounded-lg cursor-pointer transition-all duration-200">
                 <Settings className="w-5 h-5" />
-                <span>System Settings</span>
+                <span className="font-medium text-sm">System Settings</span>
               </li>
-              <li className="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-gray-50 rounded-lg cursor-pointer transition-colors">
+              <li className="flex items-center gap-3 px-4 py-2.5 text-[#0F172A] hover:bg-[#F1F5F9] rounded-lg cursor-pointer transition-all duration-200">
                 <FileText className="w-5 h-5" />
-                <span>Audit Logs</span>
+                <span className="font-medium text-sm">Audit Logs</span>
               </li>
-              <li className="flex items-center gap-3 px-4 py-2 text-red-600 hover:bg-red-50 rounded-lg cursor-pointer transition-colors">
+              <li 
+                onClick={handleLogout}
+                className="flex items-center gap-3 px-4 py-2.5 text-red-600 hover:bg-red-50 rounded-lg cursor-pointer transition-all duration-200"
+              >
                 <LogOut className="w-5 h-5" />
-                <span>Logout</span>
+                <span className="font-medium text-sm">Logout</span>
               </li>
             </ul>
           </div>
@@ -197,22 +206,63 @@ export default function AdminDashboard() {
       {/* Main Content */}
       <main className="flex-1 lg:ml-64">
         {/* Header */}
-        <header className="bg-white border-b border-gray-200 sticky top-0 z-10">
+        <header className="bg-white border-b border-gray-200 sticky top-0 z-10 shadow-sm">
           <div className="flex items-center justify-between px-4 lg:px-8 py-4">
             <div className="flex items-center gap-4 flex-1 max-w-2xl">
               <Search className="text-gray-400 w-5 h-5" />
               <input
                 type="text"
                 placeholder="Search users, classes, teachers..."
-                className="flex-1 outline-none text-sm"
+                className="flex-1 outline-none text-sm bg-transparent text-[#0F172A] placeholder-gray-400 focus:placeholder-gray-500 transition-colors"
+                aria-label="Search"
               />
             </div>
             <div className="flex items-center gap-4">
-              <Bell className="w-5 h-5 text-gray-600 cursor-pointer hover:text-gray-800 transition-colors" />
-              <div className="flex items-center gap-3">
-                <span className="hidden md:block text-sm font-medium">Administrator</span>
-                <div className="w-10 h-10 bg-blue-600 rounded-full"></div>
-                <MoreVertical className="w-5 h-5 text-gray-600 cursor-pointer hover:text-gray-800 transition-colors" />
+              <button
+                className="relative p-2 rounded-lg hover:bg-[#F1F5F9] transition-colors focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:ring-offset-2"
+                aria-label="Notifications"
+              >
+                <Bell className="w-5 h-5 text-gray-600 hover:text-[#0F172A]" />
+              </button>
+              <div className="relative">
+                <button 
+                  className="flex items-center gap-3 p-1.5 rounded-lg hover:bg-[#F1F5F9] transition-colors focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:ring-offset-2"
+                  onClick={() => setProfileMenuOpen(!profileMenuOpen)}
+                  aria-label="Profile menu"
+                  aria-expanded={profileMenuOpen}
+                >
+                  <span className="hidden md:block text-sm font-medium text-[#0F172A]">Administrator</span>
+                  <div className="w-10 h-10 bg-[#2563EB] rounded-lg flex items-center justify-center shadow-sm">
+                    <span className="text-white font-bold text-sm">A</span>
+                  </div>
+                  <MoreVertical className="w-5 h-5 text-gray-600" />
+                </button>
+                
+                {/* Profile Dropdown */}
+                {profileMenuOpen && (
+                  <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-2">
+                    <button 
+                      className="w-full text-left px-4 py-2.5 text-sm text-[#0F172A] hover:bg-[#F1F5F9] flex items-center gap-3 transition-colors"
+                    >
+                      <Settings className="w-4 h-4" />
+                      Profile Settings
+                    </button>
+                    <button 
+                      className="w-full text-left px-4 py-2.5 text-sm text-[#0F172A] hover:bg-[#F1F5F9] flex items-center gap-3 transition-colors"
+                    >
+                      <FileText className="w-4 h-4" />
+                      Activity Logs
+                    </button>
+                    <hr className="my-2 border-gray-200" />
+                    <button 
+                      onClick={handleLogout}
+                      className="w-full text-left px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 flex items-center gap-3 transition-colors"
+                    >
+                      <LogOut className="w-4 h-4" />
+                      Logout
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -240,31 +290,32 @@ export default function AdminDashboard() {
           {/* Dynamic Tab Content */}
           <Suspense fallback={<TabLoader />}>
             {currentPage === 'dashboard' && (
-              <div className="bg-white rounded-xl p-6 shadow-sm">
-                <div className="flex items-center justify-between mb-4">
+              <div className="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
+                <div className="flex items-center justify-between mb-6">
                   <h3 className="text-lg font-bold text-[#0F172A]">Recent Activities</h3>
-                  <span className="text-sm text-gray-500">
-                    Trang {currentActivityPage} / {totalPages || 1}
+                  <span className="text-sm text-gray-500 font-medium">
+                    Page {currentActivityPage} / {totalPages || 1}
                   </span>
                 </div>
                 <div className="space-y-3">
                   {currentActivities.length > 0 ? (
                     currentActivities.map((activity, idx) => (
-                      <div key={idx} className="flex items-center justify-between pb-3 border-b border-gray-100">
+                      <div key={idx} className="flex items-center justify-between pb-3 border-b border-gray-100 hover:bg-[#F1F5F9] -mx-3 px-3 py-2 rounded-lg transition-colors">
                         <div className="flex-1">
-                          <span className="text-sm text-gray-800 font-medium">{activity.action}</span>
-                          <p className="text-xs text-gray-500 mt-1">
-                            {activity.studentId?.name || activity.teacherId?.name || 'Unknown User'} - {activity.role}
+                          <span className="text-sm text-[#0F172A] font-medium">{activity.action}</span>
+                          <p className="text-xs text-gray-600 mt-1.5 leading-relaxed">
+                            {activity.studentId?.name || activity.teacherId?.name || 'Unknown User'} <span className="text-gray-400">•</span> <span className="capitalize">{activity.role}</span>
                           </p>
                         </div>
-                        <span className="text-xs text-gray-400">
+                        <span className="text-xs text-gray-500 font-medium">
                           {formatDate(activity.createdAt)}
                         </span>
                       </div>
                     ))
                   ) : (
-                    <div className="text-center py-8 text-gray-500">
-                      Không có hoạt động nào
+                    <div className="text-center py-12 text-gray-500">
+                      <BarChart3 className="w-12 h-12 mx-auto mb-3 text-gray-300" />
+                      <p className="text-sm font-medium">No recent activities</p>
                     </div>
                   )}
                 </div>
