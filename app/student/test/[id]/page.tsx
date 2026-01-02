@@ -36,6 +36,7 @@ interface Test {
   status: string;
   createDate: string;
   test_time: number;
+  isGraded?: boolean;
 }
 
 interface SubmitAnswer {

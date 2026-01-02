@@ -149,3 +149,60 @@
 .animate-fade-in {
   animation: fade-in 0.2s ease-out;
 }
+/* Custom Scrollbar Styles */
+@layer utilities {
+  /* Webkit browsers (Chrome, Safari, Edge) */
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-track {
+    @apply rounded-lg;
+  }
+
+  .scrollbar-thumb-purple-400::-webkit-scrollbar-thumb {
+    @apply bg-purple-400 rounded-lg;
+  }
+
+  .scrollbar-thumb-purple-400:hover::-webkit-scrollbar-thumb {
+    @apply bg-purple-500;
+  }
+
+  .scrollbar-thumb-purple-500::-webkit-scrollbar-thumb {
+    @apply bg-purple-500 rounded-lg;
+  }
+
+  .scrollbar-thumb-pink-400::-webkit-scrollbar-thumb {
+    @apply bg-pink-400 rounded-lg;
+  }
+
+  .scrollbar-thumb-pink-400:hover::-webkit-scrollbar-thumb {
+    @apply bg-pink-500;
+  }
+
+  .scrollbar-thumb-pink-500::-webkit-scrollbar-thumb {
+    @apply bg-pink-500 rounded-lg;
+  }
+
+  .scrollbar-track-gray-100::-webkit-scrollbar-track {
+    @apply bg-gray-100;
+  }
+
+  .scrollbar-track-purple-100::-webkit-scrollbar-track {
+    @apply bg-purple-100;
+  }
+
+  /* Firefox */
+  .scrollbar-thin {
+    scrollbar-width: thin;
+  }
+
+  .scrollbar-thumb-purple-400 {
+    scrollbar-color: rgb(192 132 252) rgb(243 244 246);
+  }
+
+  .scrollbar-thumb-pink-400 {
+    scrollbar-color: rgb(244 114 182) rgb(243 232 255);
+  }
+}

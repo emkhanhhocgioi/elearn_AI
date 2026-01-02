@@ -20,6 +20,7 @@ interface TestApiResponse {
   test_time: number;
   isSubmited: boolean;
   isSubmitedTime: string;
+  isGraded: boolean;
 }
 
 // Interface for mapped test object
@@ -36,6 +37,7 @@ interface MappedTest {
   daysUntilClose: number;
   isSubmited: boolean;
   isLateSubmission: boolean;
+  isGraded: boolean;
 }
 
 // Danh sách 12 môn học THCS
@@ -101,7 +103,8 @@ const MyTestsTab = () => {
             participants: test.participants,
             daysUntilClose: daysUntilClose,
             isSubmited: test.isSubmited,
-            isLateSubmission: isLateSubmission
+            isLateSubmission: isLateSubmission,
+            isGraded: test.isGraded
           };
         });
         
@@ -351,29 +354,35 @@ const MyTestsTab = () => {
                       </p>
                     </td>
                     <td className="px-6 py-4">
-                      {
-                        test.isSubmited === false  && (
-                           <button 
-                        onClick={() => router.push(`/student/test/${test.id}`)}
-                        className="bg-[#2563EB] text-white text-xs px-4 py-2 rounded-lg hover:bg-[#1d4ed8] transition-all duration-200 shadow-sm focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:ring-offset-2 font-medium"
-                      > 
-                        Làm bài
-                      </button>
-                        ) 
-                      }
-                      {
-                        test.isSubmited === true  && (
-                           <button 
-                        onClick={() => router.push(`/student/test/grading/${test.id}`)}
-                        className="bg-green-50 text-green-700 text-xs px-4 py-2 rounded-lg hover:bg-green-100 transition-all duration-200 border border-green-200 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 font-medium"
-                      > 
-                        Xem kết quả
-                      </button>
-                        ) 
-                      }
-
-
-                     
+                      <div className="flex flex-col gap-2">
+                        {
+                          test.isSubmited === false  && (
+                             <button 
+                          onClick={() => router.push(`/student/test/${test.id}`)}
+                          className="bg-[#2563EB] text-white text-xs px-4 py-2 rounded-lg hover:bg-[#1d4ed8] transition-all duration-200 shadow-sm focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:ring-offset-2 font-medium"
+                        > 
+                          Làm bài
+                        </button>
+                          ) 
+                        }
+                        {
+                          test.isSubmited === true  && (
+                             <button 
+                          onClick={() => router.push(`/student/test/grading/${test.id}`)}
+                          className="bg-green-50 text-green-700 text-xs px-4 py-2 rounded-lg hover:bg-green-100 transition-all duration-200 border border-green-200 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 font-medium"
+                        > 
+                          Xem kết quả
+                        </button>
+                          ) 
+                        }
+                        {
+                          test.isSubmited === true && test.isGraded && (
+                            <span className="inline-flex items-center gap-1 text-xs text-green-600 font-medium">
+                              ✓ Đã chấm điểm
+                            </span>
+                          )
+                        }
+                      </div>
                     </td>
                   </tr>
                 ))

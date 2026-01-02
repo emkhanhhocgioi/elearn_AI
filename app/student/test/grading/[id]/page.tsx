@@ -34,6 +34,8 @@ interface AnswerData {
   updatedAt: string;
   submit: boolean;
   teacherGrade?: number;
+  isGraded?: boolean;
+  isgraded?: boolean; // API returns lowercase
 }
 
 interface TestData {
@@ -246,10 +248,11 @@ const TestGradingPage = () => {
   const correctAnswers = answer.answers.filter(a => a.isCorrect).length;
   const finalGrade = answer.teacherGrade || answer.AIGrade || 0;
   
-  // Check if can edit (before closeDate)
+  // Check if can edit (before closeDate and not graded by teacher)
   const closeDate = new Date(test.closeDate);
   const now = new Date();
-  const canEdit = now < closeDate;
+  const isGraded = answer.isGraded || answer.isgraded; // Handle both field name variations
+  const canEdit = now < closeDate && !isGraded;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 py-8">
@@ -265,10 +268,17 @@ const TestGradingPage = () => {
           </button>
           <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
             <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">{test.testtitle}</h1>
-            <p className="text-gray-600 mt-2 flex items-center gap-2">
-              <Award className="w-5 h-5 text-yellow-500" />
-              Kết quả bài kiểm tra
-            </p>
+            <div className="flex items-center gap-3 mt-2">
+              <p className="text-gray-600 flex items-center gap-2">
+                <Award className="w-5 h-5 text-yellow-500" />
+                Kết quả bài kiểm tra
+              </p>
+              {isGraded && (
+                <span className="inline-flex items-center gap-1 bg-green-100 text-green-700 text-xs px-3 py-1 rounded-full font-semibold">
+                  ✓ Đã chấm điểm
+                </span>
+              )}
+            </div>
           </div>
         </div>
 
@@ -328,6 +338,11 @@ const TestGradingPage = () => {
                   {canEdit && (
                     <span className="text-xs bg-white/20 backdrop-blur-sm px-4 py-1.5 rounded-full mt-1 inline-block">
                       ⏰ Có thể chỉnh sửa đến {closeDate.toLocaleDateString('vi-VN')}
+                    </span>
+                  )}
+                  {isGraded && (
+                    <span className="text-xs bg-red-500/20 backdrop-blur-sm px-4 py-1.5 rounded-full mt-1 inline-block border border-red-300">
+                      🔒 Đã chấm điểm - không thể chỉnh sửa
                     </span>
                   )}
                 </div>

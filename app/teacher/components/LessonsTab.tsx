@@ -103,10 +103,7 @@ export default function LessonsTab() {
           <h2 className="text-2xl font-bold text-[#0F172A] leading-tight">My Lessons</h2>
           <p className="text-sm text-gray-500 mt-1">{lessons.length} total lessons</p>
         </div>
-        <button className="bg-[#2563EB] text-white px-5 py-2.5 rounded-lg flex items-center gap-2 hover:bg-blue-700 transition-colors shadow-sm focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:ring-offset-2">
-          <Plus className="w-4 h-4" />
-          Create New Lesson
-        </button>
+       
       </div>
 
       <div className="bg-white rounded-lg overflow-hidden shadow-sm border border-gray-100">

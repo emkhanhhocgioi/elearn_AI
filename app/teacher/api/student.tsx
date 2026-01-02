@@ -49,3 +49,62 @@ export const enrollStudentToClass = async (studentID: string, classID: string) =
     }           
 
 }  
+
+// Get student average grade by subject
+export const getStudentAverageGradeBySubject = async (studentId: string, subject: string) => {
+    try {
+        const token = getAdminToken();
+        if (!token) {
+            throw new Error('Token not found in localStorage');
+        }
+        const res = await axios.get(`${api_url}/api/teacher/analytics/student/average-grade`, {
+            ...getAuthConfig(),
+            params: {
+                studentId: studentId,
+                subject: subject
+            }
+        });
+        return res.data;    
+    } catch (error) {
+        console.error('Error fetching student average grade:', error);
+        throw error;
+    }
+}
+
+// Update all students' average grades in a class for a subject
+export const updateClassStudentsAverageGrade = async (classId: string, subject: string) => {
+    try {
+        const token = getAdminToken();
+        if (!token) {
+            throw new Error('Token not found in localStorage');
+        }
+        const res = await axios.post(`${api_url}/api/teacher/analytics/class/update-average-grades`, {
+            classId: classId,
+            subject: subject
+        }, getAuthConfig());
+        return res.data;    
+    } catch (error) {
+        console.error('Error updating students average grades:', error);
+        throw error;
+    }
+}
+
+// Get all subjects average for all students in a class
+export const getClassStudentsAllSubjectsAverage = async (classId: string) => {
+    try {
+        const token = getAdminToken();
+        if (!token) {
+            throw new Error('Token not found in localStorage');
+        }
+        const res = await axios.get(`${api_url}/api/teacher/analytics/class/students/all-subjects-average`, {
+            ...getAuthConfig(),
+            params: {
+                classId: classId
+            }
+        });
+        return res.data;    
+    } catch (error) {
+        console.error('Error fetching class students all subjects average:', error);
+        throw error;
+    }
+} 

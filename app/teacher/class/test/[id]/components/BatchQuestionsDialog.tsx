@@ -1,7 +1,7 @@
 'use client';
 import { useState } from 'react';
-import { X, Save, Plus, Trash2, Sparkles } from 'lucide-react';
-import { addQuestionsToTest, AI_Generate_Question_Answer, math_question_generation } from '@/app/teacher/api/test';
+import { X, Save, Plus, Trash2, Check } from 'lucide-react';
+import { addQuestionsToTest } from '@/app/teacher/api/test';
 
 interface BatchQuestion {
   question: string;
@@ -12,6 +12,8 @@ interface BatchQuestion {
   solution: string;
   metadata: string;
   options: string[];
+  file?: File | null;
+  filePreview?: string | null;
 }
 
 interface BatchQuestionsDialogProps {
@@ -32,10 +34,12 @@ export default function BatchQuestionsDialog({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
-  const [aiPrompt, setAiPrompt] = useState('');
-  const [aiGenerating, setAiGenerating] = useState(false);
 
-  const [batchQuestions, setBatchQuestions] = useState<BatchQuestion[]>([{
+  // Saved questions array
+  const [savedQuestions, setSavedQuestions] = useState<BatchQuestion[]>([]);
+
+  // Current form state for ONE question
+  const [currentQuestion, setCurrentQuestion] = useState<BatchQuestion>({
     question: '',
     questionType: 'essay',
     subjectQuestionType: '',
@@ -44,79 +48,89 @@ export default function BatchQuestionsDialog({
     solution: '',
     metadata: '',
     options: [''],
-  }]);
-
-  const [batchFiles, setBatchFiles] = useState<(File | null)[]>([null]);
-  const [batchFilePreviews, setBatchFilePreviews] = useState<(string | null)[]>([null]);
+    file: null,
+    filePreview: null,
+  });
 
   // Check if file is an image
   const isImageFile = (file: File) => {
     return file.type.startsWith('image/');
   };
 
-  // Handle batch file selection
-  const handleBatchFileSelect = (index: number, file: File | null) => {
-    const newFiles = [...batchFiles];
-    const newPreviews = [...batchFilePreviews];
-    
-    newFiles[index] = file;
-    
-    if (file) {
-      const newQuestions = [...batchQuestions];
-      newQuestions[index] = { ...newQuestions[index], metadata: '' };
-      setBatchQuestions(newQuestions);
-      
-      if (isImageFile(file)) {
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          newPreviews[index] = reader.result as string;
-          setBatchFilePreviews(newPreviews);
-        };
-        reader.readAsDataURL(file);
-      } else {
-        newPreviews[index] = null;
-        setBatchFilePreviews(newPreviews);
-      }
+  // Handle file selection for current question
+  const handleFileSelect = (file: File | null) => {
+    if (file && isImageFile(file)) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setCurrentQuestion(prev => ({ 
+          ...prev, 
+          file, 
+          filePreview: reader.result as string,
+          metadata: '' 
+        }));
+      };
+      reader.readAsDataURL(file);
+    } else if (file) {
+      setCurrentQuestion(prev => ({ 
+        ...prev, 
+        file, 
+        filePreview: null,
+        metadata: '' 
+      }));
     } else {
-      newPreviews[index] = null;
-      setBatchFilePreviews(newPreviews);
+      setCurrentQuestion(prev => ({ ...prev, file: null, filePreview: null }));
     }
+  };
+
+  // Handle form field changes
+  const handleFieldChange = (field: keyof BatchQuestion, value: any) => {
+    setCurrentQuestion(prev => ({ ...prev, [field]: value }));
+  };
+
+  // Handle option changes
+  const handleOptionChange = (index: number, value: string) => {
+    const newOptions = [...currentQuestion.options];
+    newOptions[index] = value;
+    setCurrentQuestion(prev => ({ ...prev, options: newOptions }));
+  };
+
+  const addOption = () => {
+    setCurrentQuestion(prev => ({
+      ...prev,
+      options: [...prev.options, '']
+    }));
+  };
+
+  const removeOption = (index: number) => {
+    if (currentQuestion.options.length > 1) {
+      setCurrentQuestion(prev => ({
+        ...prev,
+        options: prev.options.filter((_, i) => i !== index)
+      }));
+    }
+  };
+
+  // Save current question to the list
+  const handleSaveQuestion = () => {
+    // Validation
+    if (!currentQuestion.question.trim() || !currentQuestion.solution.trim()) {
+      setError('Please fill in question and solution fields');
+      return;
+    }
+
+    if (currentQuestion.questionType === 'multiple_choice') {
+      const hasEmptyOptions = currentQuestion.options.some(opt => !opt.trim());
+      if (hasEmptyOptions) {
+        setError('Please fill in all options for multiple choice questions');
+        return;
+      }
+    }
+
+    // Add to saved questions
+    setSavedQuestions(prev => [...prev, { ...currentQuestion }]);
     
-    setBatchFiles(newFiles);
-  };
-
-  const handleBatchQuestionChange = (index: number, field: string, value: any) => {
-    const newQuestions = [...batchQuestions];
-    newQuestions[index] = { ...newQuestions[index], [field]: value };
-    setBatchQuestions(newQuestions);
-  };
-
-  const handleBatchOptionChange = (questionIndex: number, optionIndex: number, value: string) => {
-    const newQuestions = [...batchQuestions];
-    const newOptions = [...(newQuestions[questionIndex].options || [''])];
-    newOptions[optionIndex] = value;
-    newQuestions[questionIndex] = { ...newQuestions[questionIndex], options: newOptions };
-    setBatchQuestions(newQuestions);
-  };
-
-  const addBatchOption = (questionIndex: number) => {
-    const newQuestions = [...batchQuestions];
-    newQuestions[questionIndex] = {
-      ...newQuestions[questionIndex],
-      options: [...(newQuestions[questionIndex].options || ['']), '']
-    };
-    setBatchQuestions(newQuestions);
-  };
-
-  const removeBatchOption = (questionIndex: number, optionIndex: number) => {
-    const newQuestions = [...batchQuestions];
-    const newOptions = (newQuestions[questionIndex].options || ['']).filter((_, i) => i !== optionIndex);
-    newQuestions[questionIndex] = { ...newQuestions[questionIndex], options: newOptions };
-    setBatchQuestions(newQuestions);
-  };
-
-  const addNewBatchQuestion = () => {
-    setBatchQuestions([...batchQuestions, {
+    // Reset form
+    setCurrentQuestion({
       question: '',
       questionType: 'essay',
       subjectQuestionType: '',
@@ -125,38 +139,53 @@ export default function BatchQuestionsDialog({
       solution: '',
       metadata: '',
       options: [''],
-    }]);
-    setBatchFiles([...batchFiles, null]);
-    setBatchFilePreviews([...batchFilePreviews, null]);
-  };
-
-  const removeBatchQuestion = (index: number) => {
-    if (batchQuestions.length > 1) {
-      setBatchQuestions(batchQuestions.filter((_, i) => i !== index));
-      setBatchFiles(batchFiles.filter((_, i) => i !== index));
-      setBatchFilePreviews(batchFilePreviews.filter((_, i) => i !== index));
-    }
-  };
-
-  const handleBatchSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+      file: null,
+      filePreview: null,
+    });
     
-    // Validate all questions
-    const hasEmpty = batchQuestions.some(q => !q.question || !q.solution);
-    if (hasEmpty) {
-      setError('Please fill in all required fields for all questions');
+    setError('');
+    setSuccess('Question added to list! Add more or click "Save All Questions"');
+    setTimeout(() => setSuccess(''), 2000);
+  };
+
+  // Remove a saved question from the list
+  const handleRemoveQuestion = (index: number) => {
+    setSavedQuestions(prev => prev.filter((_, i) => i !== index));
+  };
+
+  // Submit all saved questions to backend
+  const handleSaveAllQuestions = async () => {
+    if (savedQuestions.length === 0) {
+      setError('Please add at least one question before saving');
       return;
     }
 
     try {
       setLoading(true);
-      await addQuestionsToTest(testId, batchQuestions, batchFiles);
-      setSuccess('All questions added successfully!');
+      
+      // Prepare questions data without file references
+      const questionsData = savedQuestions.map(q => ({
+        question: q.question,
+        questionType: q.questionType,
+        subjectQuestionType: q.subjectQuestionType,
+        difficult: q.difficult,
+        grade: q.grade,
+        solution: q.solution,
+        metadata: q.metadata,
+        options: q.options.filter(opt => opt.trim() !== ''),
+      }));
+
+      // Prepare files array
+      const filesArray = savedQuestions.map(q => q.file || null);
+
+      await addQuestionsToTest(testId, questionsData, filesArray);
+      
+      setSuccess('All questions saved successfully!');
       setTimeout(() => {
         onClose();
         onSuccess();
-        // Reset state
-        setBatchQuestions([{
+        setSavedQuestions([]);
+        setCurrentQuestion({
           question: '',
           questionType: 'essay',
           subjectQuestionType: '',
@@ -165,70 +194,15 @@ export default function BatchQuestionsDialog({
           solution: '',
           metadata: '',
           options: [''],
-        }]);
-        setBatchFiles([null]);
-        setBatchFilePreviews([null]);
-        setSuccess('');
+          file: null,
+          filePreview: null,
+        });
       }, 1500);
     } catch (err) {
-      setError('Failed to add questions');
+      setError('Failed to save questions');
       console.error(err);
     } finally {
       setLoading(false);
-    }
-  };
-
-  const handleAIGenerate = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!aiPrompt.trim()) {
-      setError('Please enter a prompt for AI generation');
-      return;
-    }
-
-    try {
-      setAiGenerating(true);
-      setError('');
-      
-      const response = await AI_Generate_Question_Answer(aiPrompt, subject);
-      
-      if (response?.success) {
-        // Handle array of questions
-        if (response.result?.questions && Array.isArray(response.result.questions)) {
-          setBatchQuestions(response.result.questions);
-          setBatchFiles(new Array(response.result.questions.length).fill(null));
-          setBatchFilePreviews(new Array(response.result.questions.length).fill(null));
-          setAiPrompt('');
-          setSuccess('AI generated questions successfully! Review and submit.');
-        }
-        // Handle single question - convert to array
-        else if (response.result?.question) {
-          const singleQuestion = {
-            question: response.result.question || '',
-            questionType: 'essay',
-            subjectQuestionType: '',
-            difficult: response.result.difficulty || 'medium',
-            grade: 1,
-            solution: response.result.answer || '',
-            metadata: '',
-            options: [''],
-          };
-          setBatchQuestions([singleQuestion]);
-          setBatchFiles([null]);
-          setBatchFilePreviews([null]);
-          setAiPrompt('');
-          setSuccess('AI generated question successfully! Review and submit.');
-        } else {
-          setError('Failed to generate questions. Please try again.');
-        }
-      } else {
-        setError('Failed to generate questions. Please try again.');
-      }
-    } catch (err) {
-      setError('Failed to generate questions via AI');
-      console.error(err);
-    } finally {
-      setAiGenerating(false);
     }
   };
 
@@ -236,11 +210,12 @@ export default function BatchQuestionsDialog({
 
   return (
     <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-lg max-w-7xl w-full max-h-[95vh] overflow-hidden shadow-xl flex flex-col">
-        <div className="p-6 border-b">
+      <div className="bg-white rounded-lg max-w-[98vw] w-full max-h-[95vh] overflow-hidden shadow-xl flex flex-col">
+        {/* Fixed Header */}
+        <div className="p-6 border-b bg-white z-10 shadow-sm">
           <div className="flex items-center justify-between">
             <h3 className="text-2xl font-bold text-gray-900">
-              Add Multiple Questions ({batchQuestions.length})
+              Add Multiple Questions
             </h3>
             <button
               onClick={onClose}
@@ -251,292 +226,294 @@ export default function BatchQuestionsDialog({
           </div>
         </div>
 
-        {error && (
-          <div className="mx-6 mt-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
-            {error}
-          </div>
-        )}
-
-        {success && (
-          <div className="mx-6 mt-4 p-3 bg-green-50 border border-green-200 rounded-lg text-green-700 text-sm">
-            {success}
+        {/* Fixed Alert Messages */}
+        {(error || success) && (
+          <div className="px-6 pt-4 bg-white z-10">
+            {error && (
+              <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm mb-2">
+                {error}
+              </div>
+            )}
+            {success && (
+              <div className="p-3 bg-green-50 border border-green-200 rounded-lg text-green-700 text-sm">
+                {success}
+              </div>
+            )}
           </div>
         )}
 
         {/* 2-Column Layout */}
         <div className="flex-1 overflow-hidden">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-0 h-full">
-            {/* Left Column - Questions Form (2/3 width) */}
+            {/* Left Column - Question Form (2/3 width) */}
             <div className="lg:col-span-2 overflow-y-auto p-6 border-r">
-              <form onSubmit={handleBatchSubmit} className="space-y-6">
-                {batchQuestions.map((q, qIndex) => (
-                  <div key={qIndex} className="border border-gray-200 rounded-lg p-4 bg-gray-50">
-                    <div className="flex items-center justify-between mb-4">
-                      <h4 className="font-semibold text-gray-900">Question {qIndex + 1}</h4>
-                      {batchQuestions.length > 1 && (
-                        <button
-                          type="button"
-                          onClick={() => removeBatchQuestion(qIndex)}
-                          className="text-red-600 hover:text-red-700 text-sm flex items-center gap-1"
+              <div className="space-y-4">
+                <div className="border-2 border-gray-200 rounded-xl p-5 bg-white shadow-sm">
+                  <h4 className="font-semibold text-lg text-gray-900 mb-4">Question Details</h4>
+
+                  <div className="space-y-3">
+                    <div className="grid grid-cols-3 gap-3">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Type *</label>
+                        <select
+                          value={currentQuestion.questionType}
+                          onChange={(e) => handleFieldChange('questionType', e.target.value)}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
                         >
-                          <Trash2 className="w-4 h-4" />
-                          Remove
-                        </button>
+                          <option value="essay">Essay</option>
+                          <option value="multiple_choice">Multiple Choice</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Difficulty *</label>
+                        <select
+                          value={currentQuestion.difficult}
+                          onChange={(e) => handleFieldChange('difficult', e.target.value)}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                        >
+                          <option value="easy">Easy</option>
+                          <option value="medium">Medium</option>
+                          <option value="hard">Hard</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Grade Points *</label>
+                        <input
+                          type="number"
+                          value={currentQuestion.grade}
+                          onChange={(e) => handleFieldChange('grade', parseInt(e.target.value))}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                          min="1"
+                          required
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Subject Question Type</label>
+                      <input
+                        type="text"
+                        value={currentQuestion.subjectQuestionType}
+                        onChange={(e) => handleFieldChange('subjectQuestionType', e.target.value)}
+                        placeholder="Ví dụ: Văn học Việt Nam, Đại số, Hóa học hữu cơ..."
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Question *</label>
+                      <textarea
+                        value={currentQuestion.question}
+                        onChange={(e) => handleFieldChange('question', e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                        rows={4}
+                        placeholder="Enter your question here..."
+                        required
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Solution / Answer *</label>
+                      <textarea
+                        value={currentQuestion.solution}
+                        onChange={(e) => handleFieldChange('solution', e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                        rows={4}
+                        placeholder="Enter the solution or correct answer..."
+                        required
+                      />
+                    </div>
+
+                    {/* File Upload */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Image/File Attachment (Optional)
+                      </label>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => handleFileSelect(e.target.files?.[0] || null)}
+                        className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                      />
+                      {currentQuestion.filePreview && (
+                        <div className="mt-3 relative inline-block">
+                          <img
+                            src={currentQuestion.filePreview}
+                            alt="Preview"
+                            className="max-w-xs rounded-lg border border-gray-200"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => handleFileSelect(null)}
+                            className="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full hover:bg-red-600"
+                          >
+                            <X className="w-4 h-4" />
+                          </button>
+                        </div>
+                      )}
+                      {currentQuestion.file && !currentQuestion.filePreview && (
+                        <div className="mt-2 flex items-center gap-2 text-sm text-gray-600">
+                          <span>📎 {currentQuestion.file.name}</span>
+                          <button
+                            type="button"
+                            onClick={() => handleFileSelect(null)}
+                            className="text-red-600 hover:text-red-700"
+                          >
+                            <X className="w-4 h-4" />
+                          </button>
+                        </div>
                       )}
                     </div>
 
-                    <div className="space-y-3">
-                      <div className="grid grid-cols-3 gap-3">
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">Type</label>
-                          <select
-                            value={q.questionType}
-                            onChange={(e) => handleBatchQuestionChange(qIndex, 'questionType', e.target.value)}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none"
-                          >
-                            <option value="essay">Essay</option>
-                            <option value="multiple_choice">Multiple Choice</option>
-                          </select>
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">Difficulty</label>
-                          <select
-                            value={q.difficult}
-                            onChange={(e) => handleBatchQuestionChange(qIndex, 'difficult', e.target.value)}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none"
-                          >
-                            <option value="easy">Easy</option>
-                            <option value="medium">Medium</option>
-                            <option value="hard">Hard</option>
-                          </select>
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">Grade</label>
-                          <input
-                            type="number"
-                            value={q.grade}
-                            onChange={(e) => handleBatchQuestionChange(qIndex, 'grade', parseInt(e.target.value))}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none"
-                            min="1"
-                            required
-                          />
-                        </div>
-                      </div>
-
+                    {/* Multiple Choice Options */}
+                    {currentQuestion.questionType === 'multiple_choice' && (
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Subject Question Type</label>
-                        <input
-                          type="text"
-                          value={q.subjectQuestionType}
-                          onChange={(e) => handleBatchQuestionChange(qIndex, 'subjectQuestionType', e.target.value)}
-                          placeholder="Ví dụ: Văn học Việt Nam, Đại số, Hóa học hữu cơ..."
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none"
-                        />
-                      </div>
-
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Question *</label>
-                        <textarea
-                          value={q.question}
-                          onChange={(e) => handleBatchQuestionChange(qIndex, 'question', e.target.value)}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none"
-                          rows={3}
-                          required
-                        />
-                      </div>
-
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Solution *</label>
-                        <textarea
-                          value={q.solution}
-                          onChange={(e) => handleBatchQuestionChange(qIndex, 'solution', e.target.value)}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none"
-                          rows={3}
-                          required
-                        />
-                      </div>
-
-                      {/* File Upload for Batch Questions */}
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                          Image/File Attachment (Optional)
-                        </label>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Answer Options *</label>
                         <div className="space-y-2">
-                          <input
-                            type="file"
-                            accept="image/*"
-                            onChange={(e) => handleBatchFileSelect(qIndex, e.target.files?.[0] || null)}
-                            className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100"
-                          />
-                          {batchFilePreviews[qIndex] && (
-                            <div className="relative inline-block">
-                              <img
-                                src={batchFilePreviews[qIndex]!}
-                                alt="Preview"
-                                className="max-w-xs rounded-lg border border-gray-200"
+                          {currentQuestion.options.map((option, index) => (
+                            <div key={index} className="flex gap-2">
+                              <input
+                                type="text"
+                                value={option}
+                                onChange={(e) => handleOptionChange(index, e.target.value)}
+                                className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                                placeholder={`Option ${index + 1}`}
                               />
-                              <button
-                                type="button"
-                                onClick={() => handleBatchFileSelect(qIndex, null)}
-                                className="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full hover:bg-red-600"
-                              >
-                                <X className="w-4 h-4" />
-                              </button>
+                              {currentQuestion.options.length > 1 && (
+                                <button
+                                  type="button"
+                                  onClick={() => removeOption(index)}
+                                  className="p-2 text-red-600 hover:bg-red-50 rounded-lg"
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                </button>
+                              )}
                             </div>
-                          )}
-                          {batchFiles[qIndex] && !batchFilePreviews[qIndex] && (
-                            <div className="flex items-center gap-2 text-sm text-gray-600">
-                              <span>📎 {batchFiles[qIndex]!.name}</span>
-                              <button
-                                type="button"
-                                onClick={() => handleBatchFileSelect(qIndex, null)}
-                                className="text-red-600 hover:text-red-700"
-                              >
-                                <X className="w-4 h-4" />
-                              </button>
-                            </div>
-                          )}
+                          ))}
+                          <button
+                            type="button"
+                            onClick={addOption}
+                            className="text-sm text-blue-600 hover:text-blue-700 flex items-center gap-1"
+                          >
+                            <Plus className="w-4 h-4" />
+                            Add Option
+                          </button>
                         </div>
                       </div>
+                    )}
+                  </div>
 
-                      {q.questionType === 'multiple_choice' && (
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">Options</label>
-                          <div className="space-y-2">
-                            {(q.options || ['']).map((option, optIndex) => (
-                              <div key={optIndex} className="flex gap-2">
-                                <input
-                                  type="text"
-                                  value={option}
-                                  onChange={(e) => handleBatchOptionChange(qIndex, optIndex, e.target.value)}
-                                  className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none"
-                                  placeholder={`Option ${optIndex + 1}`}
-                                />
-                                {(q.options || ['']).length > 1 && (
-                                  <button
-                                    type="button"
-                                    onClick={() => removeBatchOption(qIndex, optIndex)}
-                                    className="p-2 text-red-600 hover:bg-red-50 rounded-lg"
-                                  >
-                                    <Trash2 className="w-4 h-4" />
-                                  </button>
-                                )}
+                  {/* Save Question Button */}
+                  <div className="mt-6 pt-4 border-t">
+                    <button
+                      type="button"
+                      onClick={handleSaveQuestion}
+                      className="w-full px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition flex items-center justify-center gap-2 font-medium"
+                    >
+                      <Check className="w-5 h-5" />
+                      Save Question to List
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Right Column - Questions List (1/3 width) */}
+            <div className="lg:col-span-1 overflow-y-auto">
+              <div className="bg-gray-50 p-6 min-h-full">
+                <div className="flex items-center justify-between mb-4">
+                  <h4 className="text-lg font-bold text-gray-900">Saved Questions</h4>
+                  <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm font-semibold">
+                    {savedQuestions.length}
+                  </span>
+                </div>
+
+                {savedQuestions.length === 0 ? (
+                  <div className="text-center py-12">
+                    <div className="text-gray-400 mb-2">
+                      <svg className="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                      </svg>
+                    </div>
+                    <p className="text-gray-500 text-sm">No questions added yet</p>
+                    <p className="text-gray-400 text-xs mt-1">Fill the form and click "Save Question to List"</p>
+                  </div>
+                ) : (
+                  <>
+                    <div className="space-y-3 mb-6">
+                      {savedQuestions.map((q, index) => (
+                        <div key={index} className="bg-white rounded-lg p-4 border border-gray-200 hover:border-blue-300 transition-colors">
+                          <div className="flex items-start gap-3">
+                            <span className="flex-shrink-0 flex items-center justify-center w-8 h-8 rounded-full bg-blue-100 text-blue-700 text-sm font-bold">
+                              {index + 1}
+                            </span>
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm font-medium text-gray-900 line-clamp-2 mb-2">
+                                {q.question}
+                              </p>
+                              <div className="flex flex-wrap gap-1.5 mb-2">
+                                <span className="inline-block px-2 py-0.5 bg-gray-100 text-gray-700 rounded text-xs">
+                                  {q.questionType === 'essay' ? 'Tự luận' : 'Trắc nghiệm'}
+                                </span>
+                                <span className={`inline-block px-2 py-0.5 rounded text-xs ${
+                                  q.difficult === 'easy'
+                                    ? 'bg-green-100 text-green-700'
+                                    : q.difficult === 'medium'
+                                    ? 'bg-yellow-100 text-yellow-700'
+                                    : 'bg-red-100 text-red-700'
+                                }`}>
+                                  {q.difficult === 'easy' ? 'Dễ' : q.difficult === 'medium' ? 'TB' : 'Khó'}
+                                </span>
+                                <span className="inline-block px-2 py-0.5 bg-blue-100 text-blue-700 rounded text-xs">
+                                  {q.grade} điểm
+                                </span>
                               </div>
-                            ))}
+                              {q.file && (
+                                <p className="text-xs text-gray-500 flex items-center gap-1">
+                                  📎 {q.file.name}
+                                </p>
+                              )}
+                            </div>
                             <button
-                              type="button"
-                              onClick={() => addBatchOption(qIndex)}
-                              className="text-sm text-purple-600 hover:text-purple-700 flex items-center gap-1"
+                              onClick={() => handleRemoveQuestion(index)}
+                              className="flex-shrink-0 p-1.5 text-red-600 hover:bg-red-50 rounded-lg transition"
+                              title="Remove question"
                             >
-                              <Plus className="w-4 h-4" />
-                              Add Option
+                              <Trash2 className="w-4 h-4" />
                             </button>
                           </div>
                         </div>
-                      )}
+                      ))}
                     </div>
-                  </div>
-                ))}
 
-                <button
-                  type="button"
-                  onClick={addNewBatchQuestion}
-                  className="w-full py-3 border-2 border-dashed border-gray-300 rounded-lg text-gray-600 hover:border-purple-500 hover:text-purple-600 transition flex items-center justify-center gap-2"
-                >
-                  <Plus className="w-5 h-5" />
-                  Add Another Question
-                </button>
-
-                <div className="flex gap-3 pt-4">
-                  <button
-                    type="button"
-                    onClick={onClose}
-                    className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    disabled={loading}
-                    className="flex-1 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition disabled:opacity-50 flex items-center justify-center gap-2"
-                  >
-                    {loading ? (
-                      <>
-                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                        Saving...
-                      </>
-                    ) : (
-                      <>
-                        <Save className="w-4 h-4" />
-                        Save All Questions
-                      </>
-                    )}
-                  </button>
-                </div>
-              </form>
-            </div>
-
-            {/* Right Column - AI Generator (1/3 width) */}
-            <div className="lg:col-span-1 overflow-y-auto">
-              <div className="sticky top-0 bg-gradient-to-br from-purple-50 to-pink-50 p-6 h-full">
-                <div className="flex items-center gap-2 mb-4">
-                  <Sparkles className="w-6 h-6 text-purple-600" />
-                  <h4 className="text-lg font-bold text-gray-900">AI Generator</h4>
-                </div>
-                
-                <p className="text-sm text-gray-600 mb-4">
-                  Nhập yêu cầu để AI tạo nhiều câu hỏi cùng lúc
-                </p>
-
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Yêu cầu AI *
-                    </label>
-                    <textarea
-                      value={aiPrompt}
-                      onChange={(e) => setAiPrompt(e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition min-h-[200px] text-sm"
-                      placeholder="Ví dụ: Tạo 5 câu hỏi trắc nghiệm về Văn học Việt Nam thế kỷ 20, độ khó trung bình. Mỗi câu có 4 đáp án."
-                    />
-                  </div>
-
-                  <button
-                    type="button"
-                    onClick={handleAIGenerate}
-                    disabled={aiGenerating || !aiPrompt.trim()}
-                    className="w-full px-4 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg hover:from-purple-700 hover:to-pink-700 transition disabled:opacity-50 flex items-center justify-center gap-2 font-medium"
-                  >
-                    {aiGenerating ? (
-                      <>
-                        <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                        Đang tạo...
-                      </>
-                    ) : (
-                      <>
-                        <Sparkles className="w-5 h-5" />
-                        Tạo câu hỏi
-                      </>
-                    )}
-                  </button>
-
-                  <div className="bg-white rounded-lg p-4 border border-purple-200">
-                    <p className="text-xs font-semibold text-gray-700 mb-2">💡 Gợi ý sử dụng:</p>
-                    <ul className="text-xs text-gray-600 space-y-1.5 list-disc list-inside">
-                      <li>Chỉ định số lượng câu hỏi</li>
-                      <li>Nêu rõ môn học và lớp</li>
-                      <li>Chọn loại câu hỏi (trắc nghiệm/tự luận)</li>
-                      <li>Mô tả chủ đề chi tiết</li>
-                      <li>Chỉ định độ khó</li>
-                    </ul>
-                  </div>
-
-                  <div className="bg-blue-50 rounded-lg p-3 border border-blue-200">
-                    <p className="text-xs text-blue-800">
-                      <strong>Lưu ý:</strong> Sau khi AI tạo xong, bạn có thể xem lại và chỉnh sửa trước khi lưu.
-                    </p>
-                  </div>
-                </div>
+                    {/* Save All Questions Button */}
+                    <div className="sticky bottom-0 bg-gray-50 pt-4 border-t">
+                      <button
+                        onClick={handleSaveAllQuestions}
+                        disabled={loading}
+                        className="w-full px-4 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition disabled:opacity-50 flex items-center justify-center gap-2 font-semibold shadow-lg"
+                      >
+                        {loading ? (
+                          <>
+                            <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                            Saving...
+                          </>
+                        ) : (
+                          <>
+                            <Save className="w-5 h-5" />
+                            Save All {savedQuestions.length} Question{savedQuestions.length > 1 ? 's' : ''}
+                          </>
+                        )}
+                      </button>
+                      <button
+                        onClick={onClose}
+                        className="w-full mt-2 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-100 transition font-medium"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </>
+                )}
               </div>
             </div>
           </div>

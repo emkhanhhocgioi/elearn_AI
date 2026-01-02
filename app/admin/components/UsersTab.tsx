@@ -213,7 +213,7 @@ export default function UsersTab() {
                           )}
                           <div>
                             <div className="font-medium text-gray-900">{user.name || 'N/A'}</div>
-                            <div className="text-sm text-gray-500">{user.dailyQuestionSubject || 'N/A'}</div>
+                           
                           </div>
                         </div>
                       </td>

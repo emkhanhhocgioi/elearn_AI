@@ -343,7 +343,7 @@ export default function ClassesTab() {
                 <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Teacher</th>
                 <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Year</th>
                 <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Students</th>
-                <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Avg. Grade</th>
+               
                 <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Status</th>
                 <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Actions</th>
               </tr>
@@ -412,9 +412,7 @@ export default function ClassesTab() {
                         <span className="text-sm font-medium text-gray-900">{cls.studentCount}</span>
                       </div>
                     </td>
-                    <td className="px-6 py-4" onClick={() => router.push(`/admin/class/${cls._id}`)}>
-                      <p className="text-sm font-medium text-gray-900">{cls.class_avarage_grade.toFixed(1)}</p>
-                    </td>
+                 
                     <td className="px-6 py-4" onClick={() => router.push(`/admin/class/${cls._id}`)}>
                       <span className={`text-xs px-3 py-1 rounded-full font-medium ${
                         (cls.status || 'active') === 'active' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700'

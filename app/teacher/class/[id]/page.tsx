@@ -30,6 +30,11 @@ export default function ClassDetailPage() {
   const [emailMessage, setEmailMessage] = useState('');
   const [sendingEmail, setSendingEmail] = useState(false);
 
+  // Filter and search states for tests
+  const [searchQuery, setSearchQuery] = useState('');
+  const [sortBy, setSortBy] = useState<'status' | 'closeDate' | 'createDate'>('closeDate');
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
+
   const [tests, setTests] = useState([
     {
       _id: '1',
@@ -39,7 +44,8 @@ export default function ClassDetailPage() {
       status: 'ongoing',
       closeDate: '2025-12-15T23:59:00',
       avg_score: 75,
-      questions_count: 20
+      questions_count: 20,
+      createDate: '2025-11-01T10:00:00'
     },
     {
       _id: '2',
@@ -49,7 +55,8 @@ export default function ClassDetailPage() {
       status: 'closed',
       closeDate: '2025-11-30T23:59:00',
       avg_score: 82,
-      questions_count: 10
+      questions_count: 10,
+      createDate: '2025-11-10T10:00:00'
     },
     {
       _id: '3',
@@ -59,7 +66,8 @@ export default function ClassDetailPage() {
       status: 'upcoming',
       closeDate: '2025-12-25T23:59:00',
       avg_score: 0,
-      questions_count: 25
+      questions_count: 25,
+      createDate: '2025-11-15T10:00:00'
     }
   ]);
    
@@ -99,6 +107,28 @@ export default function ClassDetailPage() {
     fetchTests();
     fetchLessons();
   }, [classId]);
+
+  // Filter and sort tests
+  const filteredAndSortedTests = tests
+    .filter(test => 
+      test.testtitle.toLowerCase().includes(searchQuery.toLowerCase())
+    )
+    .sort((a, b) => {
+      let compareValue = 0;
+      
+      if (sortBy === 'status') {
+        const statusOrder = { 'open': 1, 'ongoing': 1, 'closed': 2 };
+        const aStatus = a.status === 'open' || a.status === 'ongoing' ? 'open' : 'closed';
+        const bStatus = b.status === 'open' || b.status === 'ongoing' ? 'open' : 'closed';
+        compareValue = (statusOrder[aStatus as keyof typeof statusOrder] || 0) - (statusOrder[bStatus as keyof typeof statusOrder] || 0);
+      } else if (sortBy === 'closeDate') {
+        compareValue = new Date(a.closeDate).getTime() - new Date(b.closeDate).getTime();
+      } else if (sortBy === 'createDate') {
+        compareValue = new Date(a.createDate).getTime() - new Date(b.createDate).getTime();
+      }
+      
+      return sortOrder === 'asc' ? compareValue : -compareValue;
+    });
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -192,7 +222,7 @@ export default function ClassDetailPage() {
               <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-gray-600 mb-1.5 font-medium">Total Tests</p>
+                    <p className="text-sm text-gray-600 mb-1.5 font-medium">Tổng số bài kiểm tra</p>
                     <p className="text-3xl font-bold text-[#0F172A]">{tests.length}</p>
                   </div>
                   <div className="p-3 bg-blue-100 rounded-lg">
@@ -204,9 +234,13 @@ export default function ClassDetailPage() {
               <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-gray-600 mb-1.5 font-medium">Bài kiểm tra đang diễn ra</p>
+                    <p className="text-sm text-gray-600 mb-1.5 font-medium">Đang diễn ra</p>
                     <p className="text-3xl font-bold text-green-600">
-                      {tests.filter(t => t.status === 'ongoing').length}
+                      {tests.filter(t => {
+                        const closeDate = new Date(t.closeDate);
+                        const now = new Date();
+                        return (t.status === 'open' || t.status === 'ongoing') && closeDate > now;
+                      }).length}
                     </p>
                   </div>
                   <div className="p-3 bg-green-100 rounded-lg">
@@ -218,15 +252,18 @@ export default function ClassDetailPage() {
               <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-gray-600 mb-1.5 font-medium">Tỉ lệ hoàn thành TB</p>
-                    <p className="text-3xl font-bold text-[#2563EB]">
-                      {tests.length > 0 && tests.reduce((acc, t) => acc + t.participants, 0) > 0
-                        ? Math.round((tests.reduce((acc, t) => acc + t.submittedCount, 0) / tests.reduce((acc, t) => acc + t.participants, 0)) * 100)
-                        : 0}%
+                    <p className="text-sm text-gray-600 mb-1.5 font-medium">Sắp hết hạn</p>
+                    <p className="text-3xl font-bold text-orange-600">
+                      {tests.filter(t => {
+                        const closeDate = new Date(t.closeDate);
+                        const now = new Date();
+                        const threeDaysFromNow = new Date(now.getTime() + 3 * 24 * 60 * 60 * 1000);
+                        return (t.status === 'open' || t.status === 'ongoing') && closeDate > now && closeDate <= threeDaysFromNow;
+                      }).length}
                     </p>
                   </div>
-                  <div className="p-3 bg-blue-100 rounded-lg">
-                    <BarChart3 className="w-6 h-6 text-[#2563EB]" />
+                  <div className="p-3 bg-orange-100 rounded-lg">
+                    <BarChart3 className="w-6 h-6 text-orange-600" />
                   </div>
                 </div>
               </div>
@@ -234,13 +271,17 @@ export default function ClassDetailPage() {
               <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-gray-600 mb-1.5 font-medium">Điểm trung bình</p>
-                    <p className="text-3xl font-bold text-orange-600">
-                      {tests.length > 0 ? Math.round(tests.reduce((acc, t) => acc + t.avg_score, 0) / tests.length) : 0}%
+                    <p className="text-sm text-gray-600 mb-1.5 font-medium">Đã hết hạn</p>
+                    <p className="text-3xl font-bold text-red-600">
+                      {tests.filter(t => {
+                        const closeDate = new Date(t.closeDate);
+                        const now = new Date();
+                        return t.status === 'closed' || closeDate < now;
+                      }).length}
                     </p>
                   </div>
-                  <div className="p-3 bg-orange-100 rounded-lg">
-                    <Users className="w-6 h-6 text-orange-600" />
+                  <div className="p-3 bg-red-100 rounded-lg">
+                    <Users className="w-6 h-6 text-red-600" />
                   </div>
                 </div>
               </div>
@@ -296,8 +337,51 @@ export default function ClassDetailPage() {
         {activeTab === 'tests' && (
           <div className="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden">
             <div className="p-6 border-b border-gray-100 bg-gray-50">
-              <h2 className="text-xl font-bold text-[#0F172A] leading-tight">Quản lý Bài kiểm tra</h2>
-              <p className="text-sm text-gray-600 mt-1.5 leading-relaxed">Tạo, chỉnh sửa và quản lý các bài kiểm tra cho lớp học</p>
+              <div className="flex items-center justify-between mb-4">
+                <div>
+                  <h2 className="text-xl font-bold text-[#0F172A] leading-tight">Quản lý Bài kiểm tra</h2>
+                  <p className="text-sm text-gray-600 mt-1.5 leading-relaxed">Tạo, chỉnh sửa và quản lý các bài kiểm tra cho lớp học</p>
+                </div>
+              </div>
+              
+              {/* Search and Filter Section */}
+              <div className="flex flex-col sm:flex-row gap-3 mt-4">
+                {/* Search Input */}
+                <div className="flex-1">
+                  <div className="relative">
+                    <input
+                      type="text"
+                      placeholder="Tìm kiếm bài kiểm tra..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="w-full px-4 py-2.5 pl-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2563EB] focus:border-transparent outline-none transition bg-white text-[#0F172A] placeholder:text-gray-400"
+                    />
+                    <FileText className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                  </div>
+                </div>
+
+                {/* Sort By Dropdown */}
+                <div className="flex gap-2">
+                  <select
+                    value={sortBy}
+                    onChange={(e) => setSortBy(e.target.value as 'status' | 'closeDate' | 'createDate')}
+                    className="px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2563EB] focus:border-transparent outline-none transition bg-white text-[#0F172A] font-medium"
+                  >
+                    <option value="closeDate">Hạn nộp</option>
+                    <option value="createDate">Ngày tạo</option>
+                    <option value="status">Trạng thái</option>
+                  </select>
+
+                  {/* Sort Order Button */}
+                  <button
+                    onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
+                    className="px-4 py-2.5 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:ring-offset-1 bg-white"
+                    aria-label="Toggle sort order"
+                  >
+                    {sortOrder === 'asc' ? '↑' : '↓'}
+                  </button>
+                </div>
+              </div>
             </div>
 
             <div className="overflow-x-auto">
@@ -314,8 +398,8 @@ export default function ClassDetailPage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200">
-                  {tests.length > 0 ? (
-                    tests.map((test) => (
+                  {filteredAndSortedTests.length > 0 ? (
+                    filteredAndSortedTests.map((test) => (
                       <tr 
                         key={test._id} 
                         onClick={() => router.push(`/teacher/class/test/${test._id}/?subject=${subject}`)}
@@ -340,13 +424,9 @@ export default function ClassDetailPage() {
                       
                         <td className="px-6 py-4">
                           <div className="flex items-center gap-3">
-                            <span className="text-sm font-bold text-[#0F172A]">{test.submittedCount}/{test.participants}</span>
-                            <div className="w-20 bg-gray-200 rounded-full h-2">
-                              <div
-                                className="bg-[#2563EB] h-2 rounded-full transition-all"
-                                style={{ width: `${test.participants > 0 ? (test.submittedCount / test.participants) * 100 : 0}%` }}
-                              ></div>
-                            </div>
+                            <span className="text-sm font-bold text-[#0F172A]">{test.submittedCount}</span>
+                          
+                         
                           </div>
                         </td>
                      
@@ -386,8 +466,17 @@ export default function ClassDetailPage() {
                       <td colSpan={7} className="px-6 py-12 text-center">
                         <div className="flex flex-col items-center justify-center">
                           <FileText className="w-16 h-16 text-gray-300 mb-4" />
-                          <p className="text-gray-500 text-lg font-semibold">Chưa có bài kiểm tra nào dành cho lớp này</p>
-                          <p className="text-gray-400 text-sm mt-2">Nhấn "Create Test" để tạo bài kiểm tra đầu tiên</p>
+                          {searchQuery ? (
+                            <>
+                              <p className="text-gray-500 text-lg font-semibold">Không tìm thấy bài kiểm tra nào</p>
+                              <p className="text-gray-400 text-sm mt-2">Thử tìm kiếm với từ khóa khác</p>
+                            </>
+                          ) : (
+                            <>
+                              <p className="text-gray-500 text-lg font-semibold">Chưa có bài kiểm tra nào dành cho lớp này</p>
+                              <p className="text-gray-400 text-sm mt-2">Nhấn "Create Test" để tạo bài kiểm tra đầu tiên</p>
+                            </>
+                          )}
                         </div>
                       </td>
                     </tr>
