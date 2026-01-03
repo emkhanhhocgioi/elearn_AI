@@ -108,3 +108,21 @@ export const getClassStudentsAllSubjectsAverage = async (classId: string) => {
         throw error;
     }
 } 
+
+
+export const UpdateStudentConductAndPerformance = async (studentId: string, conduct: string, performance: string) => {
+    try {
+        const token = getAdminToken();
+        if (!token) {
+            throw new Error('Token not found in localStorage');
+        }
+        const res = await axios.patch(`${api_url}/api/teacher/students/${studentId}`, {
+            conduct: conduct,
+            performance: performance
+        }, getAuthConfig());
+        return res.data;    
+    } catch (error) {
+        console.error('Error updating student conduct and performance:', error);
+        throw error;
+    }   
+}

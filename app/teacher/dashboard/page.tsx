@@ -4,6 +4,7 @@ import { Bell, Search, MoreVertical, Users, BookOpen, FileText, Calendar, Trendi
 import { useState, lazy, Suspense } from 'react';
 import { teacherLogout } from '@/app/api/auth';
 import AnalyticsTab from '../components/AnalyticsTab';
+import SettingsTab from '../components/SettingsTab';
 const LessonsTab = lazy(() => import('../components/LessonsTab'));
 const ClassesTab = lazy(() => import('../components/ClassesTab'));
 const TestsTab = lazy(() => import('../components/TestsTab'));
@@ -11,19 +12,14 @@ const ScheduleTab = lazy(() => import('../components/ScheduleTab'));
 
 const TabLoader = () => (
   <div className="flex items-center justify-center py-12">
-    <div className="text-gray-500">Loading...</div>
+    <div className="text-gray-500">Đang tải...</div>
   </div>
 );
 
 export default function TeacherDashboard() {
   const [currentPage, setCurrentPage] = useState('lessons');
 
-  const stats = [
-    { label: "Total Students", value: "72", icon: Users, color: "purple" },
-    { label: "Active Classes", value: "3", icon: BookOpen, color: "blue" },
-    { label: "Total Lessons", value: "47", icon: FileText, color: "green" },
-    { label: "Pending Tests", value: "5", icon: Award, color: "orange" }
-  ];
+ 
 
   return (
     <div className="flex min-h-screen bg-[#F1F5F9]">
@@ -32,15 +28,15 @@ export default function TeacherDashboard() {
         <div className="p-6 border-b border-gray-200">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-[#2563EB] rounded-lg flex items-center justify-center shadow-sm">
-              <span className="text-white font-bold text-base">T</span>
+              <span className="text-white font-bold text-base">G</span>
             </div>
-            <span className="font-bold text-[#0F172A] text-base tracking-tight">TEACHER PORTAL</span>
+            <span className="font-bold text-[#0F172A] text-base tracking-tight">CỔNG GIÁO VIÊN</span>
           </div>
         </div>
 
         <nav className="flex-1 p-4 overflow-y-auto">
           <div className="mb-8">
-            <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3 px-3">Main Menu</h3>
+            <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3 px-3">Menu Chính</h3>
             <ul className="space-y-1">
               <li 
                 onClick={() => setCurrentPage('lessons')}
@@ -51,7 +47,7 @@ export default function TeacherDashboard() {
                 }`}
               >
                 <BookOpen className="w-5 h-5" />
-                <span className="font-medium text-sm">Lessons</span>
+                <span className="font-medium text-sm">Bài Giảng</span>
               </li>
               <li 
                 onClick={() => setCurrentPage('classes')}
@@ -62,7 +58,7 @@ export default function TeacherDashboard() {
                 }`}
               >
                 <Users className="w-5 h-5" />
-                <span className="font-medium text-sm">Your Class</span>
+                <span className="font-medium text-sm">Lớp Chủ Nhiệm</span>
               </li>
               <li 
                 onClick={() => setCurrentPage('tests')}
@@ -73,7 +69,7 @@ export default function TeacherDashboard() {
                 }`}
               >
                 <FileText className="w-5 h-5" />
-                <span className="font-medium text-sm">Tests & Assignments</span>
+                <span className="font-medium text-sm">Các lớp bộ môn</span>
               </li>
               <li 
                 onClick={() => setCurrentPage('schedule')}
@@ -84,7 +80,7 @@ export default function TeacherDashboard() {
                 }`}
               >
                 <Calendar className="w-5 h-5" />
-                <span className="font-medium text-sm">Schedule</span>
+                <span className="font-medium text-sm">Lịch Học</span>
               </li>
               <li 
                 onClick={() => setCurrentPage('analytics')}
@@ -95,17 +91,24 @@ export default function TeacherDashboard() {
                 }`}
               >
                 <TrendingUp className="w-5 h-5" />
-                <span className="font-medium text-sm">Analytics</span>
+                <span className="font-medium text-sm">Phân Tích</span>
               </li>
             </ul>
           </div>
 
           <div>
-            <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3 px-3">Account</h3>
+            <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3 px-3">Tài Khoản</h3>
             <ul className="space-y-1">
-              <li className="flex items-center gap-3 px-4 py-2.5 text-[#0F172A] hover:bg-[#F1F5F9] rounded-lg cursor-pointer transition-all duration-200">
+              <li 
+                onClick={() => setCurrentPage('settings')}
+                className={`flex items-center gap-3 px-4 py-2.5 rounded-lg cursor-pointer transition-all duration-200 ${
+                  currentPage === 'settings' 
+                    ? 'text-white bg-[#2563EB] shadow-sm' 
+                    : 'text-[#0F172A] hover:bg-[#F1F5F9]'
+                }`}
+              >
                 <div className="w-5 h-5">⚙️</div>
-                <span className="font-medium text-sm">Settings</span>
+                <span className="font-medium text-sm">Cài Đặt</span>
               </li>
               <li>
                 <button
@@ -114,7 +117,7 @@ export default function TeacherDashboard() {
                   className="w-full flex items-center gap-3 px-4 py-2.5 text-red-600 hover:bg-red-50 rounded-lg cursor-pointer text-left transition-all duration-200"
                 >
                   <div className="w-5 h-5">🚪</div>
-                  <span className="font-medium text-sm">Logout</span>
+                  <span className="font-medium text-sm">Đăng Xuất</span>
                 </button>
               </li>
             </ul>
@@ -131,18 +134,18 @@ export default function TeacherDashboard() {
               <Search className="text-gray-400 w-5 h-5" />
               <input
                 type="text"
-                placeholder="Search lessons, classes, students..."
+                placeholder="Tìm kiếm bài giảng, lớp học, học sinh..."
                 className="flex-1 outline-none text-sm text-[#0F172A] placeholder:text-gray-400 focus:placeholder:text-gray-500 transition-colors"
               />
             </div>
             <div className="flex items-center gap-4">
-              <button className="p-2 hover:bg-[#F1F5F9] rounded-lg transition-colors" aria-label="Notifications">
+              <button className="p-2 hover:bg-[#F1F5F9] rounded-lg transition-colors" aria-label="Thông báo">
                 <Bell className="w-5 h-5 text-gray-600" />
               </button>
               <div className="flex items-center gap-3">
-                <span className="hidden md:block text-sm font-medium text-[#0F172A]">Teacher Profile</span>
+                <span className="hidden md:block text-sm font-medium text-[#0F172A]">Hồ Sơ Giáo Viên</span>
                 <div className="w-10 h-10 bg-[#2563EB] rounded-full"></div>
-                <button className="p-1 hover:bg-[#F1F5F9] rounded-lg transition-colors" aria-label="More options">
+                <button className="p-1 hover:bg-[#F1F5F9] rounded-lg transition-colors" aria-label="Tùy chọn khác">
                   <MoreVertical className="w-5 h-5 text-gray-600" />
                 </button>
               </div>
@@ -151,29 +154,7 @@ export default function TeacherDashboard() {
         </header>
 
         <div className="p-4 lg:p-8">
-          {/* Stats Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            {stats.map((stat, idx) => {
-              const Icon = stat.icon;
-              const colorMap = {
-                purple: 'text-purple-600 bg-purple-100',
-                blue: 'text-[#2563EB] bg-blue-100',
-                green: 'text-green-600 bg-green-100',
-                orange: 'text-orange-600 bg-orange-100'
-              };
-              return (
-                <div key={idx} className="bg-white rounded-lg p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
-                  <div className="flex items-center justify-between mb-4">
-                    <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${colorMap[stat.color as keyof typeof colorMap]}`}>
-                      <Icon className="w-6 h-6" />
-                    </div>
-                  </div>
-                  <h3 className="text-2xl font-bold text-[#0F172A] mb-1">{stat.value}</h3>
-                  <p className="text-sm text-gray-500">{stat.label}</p>
-                </div>
-              );
-            })}
-          </div>
+          
 
           {/* Dynamic Tab Content */}
           <Suspense fallback={<TabLoader />}>
@@ -182,6 +163,7 @@ export default function TeacherDashboard() {
             {currentPage === 'tests' && <TestsTab />}
             {currentPage === 'schedule' && <ScheduleTab />}
             {currentPage === 'analytics' && <AnalyticsTab />}
+            {currentPage === 'settings' && <SettingsTab />}
           </Suspense>
         </div>
       </div>

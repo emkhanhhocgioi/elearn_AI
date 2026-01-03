@@ -53,6 +53,8 @@ interface SubmittedAnswer {
   createdAt: string;
   updatedAt: string;
   submit: boolean;
+  teacherGrade: number;
+  isgraded: boolean;
 }
 
 export default function SubmissionPage() {
@@ -70,6 +72,10 @@ export default function SubmissionPage() {
   const [editedAnswers, setEditedAnswers] = useState<Question[]>([]);
   const [aiGradingLoading, setAiGradingLoading] = useState<string | null>(null);
   const [aiGradingResults, setAiGradingResults] = useState<{[key: string]: any}>({});
+  const [filterStatus, setFilterStatus] = useState<'all' | 'graded' | 'ungraded'>('all');
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   // Helper function to check if URL is an image
   const isImageUrl = (url: string) => {
@@ -104,6 +110,46 @@ export default function SubmissionPage() {
     const totalQuestions = answers.length;
     return totalQuestions > 0 ? ((correctAnswers / totalQuestions) * 100).toFixed(1) : '0';
   };
+
+  const calculateAverageGrade = () => {
+    if (submissions.length === 0) return '0';
+    const total = submissions.reduce((sum, sub) => {
+      return sum + (sub.teacherGrade || parseFloat(calculateScore(sub.answers)));
+    }, 0);
+    return (total / submissions.length).toFixed(1);
+  };
+
+  const getGradedCount = () => {
+    return submissions.filter(sub => sub.isgraded).length;
+  };
+
+  const getSortedSubmissions = () => {
+    // Filter by grading status
+    let filtered = [...submissions];
+    if (filterStatus === 'graded') {
+      filtered = filtered.filter(sub => sub.isgraded);
+    } else if (filterStatus === 'ungraded') {
+      filtered = filtered.filter(sub => !sub.isgraded);
+    }
+    
+    // Sort by date
+    const sorted = filtered.sort((a, b) => {
+      const timeA = new Date(a.submissionTime).getTime();
+      const timeB = new Date(b.submissionTime).getTime();
+      return sortOrder === 'desc' ? timeB - timeA : timeA - timeB;
+    });
+    
+    return sorted;
+  };
+
+  const getPaginatedSubmissions = () => {
+    const sorted = getSortedSubmissions();
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    return sorted.slice(startIndex, endIndex);
+  };
+
+  const totalPages = Math.ceil(getSortedSubmissions().length / itemsPerPage);
 
   const handleAnswerCorrectChange = (answerId: string, isCorrect: boolean) => {
     setEditedAnswers(prev => 
@@ -234,24 +280,24 @@ export default function SubmissionPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 p-4 sm:p-6">
+    <div className="min-h-screen bg-gray-50 p-4 sm:p-6">
       {/* Header */}
       <div className="mb-8">
         <button
           onClick={() => router.back()}
-          className="flex items-center gap-2 text-purple-600 hover:text-purple-700 mb-4 px-3 py-2 rounded-xl hover:bg-purple-50 transition-all hover:scale-105 font-semibold group"
+          className="flex items-center gap-2 text-blue-600 hover:text-blue-700 mb-4 px-3 py-2 rounded-xl hover:bg-blue-50 transition-all hover:scale-105 font-semibold group"
         >
           <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
           Quay lại Bài kiểm tra
         </button>
 
-        <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl p-6 border border-gray-100">
+        <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-200">
           <div className="flex items-center gap-3 mb-4">
-            <div className="p-3 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl shadow-md">
+            <div className="p-3 bg-blue-500 rounded-xl shadow-md">
               <FileText className="w-8 h-8 text-white" />
             </div>
             <div>
-              <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 bg-clip-text text-transparent">
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
                 {submissions[0]?.testID?.testtitle || 'Bài nộp Kiểm tra'}
               </h1>
               {submissions[0]?.testID && (
@@ -262,27 +308,19 @@ export default function SubmissionPage() {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
-            <div className="bg-gradient-to-br from-blue-100 to-indigo-100 rounded-xl p-4 shadow-md hover:shadow-lg transition-all hover:scale-105">
-              <p className="text-sm text-blue-700 font-semibold">Tổng số Học sinh</p>
-              <p className="text-3xl font-bold text-blue-700">
-                {submissions[0]?.testID?.participants || 0}
-              </p>
+          <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
+            <div className="bg-blue-50 rounded-xl p-4 shadow-sm hover:shadow-md transition-all">
+              <p className="text-sm text-blue-700 font-semibold">Bài nộp</p>
+              <p className="text-3xl font-bold text-blue-700">{submissions.length}</p>
             </div>
-            <div className="bg-gradient-to-br from-green-100 to-emerald-100 rounded-xl p-4 shadow-md hover:shadow-lg transition-all hover:scale-105">
-              <p className="text-sm text-green-700 font-semibold">Bài nộp</p>
-              <p className="text-3xl font-bold text-green-700">{submissions.length}</p>
+            <div className="bg-green-50 rounded-xl p-4 shadow-sm hover:shadow-md transition-all">
+              <p className="text-sm text-green-700 font-semibold">Đã chấm điểm</p>
+              <p className="text-3xl font-bold text-green-700">{getGradedCount()}</p>
             </div>
-            <div className="bg-gradient-to-br from-purple-100 to-pink-100 rounded-xl p-4 shadow-md hover:shadow-lg transition-all hover:scale-105">
+            <div className="bg-purple-50 rounded-xl p-4 shadow-sm hover:shadow-md transition-all">
               <p className="text-sm text-purple-700 font-semibold">Điểm TB</p>
               <p className="text-3xl font-bold text-purple-700">
-                {submissions[0]?.testID?.avg_score || '0'}%
-              </p>
-            </div>
-            <div className="bg-gradient-to-br from-orange-100 to-amber-100 rounded-xl p-4 shadow-md hover:shadow-lg transition-all hover:scale-105">
-              <p className="text-sm text-orange-700 font-semibold">Trạng thái</p>
-              <p className="text-2xl font-bold text-orange-700 capitalize">
-                {submissions[0]?.testID?.status || 'N/A'}
+                {calculateAverageGrade()}
               </p>
             </div>
           </div>
@@ -290,91 +328,180 @@ export default function SubmissionPage() {
       </div>
 
       {error && (
-        <div className="mb-4 p-4 bg-gradient-to-r from-red-50 to-pink-50 border-l-4 border-red-500 rounded-lg text-red-700 shadow-sm">
+        <div className="mb-4 p-4 bg-red-50 border-l-4 border-red-500 rounded-lg text-red-700 shadow-sm">
           <p className="font-semibold">{error}</p>
         </div>
       )}
 
       {/* Submissions List */}
-      <div className="bg-white/80 backdrop-blur-sm rounded-2xl overflow-hidden shadow-xl border border-gray-100">
-        <div className="px-6 py-5 border-b border-gray-200 bg-gradient-to-r from-purple-50 to-pink-50">
-          <h2 className="text-xl font-bold text-gray-900">
-            Bài nộp của Học sinh ({submissions.length})
-          </h2>
+      <div className="bg-white rounded-2xl overflow-hidden shadow-lg border border-gray-200">
+        <div className="px-6 py-5 border-b border-gray-200 bg-blue-50">
+          <div className="flex items-center justify-between flex-wrap gap-4">
+            <h2 className="text-xl font-bold text-gray-900">
+              Bài nộp của Học sinh ({getSortedSubmissions().length}/{submissions.length})
+            </h2>
+            <div className="flex gap-3 items-center">
+              {/* Filter by status */}
+              <div className="flex items-center gap-2">
+                <label className="text-sm font-medium text-gray-700">Lọc:</label>
+                <select
+                  value={filterStatus}
+                  onChange={(e) => {
+                    setFilterStatus(e.target.value as 'all' | 'graded' | 'ungraded');
+                    setCurrentPage(1);
+                  }}
+                  className="px-4 py-2 rounded-lg font-medium border-2 border-gray-300 bg-white text-gray-700 hover:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                >
+                  <option value="all">Tất cả</option>
+                  <option value="graded">Đã chấm</option>
+                  <option value="ungraded">Chưa chấm</option>
+                </select>
+              </div>
+              
+              {/* Sort by date */}
+              <div className="flex items-center gap-2">
+                <label className="text-sm font-medium text-gray-700">Ngày nộp:</label>
+                <div className="flex gap-1">
+                  <button
+                    onClick={() => setSortOrder('desc')}
+                    className={`px-4 py-2 rounded-lg font-medium transition-all ${
+                      sortOrder === 'desc'
+                        ? 'bg-blue-600 text-white shadow-md'
+                        : 'bg-white text-gray-700 hover:bg-blue-100 border border-gray-300'
+                    }`}
+                  >
+                    Mới nhất
+                  </button>
+                  <button
+                    onClick={() => setSortOrder('asc')}
+                    className={`px-4 py-2 rounded-lg font-medium transition-all ${
+                      sortOrder === 'asc'
+                        ? 'bg-blue-600 text-white shadow-md'
+                        : 'bg-white text-gray-700 hover:bg-blue-100 border border-gray-300'
+                    }`}
+                  >
+                    Cũ nhất
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
         {submissions.length > 0 ? (
-          <div className="divide-y divide-gray-200">
-            {submissions.map((submission) => {
-              const score = calculateScore(submission.answers);
-              const correctCount = submission.answers.filter(a => a.isCorrect).length;
-              const totalCount = submission.answers.length;
+          <>
+            <div className="divide-y divide-gray-200">
+              {getPaginatedSubmissions().map((submission) => {
+                const score = submission.teacherGrade || parseFloat(calculateScore(submission.answers));
+                const correctCount = submission.answers.filter(a => a.isCorrect).length;
+                const totalCount = submission.answers.length;
 
-              return (
-                <div
-                  key={submission._id}
-                  className="p-6 hover:bg-gradient-to-r hover:from-purple-50 hover:to-pink-50 transition-all duration-200 cursor-pointer group"
-                  onClick={() => {
-                    setSelectedSubmission(submission);
-                    setTeacherComments(submission.teacherComments || '');
-                    setEditedAnswers(submission.answers);
-                    setTeacherGrade(parseFloat(score));
-                  }}
-                >
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                      {/* Student Avatar */}
-                      <img
-                        src={submission.studentID.avatar || '/default-avatar.png'}
-                        alt={submission.studentID.name}
-                        className="w-12 h-12 rounded-full object-cover"
-                      />
-
-                      {/* Student Info */}
-                      <div>
-                        <h3 className="text-lg font-semibold text-gray-900">
-                          {submission.studentID.name}
-                        </h3>
-                        <p className="text-sm text-gray-600">
-                          {submission.studentID.email}
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-6">
-                      {/* Submission Time */}
-                      <div className="text-right">
-                        <div className="flex items-center gap-2 text-sm text-gray-600">
-                          <Calendar className="w-4 h-4" />
-                          {new Date(submission.submissionTime).toLocaleDateString('vi-VN')}
+                return (
+                  <div
+                    key={submission._id}
+                    className="p-6 hover:bg-blue-50 transition-all duration-200 cursor-pointer group"
+                    onClick={() => {
+                      setSelectedSubmission(submission);
+                      setTeacherComments(submission.teacherComments || '');
+                      setEditedAnswers(submission.answers);
+                      setTeacherGrade(score);
+                    }}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-4">
+                        {/* Student Avatar */}
+                        <div className="w-12 h-12 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold text-lg shadow-md">
+                          {submission.studentID.name.charAt(0).toUpperCase()}
                         </div>
-                        <div className="flex items-center gap-2 text-sm text-gray-500 mt-1">
-                          <Clock className="w-4 h-4" />
-                          {new Date(submission.submissionTime).toLocaleTimeString('vi-VN')}
+
+                        {/* Student Info */}
+                        <div>
+                          <h3 className="text-lg font-semibold text-gray-900">
+                            {submission.studentID.name}
+                          </h3>
+                          <p className="text-sm text-gray-600">
+                            {submission.studentID.email}
+                          </p>
                         </div>
                       </div>
 
-                      {/* Score */}
-                      <div className="text-center bg-gradient-to-br from-purple-100 to-pink-100 rounded-xl px-6 py-3 shadow-md group-hover:scale-110 transition-transform">
-                        <p className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">{score}%</p>
-                        <p className="text-xs text-gray-600 mt-1">
-                          {correctCount}/{totalCount} đúng
-                        </p>
-                      </div>
-
-                      {/* Status Badge */}
-                      {submission.submit && (
-                        <div className="flex items-center gap-2 bg-gradient-to-r from-green-100 to-emerald-100 text-green-700 px-3 py-1.5 rounded-full text-sm font-medium shadow-sm">
-                          <CheckCircle className="w-4 h-4" />
-                          Đã nộp
+                      <div className="flex items-center gap-6">
+                        {/* Submission Time */}
+                        <div className="text-right">
+                          <div className="flex items-center gap-2 text-sm text-gray-600">
+                            <Calendar className="w-4 h-4" />
+                            {new Date(submission.submissionTime).toLocaleDateString('vi-VN')}
+                          </div>
+                          <div className="flex items-center gap-2 text-sm text-gray-500 mt-1">
+                            <Clock className="w-4 h-4" />
+                            {new Date(submission.submissionTime).toLocaleTimeString('vi-VN')}
+                          </div>
                         </div>
-                      )}
+
+                        {/* Score */}
+                        <div className="text-center bg-blue-100 rounded-xl px-6 py-3 shadow-sm group-hover:scale-110 transition-transform">
+                          <p className="text-3xl font-bold text-blue-600">{score.toFixed(1)}</p>
+                          <p className="text-xs text-gray-600 mt-1">
+                            {correctCount}/{totalCount} đúng
+                          </p>
+                        </div>
+
+                        {/* Status Badge */}
+                        {submission.isgraded && (
+                          <div className="flex items-center gap-2 bg-green-100 text-green-700 px-3 py-1.5 rounded-full text-sm font-medium shadow-sm">
+                            <CheckCircle className="w-4 h-4" />
+                            Đã chấm điểm
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
+                );
+              })}
+            </div>
+
+            {/* Pagination */}
+            {totalPages > 1 && (
+              <div className="px-6 py-4 border-t border-gray-200 bg-gray-50">
+                <div className="flex items-center justify-between">
+                  <p className="text-sm text-gray-600">
+                    Trang {currentPage} / {totalPages} ({getSortedSubmissions().length} bài nộp)
+                  </p>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                      disabled={currentPage === 1}
+                      className="px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-blue-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                    >
+                      Trước
+                    </button>
+                    <div className="flex gap-1">
+                      {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                        <button
+                          key={page}
+                          onClick={() => setCurrentPage(page)}
+                          className={`w-10 h-10 rounded-lg font-medium transition-all ${
+                            currentPage === page
+                              ? 'bg-blue-600 text-white shadow-md'
+                              : 'bg-white text-gray-700 hover:bg-blue-100 border border-gray-300'
+                          }`}
+                        >
+                          {page}
+                        </button>
+                      ))}
+                    </div>
+                    <button
+                      onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                      disabled={currentPage === totalPages}
+                      className="px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-blue-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                    >
+                      Sau
+                    </button>
+                  </div>
                 </div>
-              );
-            })}
-          </div>
+              </div>
+            )}
+          </>
         ) : (
           <div className="px-6 py-12 text-center">
             <FileText className="w-16 h-16 text-gray-300 mx-auto mb-4" />
@@ -389,17 +516,15 @@ export default function SubmissionPage() {
       {/* Submission Detail Modal */}
       {selectedSubmission && (  
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white/95 backdrop-blur-md rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-gray-200">
-            <div className="sticky top-0 bg-white/95 backdrop-blur-md border-b border-gray-200 p-6 z-10 rounded-t-2xl">
+          <div className="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-gray-200">
+            <div className="sticky top-0 bg-white border-b border-gray-200 p-6 z-10 rounded-t-2xl">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
-                  <img
-                    src={selectedSubmission.studentID.avatar || '/default-avatar.png'}
-                    alt={selectedSubmission.studentID.name}
-                    className="w-14 h-14 rounded-full object-cover"
-                  />
+                  <div className="w-14 h-14 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold text-xl shadow-md">
+                    {selectedSubmission.studentID.name.charAt(0).toUpperCase()}
+                  </div>
                   <div>
-                    <h2 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 bg-clip-text text-transparent">
+                    <h2 className="text-xl sm:text-2xl font-bold text-gray-900">
                       Bài nộp của {selectedSubmission.studentID.name}
                     </h2>
                     <p className="text-sm text-gray-600 mt-1">
@@ -417,28 +542,28 @@ export default function SubmissionPage() {
 
               {/* Student Stats */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-4">
-                <div className="bg-gradient-to-br from-gray-50 to-slate-50 rounded-xl p-3 border border-gray-200 shadow-sm">
+                <div className="bg-gray-50 rounded-xl p-3 border border-gray-200 shadow-sm">
                   <p className="text-xs text-gray-600 font-semibold">Học lực</p>
                   <p className="text-sm font-bold text-gray-900">
                     {selectedSubmission.studentID.academic_performance}
                   </p>
                 </div>
-                <div className="bg-gradient-to-br from-gray-50 to-slate-50 rounded-xl p-3 border border-gray-200 shadow-sm">
+                <div className="bg-gray-50 rounded-xl p-3 border border-gray-200 shadow-sm">
                   <p className="text-xs text-gray-600 font-semibold">Hạnh kiểm</p>
                   <p className="text-sm font-bold text-gray-900">
                     {selectedSubmission.studentID.conduct}
                   </p>
                 </div>
-                <div className="bg-gradient-to-br from-gray-50 to-slate-50 rounded-xl p-3 border border-gray-200 shadow-sm">
+                <div className="bg-gray-50 rounded-xl p-3 border border-gray-200 shadow-sm">
                   <p className="text-xs text-gray-600 font-semibold">Điểm TB</p>
                   <p className="text-sm font-bold text-gray-900">
                     {selectedSubmission.studentID.averageScore}
                   </p>
                 </div>
-                <div className="bg-gradient-to-br from-purple-100 to-pink-100 rounded-xl p-3 border border-purple-200 shadow-sm">
-                  <p className="text-xs text-purple-700 font-semibold">Điểm kiểm tra</p>
-                  <p className="text-sm font-bold text-purple-700">
-                    {calculateScore(selectedSubmission.answers)}%
+                <div className="bg-blue-100 rounded-xl p-3 border border-blue-200 shadow-sm">
+                  <p className="text-xs text-blue-700 font-semibold">Điểm kiểm tra</p>
+                  <p className="text-sm font-bold text-blue-700">
+                    {selectedSubmission.teacherGrade || calculateScore(selectedSubmission.answers)}
                   </p>
                 </div>
               </div>
@@ -548,7 +673,7 @@ export default function SubmissionPage() {
                         <button
                           onClick={() => handleAiGrade(answer)}
                           disabled={aiGradingLoading === answer._id}
-                          className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 text-white rounded-xl hover:from-purple-700 hover:via-pink-700 hover:to-blue-700 transition-all shadow-md hover:shadow-lg hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed font-semibold"
+                          className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-all shadow-md hover:shadow-lg hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed font-semibold"
                         >
                           {aiGradingLoading === answer._id ? (
                             <>
@@ -592,7 +717,7 @@ export default function SubmissionPage() {
                 ))}
               </div>
                {/* Teacher Grade Input */}
-              <div className="mb-6 bg-purple-50 p-4 rounded-lg">
+              <div className="mb-6 bg-blue-50 p-4 rounded-lg">
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
                   Điểm của học sinh (0-100)
                 </label>
@@ -603,7 +728,7 @@ export default function SubmissionPage() {
                   step="0.1"
                   value={teacherGrade}
                   onChange={(e) => setTeacherGrade(parseFloat(e.target.value) || 0)}
-                  className="w-full p-3 border border-purple-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  className="w-full p-3 border border-blue-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   placeholder="Nhập điểm..."
                 />
               </div>
@@ -614,14 +739,14 @@ export default function SubmissionPage() {
                   value={teacherComments}
                   onChange={(e) => setTeacherComments(e.target.value)}
                   placeholder="Add your comments for this student..."
-                  className="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none"
+                  className="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
                   rows={4}
                 />
                 <div className="flex justify-end mt-3">
                   <button
                     onClick={handleSaveComments}
                     disabled={isSavingComments}
-                    className="px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                    className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                   >
                     {isSavingComments ? (
                       <>

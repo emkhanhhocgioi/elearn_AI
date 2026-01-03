@@ -115,13 +115,13 @@ export default function StudentDashboard() {
             <div className="w-10 h-10 bg-[#2563EB] rounded-lg flex items-center justify-center shadow-sm">
               <span className="text-white font-bold text-base">S</span>
             </div>
-            <span className="font-bold text-[#0F172A] text-base tracking-tight">STUDENT PORTAL</span>
+            <span className="font-bold text-[#0F172A] text-base tracking-tight">CỔNG HỌC SINH</span>
           </div>
         </div>
 
         <nav className="flex-1 p-4 overflow-y-auto">
           <div className="mb-8">
-            <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3 px-3">Main Menu</h3>
+            <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3 px-3">Menu Chính</h3>
             <ul className="space-y-1">
               <li 
                 onClick={() => setCurrentPage('classes')}
@@ -130,7 +130,7 @@ export default function StudentDashboard() {
                 }`}
               >
                 <User className="w-5 h-5" />
-                <span className="font-medium text-sm">Personal</span>
+                <span className="font-medium text-sm">Cá nhân</span>
               </li>
               <li 
                 onClick={() => setCurrentPage('tests')}
@@ -139,7 +139,7 @@ export default function StudentDashboard() {
                 }`}
               >
                 <Award className="w-5 h-5" />
-                <span className="font-medium text-sm">My Assignments</span>
+                <span className="font-medium text-sm">Bài tập của tôi</span>
               </li>
               <li 
                 onClick={() => setCurrentPage('documents')}
@@ -148,7 +148,7 @@ export default function StudentDashboard() {
                 }`}
               >
                 <BookOpen className="w-5 h-5" />
-                <span className="font-medium text-sm">Class Documents</span>
+                <span className="font-medium text-sm">Tài liệu lớp học</span>
               </li>
                <li 
                 onClick={() => setCurrentPage('grades')}
@@ -157,7 +157,7 @@ export default function StudentDashboard() {
                 }`}
               >
                 <Star className="w-5 h-5" />
-                <span className="font-medium text-sm">Your Grade</span>
+                <span className="font-medium text-sm">Điểm của bạn</span>
               </li>
               <li 
                 onClick={() => setCurrentPage('teacher-contact')}
@@ -166,7 +166,7 @@ export default function StudentDashboard() {
                 }`}
               >
                 <Phone className="w-5 h-5" />
-                <span className="font-medium text-sm">Teacher Contact</span>
+                <span className="font-medium text-sm">Liên hệ giáo viên</span>
               </li>
               <li 
                 onClick={() => setCurrentPage('schedule')}
@@ -175,7 +175,7 @@ export default function StudentDashboard() {
                 }`}
               >
                 <Calendar className="w-5 h-5" />
-                <span className="font-medium text-sm">Schedule</span>
+                <span className="font-medium text-sm">Lịch học</span>
               </li>
               <li 
                 onClick={() => setCurrentPage('personal')}
@@ -184,13 +184,13 @@ export default function StudentDashboard() {
                 }`}
               >
                 <User className="w-5 h-5" />
-                <span className="font-medium text-sm">Personal Info</span>
+                <span className="font-medium text-sm">Thông tin cá nhân</span>
               </li>
             </ul>
           </div>
 
           <div>
-            <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3 px-3">Account</h3>
+            <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3 px-3">Tài khoản</h3>
             <ul className="space-y-1">
               <li 
                 onClick={() => setCurrentPage('settings')}
@@ -199,14 +199,14 @@ export default function StudentDashboard() {
                 }`}
               >
                 <Settings className="w-5 h-5" />
-                <span className="font-medium text-sm">Settings</span>
+                <span className="font-medium text-sm">Cài đặt</span>
               </li>
               <li 
                 onClick={handleLogout}
                 className="flex items-center gap-3 px-4 py-2.5 text-red-600 hover:bg-red-50 rounded-lg cursor-pointer transition-all duration-200"
               >
                 <LogOut className="w-5 h-5" />
-                <span className="font-medium text-sm">Logout</span>
+                <span className="font-medium text-sm">Đăng xuất</span>
               </li>
             </ul>
           </div>
@@ -224,13 +224,13 @@ export default function StudentDashboard() {
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search classes, documents, tests..."
+                placeholder="Tìm kiếm lớp học, tài liệu, bài kiểm tra..."
                 className="flex-1 outline-none text-sm bg-transparent text-[#0F172A] placeholder-gray-400 focus:placeholder-gray-500 transition-colors"
                 aria-label="Search"
               />
               {isSearching && (
                 <div className="absolute right-0 text-xs text-gray-500">
-                  Searching...
+                  Đang tìm kiếm...
                 </div>
               )}
               
@@ -239,7 +239,7 @@ export default function StudentDashboard() {
                 <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-lg shadow-lg border border-gray-200 max-h-96 overflow-y-auto z-20">
                   {searchResults.lessons && searchResults.lessons.length > 0 && (
                     <div className="p-3">
-                      <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wide px-3 py-2">Lessons</h4>
+                      <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wide px-3 py-2">Bài học</h4>
                       {searchResults.lessons.map((lesson: Lesson) => (
                         <div key={lesson._id} className="px-3 py-3 hover:bg-[#F1F5F9] rounded-lg cursor-pointer transition-colors">
                           <div className="text-sm font-medium text-[#0F172A]">{lesson.title }</div>
@@ -251,7 +251,7 @@ export default function StudentDashboard() {
                   
                   {searchResults.tests && searchResults.tests.length > 0 && (
                     <div className="p-3 border-t border-gray-100">
-                      <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wide px-3 py-2">Tests</h4>
+                      <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wide px-3 py-2">Bài kiểm tra</h4>
                       {searchResults.tests.map((test: TestApiResponse) => (
                         <div key={test._id} className="px-3 py-3 hover:bg-[#F1F5F9] rounded-lg cursor-pointer transition-colors">
                           <div className="flex items-start justify-between">
@@ -284,7 +284,7 @@ export default function StudentDashboard() {
                   {(!searchResults.lessons || searchResults.lessons.length === 0) && 
                    (!searchResults.tests || searchResults.tests.length === 0) && (
                     <div className="p-6 text-center text-sm text-gray-500">
-                      No results found
+                      Không tìm thấy kết quả
                     </div>
                   )}
                 </div>
@@ -306,7 +306,7 @@ export default function StudentDashboard() {
                 aria-label="Profile menu"
                 aria-expanded={profileMenuOpen}
               >
-                <span className="hidden md:block text-sm font-medium text-[#0F172A]">Student Profile</span>
+                <span className="hidden md:block text-sm font-medium text-[#0F172A]">Hồ sơ học sinh</span>
                 <div className="w-10 h-10 bg-[#2563EB] rounded-lg flex items-center justify-center shadow-sm">
                 <span className="text-white font-bold text-sm">A</span>
                 </div>
@@ -324,7 +324,7 @@ export default function StudentDashboard() {
                   className="w-full text-left px-4 py-2.5 text-sm text-[#0F172A] hover:bg-[#F1F5F9] flex items-center gap-3 transition-colors"
                 >
                   <User className="w-4 h-4" />
-                  View Profile
+                  Xem hồ sơ
                 </button>
                 <button 
                   onClick={() => {
@@ -334,7 +334,7 @@ export default function StudentDashboard() {
                   className="w-full text-left px-4 py-2.5 text-sm text-[#0F172A] hover:bg-[#F1F5F9] flex items-center gap-3 transition-colors"
                 >
                   <Settings className="w-4 h-4" />
-                  Settings
+                  Cài đặt
                 </button>
                 <hr className="my-2 border-gray-200" />
                 <button 
@@ -342,7 +342,7 @@ export default function StudentDashboard() {
                   className="w-full text-left px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 flex items-center gap-3 transition-colors"
                 >
                   <LogOut className="w-4 h-4" />
-                  Logout
+                  Đăng xuất
                 </button>
                 </div>
               )}

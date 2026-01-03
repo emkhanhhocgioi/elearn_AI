@@ -1,17 +1,17 @@
 'use client';
-import { Plus, Edit, Clock, X, ChevronLeft, BarChart3, FileText } from 'lucide-react';
-import { useState, useEffect, useCallback } from 'react';
+import { Plus, Edit, Clock, X, ChevronLeft, BarChart3, FileText, Search, Filter } from 'lucide-react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { getTeacherClasses, getSubjectClass } from '@/app/teacher/api/class';
 import { createTest, getClassTeacherTest } from '@/app/api/test';
 
 interface ClassItem {
-  _id: string;
-  class_name?: string;
-  class_code?: string;
-  class_subject?: string;
-  description?: string;
-  student_count?: number;
+  classId: string;
+  class_code: string;
+  class_year: string;
+  studentCount: number;
+  testCount: number;
+  subjects: string[];
 }
 
 interface TestItem {
@@ -40,7 +40,8 @@ export default function SubjectTab() {
   });
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
-  
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedYear, setSelectedYear] = useState<string>('all');
   
   const fetchTeacherTests = async () => {
     try {
@@ -78,20 +79,39 @@ export default function SubjectTab() {
       const data = await getTeacherClasses();
       const allClasses = data.data.data || [];
       
-      // Filter classes to show only those the teacher is teaching (subject classes)
-      const filteredClasses = allClasses.filter((classItem: ClassItem) => 
-        subjectClassIds.includes(classItem._id)
+      // Filter classes to show only those in subjectClassIds
+      const filteredClasses = allClasses.filter((classItem: ClassItem) =>
+        subjectClassIds.includes(classItem.classId)
       );
       
       setClasses(filteredClasses);
       setError('');
     } catch (err) {
-      setError('Failed to load classes');
+      setError('Không thể tải danh sách lớp học');
       console.error(err);
     } finally {
       setLoading(false);
     }
   }, [subjectClassIds]);
+
+  // Get unique class years for filter dropdown
+  const availableYears = useMemo(() => {
+    const years = classes.map(c => c.class_year);
+    return ['all', ...Array.from(new Set(years))];
+  }, [classes]);
+
+  // Filter and search classes
+  const filteredClasses = useMemo(() => {
+    return classes.filter(classItem => {
+      const matchesSearch = classItem.class_code.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesYear = selectedYear === 'all' || classItem.class_year === selectedYear;
+      return matchesSearch && matchesYear;
+    });
+  }, [classes, searchTerm, selectedYear]);
+
+  const filteredTests = useMemo(() => {
+    return tests;
+  }, [tests]);
 
   useEffect(() => {
     if (showDialog && classes.length === 0) {
@@ -105,41 +125,40 @@ export default function SubjectTab() {
       testtitle: '',
       participants: '',
       closedDate: '',
-      subject: classItem.class_subject || ''
+      subject: classItem.subjects[0] || ''
     });
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!formData.testtitle || !formData.participants || !formData.closedDate) {
-      setError('Please fill in all fields');
+      setError('Vui lòng điền đầy đủ thông tin');
       return;
     }
 
     if (!selectedClass) {
-      setError('No class selected');
+      setError('Chưa chọn lớp học');
       return;
     }
 
     try {
       setLoading(true);
       await createTest(
-        selectedClass._id,
+        selectedClass.classId,
         formData.testtitle,
         parseInt(formData.participants),
         formData.closedDate,
         formData.subject
       );
-      setSuccess('Test created successfully!');
+      setSuccess('Tạo bài kiểm tra thành công!');
       setTimeout(() => {
         setShowDialog(false);
         setSelectedClass(null);
@@ -147,7 +166,7 @@ export default function SubjectTab() {
         fetchTeacherTests(); // Refresh tests list
       }, 1500);
     } catch (err) {
-      setError('Failed to create test');
+      setError('Không thể tạo bài kiểm tra');
       console.error(err);
     } finally {
       setLoading(false);
@@ -161,212 +180,196 @@ export default function SubjectTab() {
     setSuccess('');
   };
 
-  // Filter tests to show only those for classes the teacher is teaching
-  const filteredTests = tests.filter((test: TestItem) => 
-    subjectClassIds.includes(test.classID)
-  );
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-6">
+    <div className="p-6 space-y-6">
       <div className="max-w-7xl mx-auto">
-        <div className="flex items-center justify-between mb-8">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-6">
           <div>
-            <h2 className="text-3xl font-bold text-gray-900">My Subject Classes</h2>
-            <p className="text-gray-600 text-sm mt-1">Manage tests for classes you&apos;re teaching</p>
+            <h2 className="text-2xl font-bold text-gray-900">Lớp Học Của Tôi</h2>
+            <p className="text-gray-600 text-sm mt-1">Quản lý bài kiểm tra cho các lớp đang giảng dạy</p>
           </div>
           <button 
             onClick={() => setShowDialog(true)}
             className="bg-gradient-to-r from-purple-600 to-purple-700 text-white px-6 py-3 rounded-lg flex items-center gap-2 hover:from-purple-700 hover:to-purple-800 transition shadow-lg hover:shadow-xl transform hover:scale-105"
           >
             <Plus className="w-5 h-5" />
-            <span className="font-semibold">Create New Test</span>
+            <span className="font-semibold">Tạo Bài Kiểm Tra</span>
           </button>
         </div>
 
-        {/* Dialog */}
+        {/* Dialog Modal */}
         {showDialog && (
-          <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
-            <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl">
-              {!selectedClass ? (
-                // Class Selection Screen
-                <div className="p-8">
-                  <div className="flex items-center justify-between mb-8">
-                    <div>
-                      <h3 className="text-2xl font-bold text-gray-900">Select a Class</h3>
-                      <p className="text-gray-500 text-sm mt-1">Choose a class you&apos;re teaching to create a test</p>
-                    </div>
-                    <button
-                      onClick={handleCloseDialog}
-                      className="p-2 hover:bg-gray-100 rounded-lg transition"
-                    >
-                      <X className="w-6 h-6 text-gray-500" />
-                    </button>
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+              <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between rounded-t-2xl">
+                {selectedClass ? (
+                  <h3 className="text-xl font-bold text-gray-900">Tạo Bài Kiểm Tra</h3>
+                ) : (
+                  <h3 className="text-xl font-bold text-gray-900">Chọn Lớp Học</h3>
+                )}
+                <button
+                  onClick={handleCloseDialog}
+                  className="p-2 hover:bg-gray-100 rounded-lg transition"
+                >
+                  <X className="w-6 h-6 text-gray-600" />
+                </button>
+              </div>
+
+              <div className="p-6">
+                {error && (
+                  <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
+                    {error}
                   </div>
+                )}
+                {success && (
+                  <div className="mb-4 p-4 bg-green-50 border border-green-200 rounded-lg text-green-700">
+                    {success}
+                  </div>
+                )}
 
-                  {error && (
-                    <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm flex items-start gap-2">
-                      <span className="text-xl">⚠️</span>
-                      {error}
-                    </div>
-                  )}
-
-                  {loading ? (
-                    <div className="flex justify-center py-12">
-                      <div className="animate-spin rounded-full h-10 w-10 border-4 border-purple-200 border-t-purple-600"></div>
-                    </div>
-                  ) : classes.length > 0 ? (
-                    <div className="space-y-3">
-                      {classes.map((classItem) => (
-                        <button
-                          key={classItem._id}
-                          onClick={() => handleSelectClass(classItem)}
-                          className="w-full text-left p-4 border border-gray-200 rounded-lg hover:bg-purple-50 hover:border-purple-300 transition group hover:shadow-md"
-                        >
-                          <p className="font-semibold text-gray-900 group-hover:text-purple-600">
-                            {classItem.class_name || classItem.class_code || 'Unnamed Class'}
-                          </p>
-                          {classItem.class_subject && (
-                            <p className="text-sm text-purple-600 mt-1 font-medium">📚 {classItem.class_subject}</p>
-                          )}
-                          {classItem.description && (
-                            <p className="text-sm text-gray-600 mt-1">{classItem.description}</p>
-                          )}
-                          {classItem.student_count && (
-                            <p className="text-xs text-gray-500 mt-1">
-                              👥 {classItem.student_count} students
-                            </p>
-                          )}
-                        </button>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="text-center py-12">
-                      <p className="text-gray-500 text-lg">No classes available</p>
-                      <p className="text-gray-400 text-sm mt-2">You are not assigned to any subject classes yet</p>
-                    </div>
-                  )}
-                </div>
-              ) : (
-                // Test Form Screen
-                <div className="p-8">
-                  <div className="flex items-center justify-between mb-8">
-                    <div className="flex items-center gap-3">
-                      <button
-                        onClick={() => setSelectedClass(null)}
-                        className="p-1 hover:bg-gray-100 rounded-lg transition"
-                      >
-                        <ChevronLeft className="w-6 h-6 text-gray-600" />
-                      </button>
-                      <div>
-                        <h3 className="text-2xl font-bold text-gray-900">Create Test</h3>
-                        <p className="text-sm text-gray-600 mt-1">
-                          {selectedClass.class_name || selectedClass.class_code || 'Selected Class'}
-                        </p>
+                {!selectedClass ? (
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-900 mb-4">Chọn Lớp Học</h3>
+                    <p className="text-gray-500 text-sm mb-6">Chọn lớp học để tạo bài kiểm tra</p>
+                    
+                    {loading ? (
+                      <div className="text-center py-12">
+                        <p className="text-gray-500">Đang tải...</p>
                       </div>
-                    </div>
-                    <button
-                      onClick={handleCloseDialog}
-                      className="p-2 hover:bg-gray-100 rounded-lg transition"
-                    >
-                      <X className="w-6 h-6 text-gray-500" />
-                    </button>
+                    ) : classes.length > 0 ? (
+                      <div className="grid gap-4">
+                        {classes.map((classItem) => (
+                          <button
+                            key={classItem.classId}
+                            onClick={() => handleSelectClass(classItem)}
+                            className="w-full text-left p-4 border border-gray-200 rounded-lg hover:bg-purple-50 hover:border-purple-300 transition group hover:shadow-md"
+                          >
+                            <div className="flex items-center justify-between">
+                              <p className="font-semibold text-gray-900 group-hover:text-purple-600">
+                                {classItem.class_code}
+                              </p>
+                              <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">
+                                {classItem.class_year}
+                              </span>
+                            </div>
+                            <div className="flex flex-wrap gap-2 mt-2">
+                              {classItem.subjects.map((subject, idx) => (
+                                <span
+                                  key={idx}
+                                  className="text-xs text-purple-600 bg-purple-50 px-2 py-1 rounded font-medium"
+                                >
+                                  📚 {subject}
+                                </span>
+                              ))}
+                            </div>
+                            <div className="flex items-center gap-4 mt-2 text-xs text-gray-500">
+                              <span>👥 {classItem.studentCount} học sinh</span>
+                              <span>📝 {classItem.testCount} bài kiểm tra</span>
+                            </div>
+                          </button>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="text-center py-12">
+                        <p className="text-gray-500 text-lg">Không có lớp học</p>
+                        <p className="text-gray-400 text-sm mt-2">Bạn chưa được phân công giảng dạy lớp nào</p>
+                      </div>
+                    )}
                   </div>
+                ) : (
+                  <div>
+                    <h3 className="text-xl font-bold text-gray-900 mb-4">Tạo Bài Kiểm Tra</h3>
+                    <p className="text-sm text-gray-600 mb-6">
+                      {selectedClass.class_code} - {selectedClass.class_year}
+                    </p>
+                    <form onSubmit={handleSubmit} className="space-y-4">
+                      <div>
+                        <label className="block text-sm font-semibold text-gray-700 mb-2">
+                          Tiêu đề bài kiểm tra
+                        </label>
+                        <input
+                          type="text"
+                          name="testtitle"
+                          value={formData.testtitle}
+                          onChange={handleInputChange}
+                          placeholder="Nhập tiêu đề bài kiểm tra"
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition hover:border-gray-400"
+                          required
+                        />
+                      </div>
 
-                  {error && (
-                    <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm flex items-start gap-2">
-                      <span className="text-xl">⚠️</span>
-                      {error}
-                    </div>
-                  )}
+                      <div>
+                        <label className="block text-sm font-semibold text-gray-700 mb-2">
+                          Số lượng học sinh
+                        </label>
+                        <input
+                          type="number"
+                          name="participants"
+                          value={formData.participants}
+                          onChange={handleInputChange}
+                          placeholder="Nhập số lượng học sinh"
+                          min="1"
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition hover:border-gray-400"
+                          required
+                        />
+                      </div>
 
-                  {success && (
-                    <div className="mb-4 p-4 bg-green-50 border border-green-200 rounded-lg text-green-700 text-sm flex items-start gap-2">
-                      <span className="text-xl">✅</span>
-                      {success}
-                    </div>
-                  )}
+                      <div>
+                        <label className="block text-sm font-semibold text-gray-700 mb-2">
+                          Hạn nộp bài
+                        </label>
+                        <input
+                          type="datetime-local"
+                          name="closedDate"
+                          value={formData.closedDate}
+                          onChange={handleInputChange}
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition hover:border-gray-400"
+                          required
+                        />
+                      </div>
 
-                  <form onSubmit={handleSubmit} className="space-y-6">
-                    <div>
-                      <label className="block text-sm font-semibold text-gray-700 mb-2">
-                        Test Title
-                      </label>
-                      <input
-                        type="text"
-                        name="testtitle"
-                        value={formData.testtitle}
-                        onChange={handleInputChange}
-                        placeholder="Enter test title"
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition hover:border-gray-400"
-                        required
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-semibold text-gray-700 mb-2">
-                        Number of Participants
-                      </label>
-                      <input
-                        type="number"
-                        name="participants"
-                        value={formData.participants}
-                        onChange={handleInputChange}
-                        placeholder="Enter number of participants"
-                        min="1"
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition hover:border-gray-400"
-                        required
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-semibold text-gray-700 mb-2">
-                        Due Date
-                      </label>
-                      <input
-                        type="datetime-local"
-                        name="closedDate"
-                        value={formData.closedDate}
-                        onChange={handleInputChange}
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition hover:border-gray-400"
-                        required
-                      />
-                    </div>
-
-                    <div className="flex gap-3 pt-6">
-                      <button
-                        type="button"
-                        onClick={() => setSelectedClass(null)}
-                        className="flex-1 px-4 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition font-semibold"
-                      >
-                        Back
-                      </button>
-                      <button
-                        type="submit"
-                        disabled={loading}
-                        className="flex-1 px-4 py-3 bg-gradient-to-r from-purple-600 to-purple-700 text-white rounded-lg hover:from-purple-700 hover:to-purple-800 transition font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
-                      >
-                        {loading ? 'Creating...' : 'Create Test'}
-                      </button>
-                    </div>
-                  </form>
-                </div>
-              )}
+                      <div className="flex gap-3 pt-6">
+                        <button
+                          type="button"
+                          onClick={() => setSelectedClass(null)}
+                          className="flex-1 px-4 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition font-semibold"
+                        >
+                          Quay lại
+                        </button>
+                        <button
+                          type="submit"
+                          disabled={loading}
+                          className="flex-1 px-4 py-3 bg-gradient-to-r from-purple-600 to-purple-700 text-white rounded-lg hover:from-purple-700 hover:to-purple-800 transition font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          {loading ? 'Đang tạo...' : 'Tạo bài kiểm tra'}
+                        </button>
+                      </div>
+                    </form>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         )}
 
+        {/* Tests Table */}
         <div className="bg-white rounded-2xl overflow-hidden shadow-lg">
+          <div className="p-6 bg-gradient-to-r from-purple-50 to-purple-100 border-b border-purple-200">
+            <h3 className="text-xl font-bold text-purple-900">Danh Sách Bài Kiểm Tra</h3>
+            <p className="text-sm text-purple-700 mt-1">Quản lý và theo dõi các bài kiểm tra của bạn</p>
+          </div>
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-gradient-to-r from-purple-50 to-purple-100 border-b-2 border-purple-200">
+              <thead className="bg-gray-50 border-b-2 border-gray-200">
                 <tr>
-                  <th className="px-6 py-4 text-left text-xs font-bold text-purple-900 uppercase tracking-wider">Test Title</th>
-                  <th className="px-6 py-4 text-left text-xs font-bold text-purple-900 uppercase tracking-wider">Class</th>
-                  <th className="px-6 py-4 text-left text-xs font-bold text-purple-900 uppercase tracking-wider">Questions</th>
-                  <th className="px-6 py-4 text-left text-xs font-bold text-purple-900 uppercase tracking-wider">Submissions</th>
-                  <th className="px-6 py-4 text-left text-xs font-bold text-purple-900 uppercase tracking-wider">Avg Score</th>
-                  <th className="px-6 py-4 text-left text-xs font-bold text-purple-900 uppercase tracking-wider">Due Date</th>
-                  <th className="px-6 py-4 text-left text-xs font-bold text-purple-900 uppercase tracking-wider">Actions</th>
+                  <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Tiêu đề</th>
+                  <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Lớp học</th>
+                  <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Câu hỏi</th>
+                  <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Nộp bài</th>
+                  <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Điểm TB</th>
+                  <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Hạn nộp</th>
+                  <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Thao tác</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
@@ -382,7 +385,7 @@ export default function SubjectTab() {
                             test.status === 'closed' ? 'bg-red-100 text-red-700' :
                             'bg-gray-100 text-gray-700'
                           }`}>
-                            {test.status}
+                            {test.status === 'ongoing' ? 'Đang diễn ra' : test.status === 'closed' ? 'Đã đóng' : test.status}
                           </span>
                         </div>
                       </td>
@@ -408,19 +411,19 @@ export default function SubjectTab() {
                       </td>
                       <td className="px-6 py-4">
                         <span className={`text-sm font-bold ${parseInt(test.avg_score) > 0 ? 'text-purple-600' : 'text-gray-400'}`}>
-                          {parseInt(test.avg_score) > 0 ? `${test.avg_score}%` : 'N/A'}
+                          {parseInt(test.avg_score) > 0 ? `${test.avg_score}%` : 'Chưa có'}
                         </span>
                       </td>
                       <td className="px-6 py-4">
                         <p className="text-sm text-gray-600">
-                          {new Date(test.closeDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                          {new Date(test.closeDate).toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' })}
                         </p>
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-2">
                           <button className="bg-gradient-to-r from-green-100 to-green-50 text-green-600 text-xs px-3 py-2 rounded-lg hover:from-green-200 hover:to-green-100 transition font-semibold flex items-center gap-1 hover:shadow-md">
                             <BarChart3 className="w-3 h-3" />
-                            Grade
+                            Chấm điểm
                           </button>
                           <button onClick={() => router.push(`/teacher/test/${test._id}`)} className="p-2 hover:bg-gray-200 rounded-lg transition text-gray-600 hover:text-purple-600">
                             <Edit className="w-4 h-4" />
@@ -432,8 +435,8 @@ export default function SubjectTab() {
                 ) : (
                   <tr>
                     <td colSpan={7} className="px-6 py-12 text-center">
-                      <p className="text-gray-500 text-lg">No tests created yet</p>
-                      <p className="text-gray-400 text-sm mt-2">Create a test for your subject classes</p>
+                      <p className="text-gray-500 text-lg">Chưa có bài kiểm tra nào</p>
+                      <p className="text-gray-400 text-sm mt-2">Tạo bài kiểm tra đầu tiên cho lớp của bạn</p>
                     </td>
                   </tr>
                 )}

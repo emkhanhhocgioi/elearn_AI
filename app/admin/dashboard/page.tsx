@@ -108,9 +108,9 @@ export default function AdminDashboard() {
   };
 
   const stats = [
-    { label: "Total Students", value: totalStudents.toString(), icon: Users, color: "blue" },
-    { label: "Total Classes", value: totalClasses.toString(), icon: BookOpen, color: "purple" },
-    { label: "Total Teachers", value: totalTeachers.toString(), icon: FileText, color: "green" }
+    { label: "Tổng số học sinh", value: totalStudents.toString(), icon: Users, color: "blue" },
+    { label: "Tổng số lớp học", value: totalClasses.toString(), icon: BookOpen, color: "purple" },
+    { label: "Tổng số giáo viên", value: totalTeachers.toString(), icon: FileText, color: "green" }
   ];
 
  
@@ -124,13 +124,13 @@ export default function AdminDashboard() {
             <div className="w-10 h-10 bg-[#2563EB] rounded-lg flex items-center justify-center shadow-sm">
               <span className="text-white font-bold text-base">A</span>
             </div>
-            <span className="font-bold text-[#0F172A] text-base tracking-tight">ADMIN PANEL</span>
+            <span className="font-bold text-[#0F172A] text-base tracking-tight">BẢNG QUẢN TRỊ</span>
           </div>
         </div>
 
         <nav className="flex-1 p-4 overflow-y-auto">
           <div className="mb-8">
-            <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3 px-3">Main Menu</h3>
+            <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3 px-3">Menu Chính</h3>
             <ul className="space-y-1">
               <li 
                 onClick={() => setCurrentPage('dashboard')}
@@ -139,7 +139,7 @@ export default function AdminDashboard() {
                 }`}
               >
                 <BarChart3 className="w-5 h-5" />
-                <span className="font-medium text-sm">Dashboard</span>
+                <span className="font-medium text-sm">Bảng điều khiển</span>
               </li>
               <li 
                 onClick={() => setCurrentPage('users')}
@@ -148,7 +148,7 @@ export default function AdminDashboard() {
                 }`}
               >
                 <Users className="w-5 h-5" />
-                <span className="font-medium text-sm">Students</span>
+                <span className="font-medium text-sm">Học sinh</span>
               </li>
               <li 
                 onClick={() => setCurrentPage('classes')}
@@ -157,7 +157,7 @@ export default function AdminDashboard() {
                 }`}
               >
                 <BookOpen className="w-5 h-5" />
-                <span className="font-medium text-sm">Classes</span>
+                <span className="font-medium text-sm">Lớp học</span>
               </li>
               <li 
                 onClick={() => setCurrentPage('teachers')}
@@ -166,7 +166,7 @@ export default function AdminDashboard() {
                 }`}
               >
                 <FileText className="w-5 h-5" />
-                <span className="font-medium text-sm">Teachers</span>
+                <span className="font-medium text-sm">Giáo viên</span>
               </li>
               <li 
                 onClick={() => setCurrentPage('reports')}
@@ -175,28 +175,28 @@ export default function AdminDashboard() {
                 }`}
               >
                 <BarChart3 className="w-5 h-5" />
-                <span className="font-medium text-sm">Reports</span>
+                <span className="font-medium text-sm">Báo cáo</span>
               </li>
             </ul>
           </div>
 
           <div>
-            <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3 px-3">Settings</h3>
+            <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3 px-3">Cài đặt</h3>
             <ul className="space-y-1">
               <li className="flex items-center gap-3 px-4 py-2.5 text-[#0F172A] hover:bg-[#F1F5F9] rounded-lg cursor-pointer transition-all duration-200">
                 <Settings className="w-5 h-5" />
-                <span className="font-medium text-sm">System Settings</span>
+                <span className="font-medium text-sm">Cài đặt hệ thống</span>
               </li>
               <li className="flex items-center gap-3 px-4 py-2.5 text-[#0F172A] hover:bg-[#F1F5F9] rounded-lg cursor-pointer transition-all duration-200">
                 <FileText className="w-5 h-5" />
-                <span className="font-medium text-sm">Audit Logs</span>
+                <span className="font-medium text-sm">Nhật ký hoạt động</span>
               </li>
               <li 
                 onClick={handleLogout}
                 className="flex items-center gap-3 px-4 py-2.5 text-red-600 hover:bg-red-50 rounded-lg cursor-pointer transition-all duration-200"
               >
                 <LogOut className="w-5 h-5" />
-                <span className="font-medium text-sm">Logout</span>
+                <span className="font-medium text-sm">Đăng xuất</span>
               </li>
             </ul>
           </div>
@@ -212,7 +212,7 @@ export default function AdminDashboard() {
               <Search className="text-gray-400 w-5 h-5" />
               <input
                 type="text"
-                placeholder="Search users, classes, teachers..."
+                placeholder="Tìm kiếm học sinh, lớp học, giáo viên..."
                 className="flex-1 outline-none text-sm bg-transparent text-[#0F172A] placeholder-gray-400 focus:placeholder-gray-500 transition-colors"
                 aria-label="Search"
               />
@@ -231,7 +231,7 @@ export default function AdminDashboard() {
                   aria-label="Profile menu"
                   aria-expanded={profileMenuOpen}
                 >
-                  <span className="hidden md:block text-sm font-medium text-[#0F172A]">Administrator</span>
+                  <span className="hidden md:block text-sm font-medium text-[#0F172A]">Quản trị viên</span>
                   <div className="w-10 h-10 bg-[#2563EB] rounded-lg flex items-center justify-center shadow-sm">
                     <span className="text-white font-bold text-sm">A</span>
                   </div>
@@ -245,13 +245,13 @@ export default function AdminDashboard() {
                       className="w-full text-left px-4 py-2.5 text-sm text-[#0F172A] hover:bg-[#F1F5F9] flex items-center gap-3 transition-colors"
                     >
                       <Settings className="w-4 h-4" />
-                      Profile Settings
+                      Cài đặt hồ sơ
                     </button>
                     <button 
                       className="w-full text-left px-4 py-2.5 text-sm text-[#0F172A] hover:bg-[#F1F5F9] flex items-center gap-3 transition-colors"
                     >
                       <FileText className="w-4 h-4" />
-                      Activity Logs
+                      Nhật ký hoạt động
                     </button>
                     <hr className="my-2 border-gray-200" />
                     <button 
@@ -259,7 +259,7 @@ export default function AdminDashboard() {
                       className="w-full text-left px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 flex items-center gap-3 transition-colors"
                     >
                       <LogOut className="w-4 h-4" />
-                      Logout
+                      Đăng xuất
                     </button>
                   </div>
                 )}
@@ -292,9 +292,9 @@ export default function AdminDashboard() {
             {currentPage === 'dashboard' && (
               <div className="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
                 <div className="flex items-center justify-between mb-6">
-                  <h3 className="text-lg font-bold text-[#0F172A]">Recent Activities</h3>
+                  <h3 className="text-lg font-bold text-[#0F172A]">Hoạt động gần đây</h3>
                   <span className="text-sm text-gray-500 font-medium">
-                    Page {currentActivityPage} / {totalPages || 1}
+                    Trang {currentActivityPage} / {totalPages || 1}
                   </span>
                 </div>
                 <div className="space-y-3">
@@ -315,7 +315,7 @@ export default function AdminDashboard() {
                   ) : (
                     <div className="text-center py-12 text-gray-500">
                       <BarChart3 className="w-12 h-12 mx-auto mb-3 text-gray-300" />
-                      <p className="text-sm font-medium">No recent activities</p>
+                      <p className="text-sm font-medium">Không có hoạt động gần đây</p>
                     </div>
                   )}
                 </div>
