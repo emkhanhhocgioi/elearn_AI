@@ -1,8 +1,9 @@
 'use client';
 import { useParams, useRouter } from 'next/navigation';
-import { useState } from 'react';
-import { ArrowLeft, Plus, FileText, Calendar, Users, BookOpen, Clock, CheckCircle, X } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { ArrowLeft, Plus, FileText, Calendar, Users, BookOpen, Clock, CheckCircle, X, Search, ArrowUpDown } from 'lucide-react';
 import { createTest } from '../../../api/test';
+import { getTeacherLessons } from '../../../api/lesson';
 import { useSearchParams } from 'next/navigation';
 
 export default function AddTestPage() {
@@ -16,13 +17,31 @@ export default function AddTestPage() {
     testtitle: '',
     test_time: 0,
     closedDate: '',
-    subject: subject
+    subject: subject,
+    lessonID: ''
   };
 
   const [formData, setFormData] = useState(initialFormData);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [showSuccessDialog, setShowSuccessDialog] = useState(false);
+  const [lessons, setLessons] = useState<any[]>([]);
+  const [selectedLessonId, setSelectedLessonId] = useState<string>('');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
+
+  useEffect(() => {
+    const fetchLessons = async () => {
+      try {
+        const response = await getTeacherLessons(classId);
+        setLessons(response.lessons || []);
+      } catch (error) {
+        console.error('Error fetching lessons:', error);
+        setLessons([]);
+      }
+    };
+    fetchLessons();
+  }, [classId]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,6 +51,7 @@ export default function AddTestPage() {
     try {
       const response = await createTest(
         classId,
+        selectedLessonId || formData.lessonID,
         formData.testtitle,
         formData.closedDate,
         formData.subject
@@ -160,6 +180,92 @@ export default function AddTestPage() {
                   className="w-full px-4 py-3.5 border-2 border-gray-300 rounded-xl bg-gray-50 cursor-not-allowed text-gray-600"
                   placeholder="VD: Toán học, Vật lý, Hóa học"
                 />
+              </div>
+
+              {/* Lesson Selector */}
+              <div>
+                <label htmlFor="lesson" className="flex items-center gap-2 text-sm font-semibold text-gray-800 mb-2">
+                  <BookOpen className="w-5 h-5 text-green-600" />
+                  Chọn Bài học (Tùy chọn)
+                </label>
+                {lessons.length > 0 ? (
+                  <div className="space-y-3">
+                    {/* Search and Sort Controls */}
+                    <div className="flex gap-2">
+                      <div className="relative flex-1">
+                        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                        <input
+                          type="text"
+                          placeholder="Tìm kiếm bài học..."
+                          value={searchQuery}
+                          onChange={(e) => setSearchQuery(e.target.value)}
+                          className="w-full pl-10 pr-4 py-2.5 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-sm"
+                        />
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
+                        className="px-4 py-2.5 border-2 border-gray-300 rounded-xl hover:bg-gray-50 transition flex items-center gap-2 text-sm font-semibold text-gray-700"
+                      >
+                        <ArrowUpDown className="w-4 h-4" />
+                        {sortOrder === 'desc' ? 'Mới nhất' : 'Cũ nhất'}
+                      </button>
+                    </div>
+                    
+                    <div className="border-2 border-gray-300 rounded-xl overflow-hidden max-h-72 overflow-y-auto">
+                      <table className="w-full">
+                        <thead className="bg-gray-100 sticky top-0">
+                          <tr>
+                            <th className="px-4 py-3 text-left text-xs font-bold text-gray-700">Chọn</th>
+                            <th className="px-4 py-3 text-left text-xs font-bold text-gray-700">Tiêu đề Bài học</th>
+                            <th className="px-4 py-3 text-left text-xs font-bold text-gray-700">Môn học</th>
+                            <th className="px-4 py-3 text-left text-xs font-bold text-gray-700">Ngày tạo</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-gray-200">
+                          {lessons
+                            .filter(lesson => 
+                              lesson.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                              lesson.subject.toLowerCase().includes(searchQuery.toLowerCase())
+                            )
+                            .sort((a, b) => {
+                              const dateA = new Date(a.createDate || a.createdAt).getTime();
+                              const dateB = new Date(b.createDate || b.createdAt).getTime();
+                              return sortOrder === 'desc' ? dateB - dateA : dateA - dateB;
+                            })
+                            .map((lesson) => (
+                              <tr
+                                key={lesson._id}
+                                onClick={() => setSelectedLessonId(lesson._id)}
+                                className={`cursor-pointer hover:bg-blue-50 transition-colors ${
+                                  selectedLessonId === lesson._id ? 'bg-blue-100' : 'bg-white'
+                                }`}
+                              >
+                                <td className="px-4 py-3">
+                                  <input
+                                    type="radio"
+                                    name="lesson"
+                                    checked={selectedLessonId === lesson._id}
+                                    onChange={() => setSelectedLessonId(lesson._id)}
+                                    className="w-4 h-4 text-blue-600 focus:ring-blue-500"
+                                  />
+                                </td>
+                                <td className="px-4 py-3 text-sm font-medium text-gray-900">{lesson.title}</td>
+                                <td className="px-4 py-3 text-sm text-gray-600">{lesson.subject}</td>
+                                <td className="px-4 py-3 text-sm text-gray-500">
+                                  {new Date(lesson.createDate || lesson.createdAt).toLocaleDateString('vi-VN')}
+                                </td>
+                              </tr>
+                            ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="p-4 bg-gray-50 border-2 border-gray-300 rounded-xl text-center">
+                    <p className="text-sm text-gray-500 italic">Không có bài học nào cho lớp này</p>
+                  </div>
+                )}
               </div>
 
               {/* Close Date */}

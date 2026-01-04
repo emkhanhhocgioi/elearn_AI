@@ -45,6 +45,7 @@ export const getTeacherLessons = async (classId?: string) => {
             ...getAuthConfig(),
             params: params,
         });
+
         return response.data;
     } catch (error) {
         console.error("Error fetching lessons:", error);
@@ -92,3 +93,16 @@ export const updateLesson = async (lessonId: string, title: string, classId: str
     });
     return response.data;
     }
+
+export const assignTestToLesson = async (lessonId: string, testId: string) => {
+    try {
+        const response = await axios.patch(`${API_URL}/api/teacher/lessons/${lessonId}/assign-test`,
+            { testId }, 
+            getAuthConfig()
+        );
+        return response.data;
+    }
+    catch (error) { 
+        console.error("Error assigning test to lesson:", error);    
+        throw error;
+    }}

@@ -21,8 +21,8 @@ interface AnswerData {
     answer: string;
     isCorrect: boolean;
 }
-export const createTest = async (classID: String , testtitle: String , 
-    closedDate: String, subject: String ) =>{
+export const createTest = async (classID: string ,lessonID: string, testtitle: string , 
+    closedDate: string, subject: string ) =>{
         try {
             const teacherToken = getAdminToken();
             if (!teacherToken) {
@@ -31,6 +31,7 @@ export const createTest = async (classID: String , testtitle: String ,
             const res = await axios.post(`${api_url}/api/teacher/tests/create`, {
                 classID: classID,
                 testtitle: testtitle,
+                lessonID: lessonID,
                 closeDate: closedDate,
                 subject: subject
             }, {
@@ -85,6 +86,7 @@ export const getTestDetailById = async (testID: string) => {
 }
 export const editTestById = async (
       testId: string,
+      lessonID: string,
       testtitle: string ,
       test_time: number,
       closeDate: string,
@@ -96,6 +98,7 @@ export const editTestById = async (
         }   
         const updateData = {
             testtitle: testtitle,
+            lessonID: lessonID,
             test_time: test_time,
             closeDate: closeDate
         };
@@ -475,5 +478,41 @@ export const Ai_grade_from_image = async (
     }
     catch (error) {   
         console.error('Error in AI grading from image:', error);
+    }
+};
+
+
+interface RubricCriteria {
+    name: string;
+    weight: number;
+    description?: string;
+}
+
+export const Teacher_AI_grading_Base_on_rubic = async (
+    answerid: string,
+    rubric_criteria: RubricCriteria[],
+    subject: string
+) => {
+    try {   
+        const teacherToken = getAdminToken();
+        if (!teacherToken) {
+            throw new Error('Token not found in localStorage'); 
+        }   
+        const res = await axios.post(`${api_url}/api/teacher/ai/auto-grading/rubric`, {
+            answerid,
+            rubric_criteria,
+            subject
+        }, {
+            headers: {
+                'Content-Type': 'application/json', 
+                'Authorization': `Bearer ${teacherToken}`
+            }
+        });
+        console.log("Teacher AI grading based on rubric response:", res.data);
+        return res.data;
+    }
+    catch (error) {
+        console.error('Error in Teacher AI grading based on rubric:', error);
+        throw error;
     }
 };

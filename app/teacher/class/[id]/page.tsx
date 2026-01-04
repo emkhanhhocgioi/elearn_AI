@@ -138,9 +138,9 @@ export default function ClassDetailPage() {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <button
-                onClick={() => router.back()}
+                onClick={() => router.push('/teacher/dashboard')}
                 className="p-2.5 hover:bg-blue-50 rounded-xl transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:ring-offset-2 group"
-                aria-label="Go back"
+                aria-label="trở về bảng điều khiển"
               >
                 <ArrowLeft className="w-5 h-5 text-gray-600 group-hover:text-[#2563EB] transition-colors" />
               </button>

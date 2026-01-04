@@ -15,9 +15,10 @@ const getAuthConfig = () => {
 };
 
 // Update account settings
-export const updateAccountSettings = async (teacherId: string, settingsData: any) => {
+export const updateAccountSettings = async ( settingsData: any) => {
   try {
-    const response = await axios.patch(`${API_URL}/teacher/settings/${teacherId}`, settingsData, {
+    const response = await axios.patch(`${API_URL}/api/teacher/settings`, settingsData, {
+      ...getAuthConfig(),
       withCredentials: true,
     });
     return response.data;
@@ -30,6 +31,7 @@ export const updateAccountSettings = async (teacherId: string, settingsData: any
 export const changePassword = async (teacherId: string, passwordData: any) => {
   try {
     const response = await axios.post(`${API_URL}/teacher/settings/${teacherId}/change-password`, passwordData, {
+        ...getAuthConfig(),
         withCredentials: true,  
     });
     return response.data;
@@ -40,7 +42,7 @@ export const changePassword = async (teacherId: string, passwordData: any) => {
 
 export const getTeacherSettings = async (teacherId: string) => {
   try {
-    const response = await axios.get(`${API_URL}/teacher/settings/${teacherId}`, getAuthConfig());
+    const response = await axios.get(`${API_URL}/api/teacher/settings/${teacherId}`, getAuthConfig());
     return response.data;
   } catch (error) {
     throw error;

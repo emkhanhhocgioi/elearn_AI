@@ -213,7 +213,7 @@ export default function MyGradeTab() {
                     <div className="text-right">
                       <p className="text-xs text-gray-500 mb-1 font-medium">Điểm trung bình</p>
                       <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full font-bold shadow-md group-hover:scale-110 transition-transform ${getGradeColor(subject.averageGrade)}`}>
-                        <span className="text-2xl">{subject.averageGrade.toFixed(2)}</span>
+                        <span className="text-2xl">{subject.averageGrade}</span>
                       </div>
                     </div>
                     

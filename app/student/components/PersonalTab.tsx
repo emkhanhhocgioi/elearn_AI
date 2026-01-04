@@ -209,7 +209,7 @@ const MyClassesTab = () => {
   return (
     <div className="space-y-6 animate-fade-in">
       {/* Header Section */}
-      <div className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 rounded-3xl p-8 text-white shadow-2xl relative overflow-hidden">
+      <div className="bg-blue-600 rounded-3xl p-8 text-white shadow-2xl relative overflow-hidden">
         {/* Animated background circles */}
         <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -mr-32 -mt-32 animate-pulse"></div>
         <div className="absolute bottom-0 left-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -ml-32 -mb-32 animate-pulse" style={{animationDelay: '1s'}}></div>
@@ -236,22 +236,22 @@ const MyClassesTab = () => {
        <div>
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-3">
-            <div className="p-2 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl shadow-lg">
+            <div className="p-2 bg-blue-600 rounded-xl shadow-lg">
               <Brain className="w-6 h-6 text-white" />
             </div>
-            <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+            <span className="text-blue-600">
               Gợi Ý Dựa Trên Đánh Giá Giáo Viên
             </span>
           </h2>
-          <span className="px-4 py-2 bg-gradient-to-r from-blue-50 to-purple-50 text-blue-700 text-sm font-semibold rounded-full border border-blue-200">{learningPaths.length} môn học</span>
+          <span className="px-4 py-2 bg-blue-50 text-blue-700 text-sm font-semibold rounded-full border border-blue-200">{learningPaths.length} môn học</span>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Left Side - AI Response Display */}
           <div className="lg:col-span-1">
-            <div className="bg-gradient-to-br from-purple-50 via-blue-50 to-pink-50 rounded-2xl p-6 border-2 border-purple-200 shadow-xl sticky top-4 hover:shadow-2xl transition-shadow">
+            <div className="bg-purple-50 rounded-2xl p-6 border-2 border-purple-200 shadow-xl sticky top-4 hover:shadow-2xl transition-shadow">
               <div className="flex items-center gap-3 mb-5">
-                <div className="bg-gradient-to-br from-purple-500 to-pink-500 p-3 rounded-xl shadow-lg">
+                <div className="bg-purple-500 p-3 rounded-xl shadow-lg">
                   <Sparkles className="w-6 h-6 text-white animate-pulse" />
                 </div>
                 <div>
@@ -323,7 +323,7 @@ const MyClassesTab = () => {
 
                   <button 
                     onClick={() => handleStartPractice(selectedSubject)}
-                    className="w-full bg-gradient-to-r from-purple-600 to-blue-600 text-white py-3 rounded-lg font-semibold hover:shadow-lg transition-all flex items-center justify-center gap-2"
+                    className="w-full bg-purple-600 text-white py-3 rounded-lg font-semibold hover:bg-purple-700 hover:shadow-lg transition-all flex items-center justify-center gap-2"
                   >
                     Bắt đầu luyện tập
                     <ChevronRight className="w-5 h-5" />
@@ -367,7 +367,7 @@ const MyClassesTab = () => {
             aria-label={`Chọn môn ${subject}`}
             className={`group flex items-center gap-3 px-4 py-4 rounded-xl text-sm font-semibold border-2 transition-all hover:scale-105 ${
               selectedSubject === subject
-                ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white border-blue-600 shadow-lg shadow-blue-200'
+                ? 'bg-blue-600 text-white border-blue-600 shadow-lg'
                 : 'bg-white hover:bg-blue-50 text-gray-800 border-gray-200 hover:border-blue-300 hover:shadow-md'
             } ${isLoadingAI ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
           >
@@ -378,7 +378,7 @@ const MyClassesTab = () => {
           </button>
               ))}
             </div>
-            <div className="mt-6 bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl p-5 border-2 border-blue-100">
+            <div className="mt-6 bg-blue-50 rounded-xl p-5 border-2 border-blue-100">
               <div className="flex items-start gap-3">
                 <div className="p-2 bg-blue-100 rounded-lg">
                   <AlertCircle className="w-5 h-5 text-blue-600" />
@@ -401,20 +401,20 @@ const MyClassesTab = () => {
       <div>
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-3">
-            <div className="p-2 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-xl shadow-lg">
+            <div className="p-2 bg-yellow-500 rounded-xl shadow-lg">
               <Lightbulb className="w-6 h-6 text-white" />
             </div>
-            <span className="bg-gradient-to-r from-yellow-600 to-orange-600 bg-clip-text text-transparent">
+            <span className="text-yellow-600">
               Câu Hỏi Từ Bài Làm Sai Gần Đây
             </span>
           </h2>
-          <span className="px-4 py-2 bg-gradient-to-r from-yellow-50 to-orange-50 text-orange-700 text-sm font-semibold rounded-full border border-orange-200">Dựa trên lỗi mắc phải</span>
+          <span className="px-4 py-2 bg-yellow-50 text-orange-700 text-sm font-semibold rounded-full border border-orange-200">Dựa trên lỗi mắc phải</span>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
           {/* Left Side - Recent Test AI Response Display */}
           <div className="lg:col-span-1">
-            <div className="bg-gradient-to-br from-yellow-50 to-orange-50 rounded-xl p-6 border border-yellow-200 sticky top-4">
+            <div className="bg-yellow-50 rounded-xl p-6 border border-yellow-200 sticky top-4">
               <div className="flex items-center gap-3 mb-4">
                 <div className="bg-yellow-100 p-3 rounded-lg">
                   <AlertCircle className="w-6 h-6 text-yellow-600" />
@@ -470,7 +470,7 @@ const MyClassesTab = () => {
                       // Handle practice start with recent test data
                       console.log('Start practice with recent test data');
                     }}
-                    className="w-full bg-gradient-to-r from-yellow-600 to-orange-600 text-white py-3 rounded-lg font-semibold hover:shadow-lg transition-all flex items-center justify-center gap-2"
+                    className="w-full bg-yellow-600 text-white py-3 rounded-lg font-semibold hover:bg-yellow-700 hover:shadow-lg transition-all flex items-center justify-center gap-2"
                   >
                     Luyện tập khắc phục lỗi
                     <ChevronRight className="w-5 h-5" />
@@ -634,7 +634,7 @@ const MyClassesTab = () => {
       </div>
 
       {/* AI Insights */}
-      <div className="bg-gradient-to-br from-purple-50 to-blue-50 rounded-xl p-6 border border-purple-200">
+      <div className="bg-purple-50 rounded-xl p-6 border border-purple-200">
         <div className="flex items-start gap-4">
           <div className="bg-purple-100 p-3 rounded-lg">
             <Award className="w-6 h-6 text-purple-600" />

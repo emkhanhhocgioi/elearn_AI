@@ -1,14 +1,14 @@
 'use client';
 export const dynamic = "force-dynamic";
-import { Bell, Search, MoreVertical, Users, BookOpen, FileText, Calendar, TrendingUp, Award } from 'lucide-react';
+import { Bell, Search, MoreVertical, Users, BookOpen, FileText, Calendar, TrendingUp,User } from 'lucide-react';
 import { useState, lazy, Suspense } from 'react';
 import { teacherLogout } from '@/app/api/auth';
 import AnalyticsTab from '../components/AnalyticsTab';
-import SettingsTab from '../components/SettingsTab';
 const LessonsTab = lazy(() => import('../components/LessonsTab'));
 const ClassesTab = lazy(() => import('../components/ClassesTab'));
 const TestsTab = lazy(() => import('../components/TestsTab'));
 const ScheduleTab = lazy(() => import('../components/ScheduleTab'));
+const InfoTab = lazy(() => import('../components/Info'));
 
 const TabLoader = () => (
   <div className="flex items-center justify-center py-12">
@@ -93,23 +93,21 @@ export default function TeacherDashboard() {
                 <TrendingUp className="w-5 h-5" />
                 <span className="font-medium text-sm">Phân Tích</span>
               </li>
+               <li 
+                onClick={() => setCurrentPage('info')}
+                className={`flex items-center gap-3 px-4 py-2.5 rounded-lg cursor-pointer transition-all duration-200 ${
+                  currentPage === 'info' ? 'text-white bg-[#2563EB] shadow-sm' : 'text-[#0F172A] hover:bg-[#F1F5F9]'
+                }`}
+              >
+                <User className="w-5 h-5" />
+                <span className="font-medium text-sm">Thông tin cá nhân</span>
+              </li>
             </ul>
           </div>
 
           <div>
             <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3 px-3">Tài Khoản</h3>
             <ul className="space-y-1">
-              <li 
-                onClick={() => setCurrentPage('settings')}
-                className={`flex items-center gap-3 px-4 py-2.5 rounded-lg cursor-pointer transition-all duration-200 ${
-                  currentPage === 'settings' 
-                    ? 'text-white bg-[#2563EB] shadow-sm' 
-                    : 'text-[#0F172A] hover:bg-[#F1F5F9]'
-                }`}
-              >
-                <div className="w-5 h-5">⚙️</div>
-                <span className="font-medium text-sm">Cài Đặt</span>
-              </li>
               <li>
                 <button
                   type="button"
@@ -163,7 +161,7 @@ export default function TeacherDashboard() {
             {currentPage === 'tests' && <TestsTab />}
             {currentPage === 'schedule' && <ScheduleTab />}
             {currentPage === 'analytics' && <AnalyticsTab />}
-            {currentPage === 'settings' && <SettingsTab />}
+            {currentPage === 'info' && <InfoTab />}
           </Suspense>
         </div>
       </div>

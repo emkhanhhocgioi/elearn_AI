@@ -30,6 +30,11 @@ interface TestDetail {
     _id: string;
     class_code: string;
   };
+  lessonID: {
+    _id: string;
+    title: string;
+  };
+  subject: string;
   teacherID: {
     _id: string;
     name: string;
@@ -122,7 +127,7 @@ export default function TestDetailPage() {
       {/* Header */}
       <div className="mb-8">
         <button
-          onClick={() => router.back()}
+          onClick={() => router.push('/teacher/class/tests/' + testDetail?.classID._id)}
           className="flex items-center gap-2 text-blue-600 hover:text-blue-700 mb-4 px-3 py-2 rounded-xl hover:bg-blue-50 transition-all hover:scale-105 font-semibold group"
         >
           <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
@@ -138,10 +143,10 @@ export default function TestDetailPage() {
               <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
               
                 <p className="text-gray-600">
-                  <strong>Số học sinh:</strong> {testDetail?.participants || 0}
+                  <strong>Bài học:</strong> {testDetail?.lessonID.title || 0}
                 </p>
                 <p className="text-gray-600">
-                  <strong>Điểm trung bình:</strong> {testDetail?.avg_score || '0'}
+                  <strong>Giáo viên:</strong> {testDetail?.teacherID.name || 'N/A'}
                 </p>
                 <p className="text-gray-600">
                   <strong>Ngày tạo:</strong> {testDetail?.createDate ? new Date(testDetail.createDate).toLocaleDateString('vi-VN') : 'N/A'}

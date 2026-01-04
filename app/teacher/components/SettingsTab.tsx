@@ -1,13 +1,15 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { Bell, Lock, Globe, Save, X, Eye, EyeOff, AlertCircle, CheckCircle } from 'lucide-react';
+import { Bell, Lock, Globe, Save, X, Eye, EyeOff, AlertCircle, CheckCircle, User, Mail, Phone, Calendar } from 'lucide-react';
 import { updateAccountSettings, changePassword } from '../api/settings';
+import { getTeacherInfo, updateAccountSettings as updateInfo } from '@/app/teacher/api/info';
 import axios from 'axios';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
 
 const SettingsTab = () => {
   const [isEditing, setIsEditing] = useState(false);
+  const [isEditingProfile, setIsEditingProfile] = useState(false);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const [showPasswordModal, setShowPasswordModal] = useState(false);
@@ -28,7 +30,12 @@ const SettingsTab = () => {
     language: 'vi'
   });
 
- 
+  const [profileData, setProfileData] = useState({
+    fullName: '',
+    email: '',
+    phone: '',
+    dateOfBirth: ''
+  });
 
   // Fetch current settings
   useEffect(() => {
@@ -54,6 +61,16 @@ const SettingsTab = () => {
             language: 'vi'
           });
         }
+
+        // Load profile data
+        if (response.data) {
+          setProfileData({
+            fullName: response.data.name || '',
+            email: response.data.email || '',
+            phone: response.data.phone || '',
+            dateOfBirth: response.data.DOB ? response.data.DOB.split('T')[0] : ''
+          });
+        }
       } catch (error) {
         console.error('Error fetching settings:', error);
       }
@@ -76,12 +93,47 @@ const SettingsTab = () => {
     }));
   };
 
+  const handleProfileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setProfileData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleSaveProfile = async () => {
+    setLoading(true);
+    setMessage(null);
+    
+    try {
+      await updateInfo({
+        name: profileData.fullName,
+        email: profileData.email,
+        phone: profileData.phone,
+        DOB: profileData.dateOfBirth
+      });
+      
+      setMessage({ type: 'success', text: 'Cập nhật thông tin cá nhân thành công!' });
+      setIsEditingProfile(false);
+      
+      // Clear message after 3 seconds
+      setTimeout(() => setMessage(null), 3000);
+    } catch (error: any) {
+      setMessage({ 
+        type: 'error', 
+        text: error.message || 'Lỗi cập nhật thông tin' 
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleSave = async () => {
     setLoading(true);
     setMessage(null);
     
     try {
-      await updateAccountSettings(teacherId, {
+      await updateAccountSettings({
         notifications: settings.notifications,
         darkMode: settings.darkMode,
         TestReminder: settings.TestReminder
@@ -192,6 +244,107 @@ const SettingsTab = () => {
       </div>
 
       <div className="space-y-6">
+        {/* Profile Information Section */}
+        <div className="bg-gradient-to-br from-white to-indigo-50 rounded-2xl p-6 shadow-lg border-2 border-indigo-100">
+          <div className="flex items-center gap-3 mb-6 pb-4 border-b-2 border-indigo-100">
+            <div className="p-3 bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-xl shadow-lg">
+              <User className="w-6 h-6 text-white" />
+            </div>
+            <div className="flex-1">
+              <h3 className="text-xl font-bold text-gray-900">Thông Tin Cá Nhân</h3>
+              <p className="text-sm text-gray-600">Cập nhật thông tin cơ bản của bạn</p>
+            </div>
+            {!isEditingProfile && (
+              <button
+                onClick={() => setIsEditingProfile(true)}
+                className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 text-sm font-medium transition-colors"
+              >
+                Chỉnh sửa
+              </button>
+            )}
+          </div>
+
+          <div className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="text-sm font-medium text-gray-900 block mb-2">
+                  <User className="w-4 h-4 inline mr-2" />
+                  Họ và Tên
+                </label>
+                <input
+                  type="text"
+                  name="fullName"
+                  value={profileData.fullName}
+                  onChange={handleProfileChange}
+                  disabled={!isEditingProfile}
+                  className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:bg-gray-100 disabled:cursor-not-allowed text-gray-900"
+                />
+              </div>
+              <div>
+                <label className="text-sm font-medium text-gray-900 block mb-2">
+                  <Mail className="w-4 h-4 inline mr-2" />
+                  Email
+                </label>
+                <input
+                  type="email"
+                  name="email"
+                  value={profileData.email}
+                  onChange={handleProfileChange}
+                  disabled={!isEditingProfile}
+                  className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:bg-gray-100 disabled:cursor-not-allowed text-gray-900"
+                />
+              </div>
+              <div>
+                <label className="text-sm font-medium text-gray-900 block mb-2">
+                  <Phone className="w-4 h-4 inline mr-2" />
+                  Số Điện Thoại
+                </label>
+                <input
+                  type="tel"
+                  name="phone"
+                  value={profileData.phone}
+                  onChange={handleProfileChange}
+                  disabled={!isEditingProfile}
+                  className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:bg-gray-100 disabled:cursor-not-allowed text-gray-900"
+                />
+              </div>
+              <div>
+                <label className="text-sm font-medium text-gray-900 block mb-2">
+                  <Calendar className="w-4 h-4 inline mr-2" />
+                  Ngày Sinh
+                </label>
+                <input
+                  type="date"
+                  name="dateOfBirth"
+                  value={profileData.dateOfBirth}
+                  onChange={handleProfileChange}
+                  disabled={!isEditingProfile}
+                  className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:bg-gray-100 disabled:cursor-not-allowed text-gray-900"
+                />
+              </div>
+            </div>
+
+            {isEditingProfile && (
+              <div className="flex gap-3 justify-end pt-4 border-t border-indigo-100">
+                <button
+                  onClick={() => setIsEditingProfile(false)}
+                  className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
+                  disabled={loading}
+                >
+                  Hủy
+                </button>
+                <button
+                  onClick={handleSaveProfile}
+                  className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                  disabled={loading}
+                >
+                  {loading ? 'Đang lưu...' : 'Lưu thay đổi'}
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+
         {/* Notification Settings */}
         <div className="bg-gradient-to-br from-white to-blue-50 rounded-2xl p-6 shadow-lg border-2 border-blue-100">
           <div className="flex items-center gap-3 mb-6 pb-4 border-b-2 border-blue-100">
