@@ -5,8 +5,8 @@ import { getAllSubjectsGrade } from '../api/personal';
 
 interface SubjectGrade {
   subject: string;
-  averageGrade: number;
-  totalTests: number;
+  average: number;
+  testCount: number;
 }
 
 export default function MyGradeTab() {
@@ -50,7 +50,7 @@ export default function MyGradeTab() {
   const calculateOverallGPA = () => {
     if (!gradeData || gradeData.length === 0) return 0;
     
-    const total = gradeData.reduce((sum, subject) => sum + subject.averageGrade, 0);
+    const total = gradeData.reduce((sum, subject) => sum + subject.average, 0);
     return (total / gradeData.length).toFixed(2);
   };
 
@@ -159,7 +159,7 @@ export default function MyGradeTab() {
             <div>
               <p className="text-purple-100 text-sm font-medium">Tổng Bài Kiểm Tra</p>
               <p className="text-4xl font-bold mt-2">
-                {gradeData?.reduce((sum, subject) => sum + subject.totalTests, 0) || 0}
+                {gradeData?.reduce((sum, subject) => sum + subject.testCount, 0) || 0}
               </p>
               <p className="text-purple-100 text-sm mt-1 font-medium">Bài đã làm</p>
             </div>
@@ -192,10 +192,10 @@ export default function MyGradeTab() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-4 flex-1">
                     <div className={`w-14 h-14 rounded-xl flex items-center justify-center text-2xl font-bold shadow-lg group-hover:scale-110 transition-transform ${
-                      subject.averageGrade >= 9 ? 'bg-gradient-to-br from-green-400 to-green-600 text-white' :
-                      subject.averageGrade >= 8 ? 'bg-gradient-to-br from-blue-400 to-blue-600 text-white' :
-                      subject.averageGrade >= 6.5 ? 'bg-gradient-to-br from-yellow-400 to-yellow-600 text-white' :
-                      subject.averageGrade >= 5 ? 'bg-gradient-to-br from-orange-400 to-orange-600 text-white' :
+                      subject.average >= 9 ? 'bg-gradient-to-br from-green-400 to-green-600 text-white' :
+                      subject.average >= 8 ? 'bg-gradient-to-br from-blue-400 to-blue-600 text-white' :
+                      subject.average >= 6.5 ? 'bg-gradient-to-br from-yellow-400 to-yellow-600 text-white' :
+                      subject.average >= 5 ? 'bg-gradient-to-br from-orange-400 to-orange-600 text-white' :
                       'bg-gradient-to-br from-red-400 to-red-600 text-white'
                     }`}>
                       {subject.subject.charAt(0)}
@@ -204,7 +204,7 @@ export default function MyGradeTab() {
                       <h3 className="font-bold text-gray-900 text-lg group-hover:text-blue-600 transition-colors">{subject.subject}</h3>
                       <p className="text-sm text-gray-500 flex items-center gap-1">
                         <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
-                        {subject.totalTests} bài kiểm tra
+                        {subject.testCount} bài kiểm tra
                       </p>
                     </div>
                   </div>
@@ -212,14 +212,14 @@ export default function MyGradeTab() {
                   <div className="flex items-center gap-6">
                     <div className="text-right">
                       <p className="text-xs text-gray-500 mb-1 font-medium">Điểm trung bình</p>
-                      <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full font-bold shadow-md group-hover:scale-110 transition-transform ${getGradeColor(subject.averageGrade)}`}>
-                        <span className="text-2xl">{subject.averageGrade}</span>
+                      <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full font-bold shadow-md group-hover:scale-110 transition-transform ${getGradeColor(subject.average)}`}>
+                        <span className="text-2xl">{subject.average}</span>
                       </div>
                     </div>
                     
                     <div className="text-right">
-                      <span className={`inline-block px-4 py-2 rounded-full text-sm font-bold shadow-md ${getGradeColor(subject.averageGrade)}`}>
-                        {getGradeLabel(subject.averageGrade)}
+                      <span className={`inline-block px-4 py-2 rounded-full text-sm font-bold shadow-md ${getGradeColor(subject.average)}`}>
+                        {getGradeLabel(subject.average)}
                       </span>
                     </div>
                   </div>
@@ -230,13 +230,13 @@ export default function MyGradeTab() {
                   <div className="relative w-full bg-gray-200 rounded-full h-3 overflow-hidden shadow-inner">
                     <div
                       className={`absolute top-0 left-0 h-full rounded-full transition-all duration-1000 shadow-lg ${
-                        subject.averageGrade >= 9 ? 'bg-gradient-to-r from-green-400 to-green-600' :
-                        subject.averageGrade >= 8 ? 'bg-gradient-to-r from-blue-400 to-blue-600' :
-                        subject.averageGrade >= 6.5 ? 'bg-gradient-to-r from-yellow-400 to-yellow-600' :
-                        subject.averageGrade >= 5 ? 'bg-gradient-to-r from-orange-400 to-orange-600' : 
+                        subject.average >= 9 ? 'bg-gradient-to-r from-green-400 to-green-600' :
+                        subject.average >= 8 ? 'bg-gradient-to-r from-blue-400 to-blue-600' :
+                        subject.average >= 6.5 ? 'bg-gradient-to-r from-yellow-400 to-yellow-600' :
+                        subject.average >= 5 ? 'bg-gradient-to-r from-orange-400 to-orange-600' : 
                         'bg-gradient-to-r from-red-400 to-red-600'
                       }`}
-                      style={{ width: `${(subject.averageGrade / 10) * 100}%` }}
+                      style={{ width: `${(subject.average / 10) * 100}%` }}
                     >
                       <div className="absolute inset-0 bg-white/20 animate-pulse"></div>
                     </div>
@@ -249,7 +249,7 @@ export default function MyGradeTab() {
                     <div className="grid grid-cols-3 gap-4 text-center">
                       <div className="bg-blue-50 rounded-lg p-3">
                         <p className="text-sm text-gray-600">Số bài thi</p>
-                        <p className="text-xl font-bold text-blue-600">{subject.totalTests}</p>
+                        <p className="text-xl font-bold text-blue-600">{subject.testCount}</p>
                       </div>
                       <div className="bg-green-50 rounded-lg p-3">
                         <p className="text-sm text-gray-600">Điểm cao nhất</p>
@@ -258,7 +258,7 @@ export default function MyGradeTab() {
                       <div className="bg-orange-50 rounded-lg p-3">
                         <p className="text-sm text-gray-600">Điểm thấp nhất</p>
                         <p className="text-xl font-bold text-orange-600">
-                          {(subject.averageGrade - 1.5).toFixed(1)}
+                          {(subject.average - 1.5).toFixed(1)}
                         </p>
                       </div>
                     </div>
@@ -277,7 +277,7 @@ export default function MyGradeTab() {
       </div>
 
       {/* Achievement Section */}
-      {gradeData && gradeData.some(g => g.averageGrade >= 9) && (
+      {gradeData && gradeData.some(g => g.average >= 9) && (
         <div className="bg-gradient-to-r from-yellow-50 to-orange-50 rounded-xl p-6 border border-yellow-200">
           <div className="flex items-center gap-4">
             <div className="w-16 h-16 bg-yellow-400 rounded-full flex items-center justify-center">
@@ -286,7 +286,7 @@ export default function MyGradeTab() {
             <div>
               <h3 className="font-bold text-gray-900 text-lg">Chúc mừng! 🎉</h3>
               <p className="text-gray-600 mt-1">
-                Bạn đạt điểm xuất sắc ở {gradeData.filter(g => g.averageGrade >= 9).length} môn học!
+                Bạn đạt điểm xuất sắc ở {gradeData.filter(g => g.average >= 9).length} môn học!
               </p>
             </div>
           </div>

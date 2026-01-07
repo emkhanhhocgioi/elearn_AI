@@ -1,6 +1,7 @@
 
 import axios from 'axios';
-const api_url = "http://localhost:4000"
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
 
 export async function addQuestion(testid: string, difficult: string, question: string, questionType: string, grade: string, solution: string, metadata: string) {
     try {
@@ -9,7 +10,7 @@ export async function addQuestion(testid: string, difficult: string, question: s
         if (!token) {
             throw new Error('Token not found in localStorage');
         }
-        const res = await axios.post(`${api_url}/api/test/question/add`, {
+        const res = await axios.post(`${API_URL}/api/test/question/add`, {
             testid,
             difficult,
             question,
@@ -40,7 +41,7 @@ export async function getTestDetail(testid: string) {
         if (!token) {
             throw new Error('Token not found in localStorage');
         }
-        const res = await axios.get(`${api_url}/api/test/question/fetch/${testid}`, {
+        const res = await axios.get(`${API_URL}/api/test/question/fetch/${testid}`, {
             headers: {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
@@ -61,7 +62,7 @@ export async function getTestQuestions(testid: string) {
         if (!token) {
             throw new Error('Token not found in localStorage');
         }
-        const res = await axios.get(`${api_url}/api/test/question/fetch/${testid}`, {
+        const res = await axios.get(`${API_URL}/api/test/question/fetch/${testid}`, {
             headers: {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
@@ -82,7 +83,7 @@ export async function updateQuestion(questionid: string, testid: string, difficu
         if (!token) {
             throw new Error('Token not found in localStorage');
         }
-        const res = await axios.put(`${api_url}/api/test/question/edit`, {
+        const res = await axios.put(`${API_URL}/api/test/question/edit`, {
             questionId: questionid,
             testid,
             difficult,
@@ -112,7 +113,7 @@ export async function deleteQuestion(questionIds: string[]) {
         if (!token) {
             throw new Error('Token not found in localStorage');
         }
-        const res = await axios.post(`${api_url}/api/test/question/delete`, {
+        const res = await axios.post(`${API_URL}/api/test/question/delete`, {
             questionIds
         }, {
             headers: {

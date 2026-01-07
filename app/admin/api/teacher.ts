@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const BASE_URL = "http://localhost:4000";
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
 
 const getAdminToken = () => {
   if (typeof window !== "undefined") {
@@ -48,7 +48,7 @@ export const getTeacherById  = async (teacherId: string) => {
   try {
     const token = getAdminToken();
     if (!token) throw new Error('Token not found');
-    const response = await axios.get(`${BASE_URL}/api/admin/teacher/${teacherId}`, {
+    const response = await axios.get(`${API_URL}/api/admin/teacher/${teacherId}`, {
       ...getAuthConfig(),
       headers: {
         ...getAuthConfig().headers,
@@ -65,7 +65,7 @@ export const getAllTeachers = async ()  => {
   try {
     const token = getAdminToken();
     if (!token) throw new Error('Token not found');
-    const response = await axios.get(`${BASE_URL}/api/admin/teachers`, {
+    const response = await axios.get(`${API_URL}/api/admin/teachers`, {
       ...getAuthConfig(),
       headers: {
         ...getAuthConfig().headers,
@@ -85,7 +85,7 @@ export const createTeacher = async (teacherData: CreateTeacherDTO) => {
   try {
     const token = getAdminToken();
     if (!token) throw new Error('Token not found');
-    const response = await axios.post(`${BASE_URL}/api/admin/teachers/create`, teacherData, {
+    const response = await axios.post(`${API_URL}/api/admin/teachers/create`, teacherData, {
       ...getAuthConfig(),
       headers: {
         ...getAuthConfig().headers,
@@ -103,7 +103,7 @@ export const updateTeacher = async (id: string, teacherData: Partial<CreateTeach
   try {
     const token = getAdminToken();
     if (!token) throw new Error('Token not found');
-    const response = await axios.put(`${BASE_URL}/api/admin/teacher/update/${id}`, teacherData, {
+    const response = await axios.put(`${API_URL}/api/admin/teacher/update/${id}`, teacherData, {
       ...getAuthConfig(),
       headers: {
         ...getAuthConfig().headers,
@@ -121,7 +121,7 @@ export const deleteTeacher = async (id: string) => {
   try {
     const token = getAdminToken();
     if (!token) throw new Error('Token not found');
-    const response = await axios.delete(`${BASE_URL}/api/admin/teacher/delete/${id}`, {
+    const response = await axios.delete(`${API_URL}/api/admin/teacher/delete/${id}`, {
       ...getAuthConfig(),
       headers: {
         ...getAuthConfig().headers,

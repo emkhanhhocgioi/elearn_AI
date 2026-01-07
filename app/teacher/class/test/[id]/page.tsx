@@ -1,12 +1,11 @@
 'use client';
-import { useState, useEffect } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useState, useEffect, Suspense } from 'react';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { ArrowLeft, Plus, Edit, Trash2, Settings, FileText } from 'lucide-react';
 import { getTestDetailById, deleteQuestionFromTest } from '@/app/teacher/api/test';
 import AddQuestionDialog from './components/AddQuestionDialog';
 import BatchQuestionsDialog from './components/BatchQuestionsDialog';
 import EditTestDialog from './components/EditTestDialog';
-import { useSearchParams } from 'next/navigation';
 
 
 interface Question {
@@ -46,7 +45,7 @@ interface TestDetail {
   createDate: string;
 }
 
-export default function TestDetailPage() {
+function TestDetailContent() {
   const params = useParams();
   const router = useRouter();
   const testId = params.id as string;
@@ -313,5 +312,17 @@ export default function TestDetailPage() {
         )}
       </div>
     </div>
+  );
+}
+
+export default function TestDetailPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
+      </div>
+    }>
+      <TestDetailContent />
+    </Suspense>
   );
 }

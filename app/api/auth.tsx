@@ -1,15 +1,11 @@
 
 import axios  from "axios";
 
-
-
-
-
-const api_url = "http://localhost:4000"
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
 
 export const studentlogin = async (email: string, password: string) => {
   try {
-    const response = await axios.post(`${api_url}/api/auth/student/login`, {
+    const response = await axios.post(`${API_URL}/api/auth/student/login`, {
       email,
       password
     });
@@ -22,7 +18,7 @@ export const studentlogin = async (email: string, password: string) => {
 
 export const teacherLogin  = async (email: string , password: string) => {
     try {
-    const response = await axios.post(`${api_url}/api/auth/teacher/login`, {
+    const response = await axios.post(`${API_URL}/api/auth/teacher/login`, {
       email,
       password
     });
@@ -35,7 +31,7 @@ export const teacherLogin  = async (email: string , password: string) => {
 
 export const adminLogin  = async (email: string , password: string) => {
     try {
-    const response = await axios.post(`${api_url}/api/auth/admin/login`, {
+    const response = await axios.post(`${API_URL}/api/auth/admin/login`, {
       email,  
       password
     });

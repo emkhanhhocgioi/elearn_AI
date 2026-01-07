@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const api_url = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
 
 const getStudentToken = () => {
   if (typeof window !== "undefined") {
@@ -21,7 +21,7 @@ export const getStudentClassTest = async () => {
         if (!studentToken) {
             throw new Error('Token not found in localStorage');
         }
-        const res = await axios.get(`${api_url}/api/student/tests`, {
+        const res = await axios.get(`${API_URL}/api/student/tests`, {
             ...getAuthConfig(),
             headers: {
                 ...getAuthConfig().headers,
@@ -41,7 +41,7 @@ export const getTestQuestionsDetail = async (testId: string) => {
         if (!studentToken) {
             throw new Error('Token not found in localStorage');
         }
-        const res = await axios.get(`${api_url}/api/student/test/${testId}`, {
+        const res = await axios.get(`${API_URL}/api/student/test/${testId}`, {
             ...getAuthConfig(),
             headers: {
                 ...getAuthConfig().headers,
@@ -61,7 +61,7 @@ export const getTestGradingDetail = async (testId: string) => {
         if (!studentToken) {
             throw new Error('Token not found in localStorage');
         }
-        const res = await axios.get(`${api_url}/api/student/test/grading/${testId}`, {
+        const res = await axios.get(`${API_URL}/api/student/test/grading/${testId}`, {
             ...getAuthConfig(),
             headers: {
                 ...getAuthConfig().headers,
@@ -82,7 +82,7 @@ export const uploadTestAnswerFile = async (formData: FormData) => {
             throw new Error('Token not found in localStorage');
         }
 
-        const res = await axios.post(`${api_url}/api/student/test/answer/file-upload`, formData, getAuthConfig());
+        const res = await axios.post(`${API_URL}/api/student/test/answer/file-upload`, formData, getAuthConfig());
         console.log('Uploaded test answer file:', res.data);
         return res.data;
     }
@@ -99,7 +99,7 @@ export const editTestAnswer = async (testId: string, questionId: string, answer:
             throw new Error('Token not found in localStorage');
         }
 
-        const res = await axios.put(`${api_url}/api/student/test/answer/edit`, 
+        const res = await axios.put(`${API_URL}/api/student/test/answer/edit`, 
             {
                 testId,
                 questionId,
@@ -129,7 +129,7 @@ export const editTestAnswerFile = async (formData: FormData) => {
             throw new Error('Token not found in localStorage');
         }
 
-        const res = await axios.put(`${api_url}/api/student/test/answer/file-edit`, formData, getAuthConfig());
+        const res = await axios.put(`${API_URL}/api/student/test/answer/file-edit`, formData, getAuthConfig());
         console.log('Edited test answer file:', res.data);
         return res.data;
     }

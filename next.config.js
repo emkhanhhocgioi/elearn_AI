@@ -10,6 +10,10 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'bing.com',
       },
+      {
+      protocol: 'http',
+        hostname: 'media.cntraveler.com',
+      },
     ],
   },
    eslint: {

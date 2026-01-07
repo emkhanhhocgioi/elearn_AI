@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { usePractice } from '@/app/student/context/PracticeContext';
-import { gradeEssay ,AI_auto_grade} from '@/app/student/api/personal';
+import { AI_auto_grade } from '@/app/student/api/personal';
 import { 
   BookOpen, 
   Send, 
@@ -44,18 +44,10 @@ const PracticePage = () => {
 
     setIsSubmitting(true);
     try {
-      // Kiểm tra nếu là môn Văn thì dùng gradeEssay
-      if (practiceData.subject.toLowerCase().includes('văn') || 
-          practiceData.subject.toLowerCase() === 'ngữ văn') {
-        const result = await gradeEssay(practiceData.exercise_question, studentAnswer);
-        console.log('Grading Result:', result);
-        setGradingResult(result);
-      } else {
-        console.log('Submitting answer for non-Van subject:', practiceData.exercise_question);
-        const result = await AI_auto_grade(practiceData.exercise_question, studentAnswer, practiceData.subject);
-        console.log('Auto Grade Result:', result);
-        setGradingResult(result);
-      }
+      // Sử dụng AI_auto_grade cho tất cả các môn học
+      const result = await AI_auto_grade(practiceData.exercise_question, studentAnswer, practiceData.subject);
+      console.log('Auto Grade Result:', result);
+      setGradingResult(result);
     } catch (error) {
       console.error('Error submitting answer:', error);
       alert('Có lỗi xảy ra khi chấm bài!');
@@ -79,7 +71,7 @@ const PracticePage = () => {
                        practiceData.subject.toLowerCase() === 'ngữ văn';
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 p-6">
+    <div className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="mb-6">
@@ -91,7 +83,7 @@ const PracticePage = () => {
             <span>Quay lại</span>
           </button>
           
-          <div className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 rounded-2xl p-8 text-white shadow-2xl border-4 border-white">
+          <div className="bg-blue-600 rounded-2xl p-8 text-white shadow-2xl border-4 border-white">
             <div className="flex items-center gap-4 mb-3">
               <div className="bg-white/20 backdrop-blur-sm p-4 rounded-xl shadow-lg">
                 <BookOpen className="w-8 h-8" />
@@ -119,14 +111,14 @@ const PracticePage = () => {
             {/* Question Card */}
             <div className="bg-white rounded-2xl shadow-xl border-2 border-blue-100 p-8">
               <div className="flex items-start gap-4 mb-6">
-                <div className="bg-gradient-to-br from-blue-500 to-purple-600 p-3 rounded-xl shadow-md">
+                <div className="bg-blue-600 p-3 rounded-xl shadow-md">
                   <Target className="w-6 h-6 text-white" />
                 </div>
                 <div className="flex-1">
                   <h2 className="text-2xl font-bold text-gray-900 mb-3 flex items-center gap-2">
                     🎯 Câu hỏi
                   </h2>
-                  <div className="bg-gradient-to-br from-blue-50 to-purple-50 p-6 rounded-xl border-2 border-blue-200 shadow-inner">
+                  <div className="bg-blue-50 p-6 rounded-xl border-2 border-blue-200 shadow-inner">
                     <p className="text-gray-900 leading-relaxed whitespace-pre-wrap font-medium text-lg">
                       {practiceData.exercise_question}
                     </p>
@@ -138,7 +130,7 @@ const PracticePage = () => {
             {/* Answer Input */}
             <div className="bg-white rounded-2xl shadow-xl border-2 border-purple-100 p-8">
               <div className="flex items-center gap-4 mb-6">
-                <div className="bg-gradient-to-br from-purple-500 to-pink-600 p-3 rounded-xl shadow-md">
+                <div className="bg-purple-600 p-3 rounded-xl shadow-md">
                   <Send className="w-6 h-6 text-white" />
                 </div>
                 <h2 className="text-2xl font-bold text-gray-900">
@@ -152,7 +144,7 @@ const PracticePage = () => {
                 placeholder={isVanSubject 
                   ? "Nhập bài làm của bạn vào đây...\n\nHãy trình bày rõ ràng, mạch lạc và có dẫn chứng cụ thể."
                   : "Nhập câu trả lời của bạn vào đây..."}
-                className="w-full min-h-[300px] p-5 border-2 border-purple-300 rounded-xl focus:ring-4 focus:ring-purple-200 focus:border-purple-500 resize-none shadow-inner bg-gradient-to-br from-white to-purple-50 text-lg"
+                className="w-full min-h-[300px] p-5 border-2 border-purple-300 rounded-xl focus:ring-4 focus:ring-purple-200 focus:border-purple-500 resize-none shadow-inner bg-white text-lg"
                 disabled={isSubmitting}
               />
 
@@ -174,8 +166,8 @@ const PracticePage = () => {
                 <button
                   onClick={handleSubmit}
                   disabled={isSubmitting || !studentAnswer.trim()}
-                  className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 text-white px-8 py-3.5 rounded-xl font-bold hover:shadow-2xl transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center gap-2 text-lg"
-                >
+                  className="bg-blue-600 text-white px-8 py-3.5 rounded-xl font-bold hover:shadow-2xl transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center gap-2 text-lg">
+                
                   {isSubmitting ? (
                     <>
                       <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
@@ -194,7 +186,7 @@ const PracticePage = () => {
             {gradingResult && (
               <div className="bg-white rounded-2xl shadow-2xl border-4 border-green-200 p-8">
                 <div className="flex items-start gap-4 mb-8">
-                  <div className="bg-gradient-to-br from-green-500 to-green-600 p-4 rounded-xl shadow-lg">
+                  <div className="bg-green-600 p-4 rounded-xl shadow-lg">
                     <Award className="w-8 h-8 text-white" />
                   </div>
                   <div className="flex-1">
@@ -209,11 +201,11 @@ const PracticePage = () => {
                 {gradingResult.success && (gradingResult.result || gradingResult.grading_response) ? (
                   <div className="space-y-6">
                     {/* Overall Grade */}
-                    <div className="bg-gradient-to-br from-green-50 via-blue-50 to-purple-50 p-8 rounded-2xl border-4 border-green-300 shadow-lg">
+                    <div className="bg-green-50 p-8 rounded-2xl border-4 border-green-300 shadow-lg">
                       <div className="text-center">
                         <p className="text-sm font-bold text-gray-600 mb-3 uppercase tracking-wide">Điểm tổng thể</p>
                         <div className="flex items-center justify-center gap-4 mb-4">
-                          <p className="text-7xl font-bold bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">
+                          <p className="text-7xl font-bold text-green-600">
                             {gradingResult.grading_response?.score || gradingResult.result?.grade || 0}
                           </p>
                           <span className="text-4xl text-gray-400 font-bold">/10</span>
@@ -291,7 +283,7 @@ const PracticePage = () => {
                               </div>
                               <div className="w-full bg-gray-200 rounded-full h-2">
                                 <div 
-                                  className="bg-gradient-to-r from-purple-500 to-blue-500 h-2 rounded-full transition-all duration-500"
+                                  className="bg-purple-600 h-2 rounded-full transition-all duration-500"
                                   style={{ width: `${(score / 10) * 100}%` }}
                                 />
                               </div>
@@ -344,8 +336,8 @@ const PracticePage = () => {
                           setStudentAnswer('');
                           setGradingResult(null);
                         }}
-                        className="flex-1 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 text-white py-4 rounded-xl font-bold hover:shadow-2xl transition-all duration-300 transform hover:scale-105 flex items-center justify-center gap-2 text-lg"
-                      >
+                        className="flex-1 bg-blue-600 text-white py-4 rounded-xl font-bold hover:shadow-2xl transition-all duration-300 transform hover:scale-105 flex items-center justify-center gap-2 text-lg">
+                      
                         <Send className="w-6 h-6" />
                         🔄 Làm lại bài mới
                       </button>
@@ -378,14 +370,14 @@ const PracticePage = () => {
           <div className="lg:col-span-1">
             <div className="bg-white rounded-2xl shadow-xl border-2 border-yellow-200 p-6 sticky top-6">
               <div className="flex items-center gap-3 mb-6">
-                <div className="bg-gradient-to-br from-yellow-400 to-orange-500 p-3 rounded-xl shadow-md">
+                <div className="bg-yellow-500 p-3 rounded-xl shadow-md">
                   <Lightbulb className="w-6 h-6 text-white" />
                 </div>
                 <h3 className="font-bold text-gray-900 text-lg">💡 Gợi ý cải thiện</h3>
               </div>
 
               {practiceData.improve_suggestion ? (
-                <div className="bg-gradient-to-br from-yellow-50 to-orange-50 p-5 rounded-xl border-2 border-yellow-200 shadow-inner">
+                <div className="bg-yellow-50 p-5 rounded-xl border-2 border-yellow-200 shadow-inner">
                   <p className="text-sm text-gray-800 leading-relaxed whitespace-pre-wrap">
                     {practiceData.improve_suggestion}
                   </p>

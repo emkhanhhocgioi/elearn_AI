@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const api_url = "http://localhost:4000";
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
 
 const getAdminToken = () => {
   if (typeof window !== "undefined") {
@@ -22,7 +22,7 @@ export const getAllStudent = async () => {
         if (!token) {
             throw new Error('Token not found in localStorage');
         }
-        const res = await axios.get(`${api_url}/api/student/all`, getAuthConfig());
+        const res = await axios.get(`${API_URL}/api/student/all`, getAuthConfig());
         console.log(res.data)
         return res.data;    
     } catch (error) {
@@ -37,7 +37,7 @@ export const enrollStudentToClass = async (studentID: string, classID: string) =
         if (!token) {
             throw new Error('Token not found in localStorage');
         }
-        const res = await axios.post(`${api_url}/api/class/enrollStudent`, {
+        const res = await axios.post(`${API_URL}/api/class/enrollStudent`, {
             studentID: studentID,
             classID: classID
         }, getAuthConfig());
@@ -57,7 +57,7 @@ export const getStudentAverageGradeBySubject = async (studentId: string, subject
         if (!token) {
             throw new Error('Token not found in localStorage');
         }
-        const res = await axios.get(`${api_url}/api/teacher/analytics/student/average-grade`, {
+        const res = await axios.get(`${API_URL}/api/teacher/analytics/student/average-grade`, {
             ...getAuthConfig(),
             params: {
                 studentId: studentId,
@@ -78,7 +78,7 @@ export const updateClassStudentsAverageGrade = async (classId: string, subject: 
         if (!token) {
             throw new Error('Token not found in localStorage');
         }
-        const res = await axios.post(`${api_url}/api/teacher/analytics/class/update-average-grades`, {
+        const res = await axios.post(`${API_URL}/api/teacher/analytics/class/update-average-grades`, {
             classId: classId,
             subject: subject
         }, getAuthConfig());
@@ -96,7 +96,7 @@ export const getClassStudentsAllSubjectsAverage = async (classId: string) => {
         if (!token) {
             throw new Error('Token not found in localStorage');
         }
-        const res = await axios.get(`${api_url}/api/teacher/analytics/class/students/all-subjects-average`, {
+        const res = await axios.get(`${API_URL}/api/teacher/analytics/class/students/all-subjects-average`, {
             ...getAuthConfig(),
             params: {
                 classId: classId
@@ -116,7 +116,7 @@ export const UpdateStudentConductAndPerformance = async (studentId: string, cond
         if (!token) {
             throw new Error('Token not found in localStorage');
         }
-        const res = await axios.patch(`${api_url}/api/teacher/students/${studentId}`, {
+        const res = await axios.patch(`${API_URL}/api/teacher/students/${studentId}`, {
             conduct: conduct,
             performance: performance
         }, getAuthConfig());

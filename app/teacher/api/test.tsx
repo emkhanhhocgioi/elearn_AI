@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const api_url = "http://localhost:4000";
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
 
 const getAdminToken = () => {
   if (typeof window !== "undefined") {
@@ -28,7 +28,7 @@ export const createTest = async (classID: string ,lessonID: string, testtitle: s
             if (!teacherToken) {
                 throw new Error('Token not found in localStorage');
             }   
-            const res = await axios.post(`${api_url}/api/teacher/tests/create`, {
+            const res = await axios.post(`${API_URL}/api/teacher/tests/create`, {
                 classID: classID,
                 testtitle: testtitle,
                 lessonID: lessonID,
@@ -53,7 +53,7 @@ export const getClassTeacherTest = async (classID: string) => {
         if (!teacherToken) {
             throw new Error('Token not found in localStorage');
         }
-        const res = await axios.get(`${api_url}/api/teacher/${classID}/tests`, {
+        const res = await axios.get(`${API_URL}/api/teacher/${classID}/tests`, {
             headers: {
                 'Content-Type': 'application/json',     
                 'Authorization': `Bearer ${teacherToken}`
@@ -72,7 +72,7 @@ export const getTestDetailById = async (testID: string) => {
         if (!teacherToken) {
             throw new Error('Token not found in localStorage');
         }
-        const res = await axios.get(`${api_url}/api/teacher/tests/${testID}`, {
+        const res = await axios.get(`${API_URL}/api/teacher/tests/${testID}`, {
             headers: {
                 'Content-Type': 'application/json', 
                 'Authorization': `Bearer ${teacherToken}`
@@ -102,7 +102,7 @@ export const editTestById = async (
             test_time: test_time,
             closeDate: closeDate
         };
-        const res = await axios.put(`${api_url}/api/teacher/tests/${testId}`, updateData, {
+        const res = await axios.put(`${API_URL}/api/teacher/tests/${testId}`, updateData, {
 
             headers: {
                 'Content-Type': 'application/json',
@@ -120,7 +120,7 @@ export const deleteTestById = async (testID: string) => {
         if (!teacherToken) {
             throw new Error('Token not found in localStorage');
         }
-        const res = await axios.delete(`${api_url}/api/teacher/tests/${testID}`, {
+        const res = await axios.delete(`${API_URL}/api/teacher/tests/${testID}`, {
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${teacherToken}`
@@ -171,7 +171,7 @@ export const addQuestionToTest = async (
             formData.append('file', file);
         }
 
-        const res = await axios.post(`${api_url}/api/teacher/tests/${testId}/questions/single`, formData, {
+        const res = await axios.post(`${API_URL}/api/teacher/tests/${testId}/questions/single`, formData, {
             headers: {
                 'Content-Type': 'multipart/form-data',
                 'Authorization': `Bearer ${teacherToken}`
@@ -219,7 +219,7 @@ export const addQuestionsToTest = async (
             });
         }
 
-        const res = await axios.post(`${api_url}/api/teacher/tests/${testId}/questions`, formData, {
+        const res = await axios.post(`${API_URL}/api/teacher/tests/${testId}/questions`, formData, {
             headers: {
                 'Content-Type': 'multipart/form-data',
                 'Authorization': `Bearer ${teacherToken}`
@@ -242,7 +242,7 @@ export const AI_Generate_Question_Answer = async (
         if (!teacherToken) {
             throw new Error('Token not found in localStorage');
         }
-        const res = await axios.post(`${api_url}/api/teacher/ai/question-answer/generate`, {
+        const res = await axios.post(`${API_URL}/api/teacher/ai/question-answer/generate`, {
             prompt: prompt,
             subject: subject
         }, {
@@ -264,7 +264,7 @@ export const deleteQuestionFromTest = async (questionId: string) => {
         if (!teacherToken) {
             throw new Error('Token not found in localStorage');
         }
-        const res = await axios.delete(`${api_url}/api/teacher/tests/questions/${questionId}`, {
+        const res = await axios.delete(`${API_URL}/api/teacher/tests/questions/${questionId}`, {
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${teacherToken}`
@@ -316,7 +316,7 @@ export const UpdateQuestion = async (
             formData.append('file', file);
         }
 
-        const res = await axios.put(`${api_url}/api/teacher/tests/questions/${QuestionId}`, formData, {
+        const res = await axios.put(`${API_URL}/api/teacher/tests/questions/${QuestionId}`, formData, {
             headers: {
                 'Content-Type': 'multipart/form-data',
                 'Authorization': `Bearer ${teacherToken}`
@@ -336,7 +336,7 @@ export const getSubmittedAnswers = async (testId: string) => {
         if (!teacherToken) {
             throw new Error('Token not found in localStorage');
         }
-        const res = await axios.get(`${api_url}/api/teacher/tests/${testId}/submitted-answers`, {
+        const res = await axios.get(`${API_URL}/api/teacher/tests/${testId}/submitted-answers`, {
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${teacherToken}`
@@ -360,7 +360,7 @@ export const TeacherGradingAsnwer = async (
         if (!teacherToken) {
             throw new Error('Token not found in localStorage');
         }   
-        const res = await axios.put(`${api_url}/api/teacher/tests/answers/${answerId}/grade`, {
+        const res = await axios.put(`${API_URL}/api/teacher/tests/answers/${answerId}/grade`, {
             teacherGrade:grade,
             teacherComments,
             answerData
@@ -384,7 +384,7 @@ export const math_question_generation = async (prompt: string) => {
         if (!teacherToken) {
             throw new Error('Token not found in localStorage');
         }
-        const res = await axios.post(`${api_url}/api/teacher/tests/question/math/generate`,
+        const res = await axios.post(`${API_URL}/api/teacher/tests/question/math/generate`,
             { prompt },
             {
                 headers: {
@@ -410,7 +410,7 @@ export const Ai_grade = async (
         if (!teacherToken) {
             throw new Error('Token not found in localStorage');
         }   
-        const res = await axios.post(`${api_url}/api/teacher/ai/auto-grading`, {
+        const res = await axios.post(`${API_URL}/api/teacher/ai/auto-grading`, {
             exercise_question,
             student_answer,
             subject
@@ -436,7 +436,7 @@ export const Ai_grade_from_file = async (
         if (!teacherToken) {
             throw new Error('Token not found in localStorage');
         }
-        const res = await axios.post(`${api_url}/api/teacher/ai/auto-grading/file`, {
+        const res = await axios.post(`${API_URL}/api/teacher/ai/auto-grading/file`, {
             exercise_question,
             student_answer_file_url,
             subject
@@ -463,7 +463,7 @@ export const Ai_grade_from_image = async (
         if (!teacherToken) {
             throw new Error('Token not found in localStorage');
         }   
-        const res = await axios.post(`${api_url}/api/teacher/ai/auto-grading/image`, {
+        const res = await axios.post(`${API_URL}/api/teacher/ai/auto-grading/image`, {
             exercise_question,
             student_answer_image_url,
             subject
@@ -498,7 +498,7 @@ export const Teacher_AI_grading_Base_on_rubic = async (
         if (!teacherToken) {
             throw new Error('Token not found in localStorage'); 
         }   
-        const res = await axios.post(`${api_url}/api/teacher/ai/auto-grading/rubric`, {
+        const res = await axios.post(`${API_URL}/api/teacher/ai/auto-grading/rubric`, {
             answerid,
             rubric_criteria,
             subject

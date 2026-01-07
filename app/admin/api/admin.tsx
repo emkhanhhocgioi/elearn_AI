@@ -1,6 +1,6 @@
 import axios from "axios";
-// Admin API endpoints
-const api_url = "http://localhost:4000";
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
 
 const getAdminToken = () => {
   if (typeof window !== "undefined") {
@@ -47,7 +47,7 @@ export const createMutilpleStudentAccount = async (students: StudentData[], clas
   try {
     const token = getAdminToken();
     if (!token) throw new Error('Token not found');
-    const res = await fetch(`${api_url}/api/admin/students/create`, {
+    const res = await fetch(`${API_URL}/api/admin/students/create`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -70,7 +70,7 @@ export const getAllUsers = async () => {
     if (!token) {
       throw new Error('Token not found in localStorage');
     }
-    const res = await fetch(`${api_url}/api/admin/users`, {
+    const res = await fetch(`${API_URL}/api/admin/users`, {
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json'
@@ -88,7 +88,7 @@ export const getUserById = async (userId: string) => {
   try {
     const token = getAdminToken();
     if (!token) throw new Error('Token not found');
-    const res = await fetch(`${api_url}/api/admin/users/${userId}`, {
+    const res = await fetch(`${API_URL}/api/admin/users/${userId}`, {
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json'

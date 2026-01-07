@@ -53,18 +53,6 @@ export const generateTeacherComment = async (subject: string) => {
     }
 }
 
-export const gradeEssay = async (exercise_question: string, student_answer: string) =>{
-    try {
-        const response = await axios.post(`${API_URL}/api/student/ai/grading/essay`, { exercise_question, student_answer }, getAuthConfig());
-        console.log("AI Grading Response:", response.data);
-        return response.data;
-
-    } catch (error) {
-        console.error("Error grading essay:", error);
-        throw error;
-    }
-}
-
 export const getStudentInfo = async () => {
     try {
         const response = await axios.get(`${API_URL}/api/student/info`, getAuthConfig());

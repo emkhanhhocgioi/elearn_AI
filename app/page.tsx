@@ -114,13 +114,14 @@ export default function Home() {
             {/* Thẻ Tải Lên & Chia Sẻ */}
             <Card className="group overflow-hidden border-0 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 bg-white">
               <div className="relative w-full h-64 overflow-hidden">
-                <Image
-                  src="/landingpage/sharing.jpg"
+               <img
+                  src="https://th.bing.com/th/id/R.0ffc27a7a0b7ba961afe9964e14af04e?rik=KASpmcb%2foApIag&riu=http%3a%2f%2fmedia.cntraveler.com%2fphotos%2f568ae16e67dc82253d9f72cf%2fmaster%2fpass%2fStockholm-Public-Library-Alamy.jpg&ehk=tkl2CXGF9pzan9qcnJF%2b9IIhgU8M9%2ba5KvXxFg7uTCY%3d&risl=&pid=ImgRaw&r=0"
                   alt="Tải Lên Tài Liệu"
-                  fill
+                  
                   className="object-cover transition-transform duration-500 group-hover:scale-110"
-                  priority
+                  
                 />
+
                 <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 <div className="absolute bottom-4 left-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                   <div className="w-12 h-12 bg-[#0694fa] rounded-full flex items-center justify-center">
@@ -132,7 +133,7 @@ export default function Home() {
               </div>
               <CardHeader className="pb-3">
                 <CardTitle className="text-2xl font-bold text-gray-900 group-hover:text-[#0694fa] transition-colors">
-                  Bài Giảng Video
+                  Bài Giảng Chất Lượng Cao
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -151,12 +152,12 @@ export default function Home() {
             {/* Thẻ Khám Phá Tài Nguyên */}
             <Card className="group overflow-hidden border-0 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 bg-white">
               <div className="relative w-full h-64 overflow-hidden">
-                <Image
-                  src="/landingpage/discover.jpg"
+                <img
+                  src="https://thpt-locninh-binhphuoc.edu.vn/uploads/news/2025_07/images.png  "
                   alt="Khám Phá Tài Nguyên"
-                  fill
+             
                   className="object-cover transition-transform duration-500 group-hover:scale-110"
-                  priority
+               
                 />
                 <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 <div className="absolute bottom-4 left-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
@@ -188,12 +189,12 @@ export default function Home() {
             {/* Thẻ Cộng Tác & Kết Nối */}
             <Card className="group overflow-hidden border-0 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 bg-white">
               <div className="relative w-full h-64 overflow-hidden">
-                <Image
-                  src="/landingpage/collab.jpg"
+                <img
+                  src="https://facts.net/wp-content/uploads/2023/06/Communication-modes-768x415.jpg"
                   alt="Cộng Tác"
-                  fill
+                 
                   className="object-cover transition-transform duration-500 group-hover:scale-110"
-                  priority
+                
                 />
                 <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 <div className="absolute bottom-4 left-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">

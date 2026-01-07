@@ -1,6 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { Clock, CheckCircle, AlertCircle, Filter, Calendar, ChevronRight } from 'lucide-react';
+import { Clock, CheckCircle, AlertCircle, Filter, Calendar, ChevronRight, Award } from 'lucide-react';
 import { getStudentClassTest } from '../../student/api/test';
 import { useRouter } from 'next/navigation';
 
@@ -18,8 +18,8 @@ interface TestApiResponse {
   createDate: string;
   __v: number;
   test_time: number;
-  isSubmited: boolean;
-  isSubmitedTime: string;
+  hasSubmitted: boolean;
+  isSubmitedTime?: string;
   isGraded: boolean;
 }
 
@@ -62,6 +62,8 @@ const MyTestsTab = () => {
   const [filteredTests, setFilteredTests] = useState<MappedTest[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedSubject, setSelectedSubject] = useState('Tất cả môn');
+  const [currentPage, setCurrentPage] = useState(1);
+  const testsPerPage = 10;
   const router = useRouter();
 
   useEffect(() => {
@@ -76,14 +78,16 @@ const MyTestsTab = () => {
           const now = new Date();
           const daysUntilClose = Math.ceil((closeDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
           
-          // Determine status based on isSubmited and closeDate
+          // Determine status based on hasSubmitted and closeDate
           let status = 'Upcoming';
           let isLateSubmission = false;
           
-          if (test.isSubmited) {
+          if (test.hasSubmitted) {
             // Check if submitted on time
-            const submitTime = new Date(test.isSubmitedTime);
-            isLateSubmission = submitTime > closeDate;
+            if (test.isSubmitedTime) {
+              const submitTime = new Date(test.isSubmitedTime);
+              isLateSubmission = submitTime > closeDate;
+            }
             status = isLateSubmission ? 'Submitted Late' : 'Submitted';
           } else if (test.status === 'closed' || daysUntilClose < 0) {
             status = 'Overdue';
@@ -102,7 +106,7 @@ const MyTestsTab = () => {
             closeDate: closeDate.toLocaleDateString('vi-VN'),
             participants: test.participants,
             daysUntilClose: daysUntilClose,
-            isSubmited: test.isSubmited,
+            isSubmited: test.hasSubmitted,
             isLateSubmission: isLateSubmission,
             isGraded: test.isGraded
           };
@@ -130,6 +134,7 @@ const MyTestsTab = () => {
       const filtered = tests.filter(test => test.subject === selectedSubject);
       setFilteredTests(filtered);
     }
+    setCurrentPage(1); // Reset to first page when filter changes
   }, [selectedSubject, tests]);
 
   const getStatusBadge = (status: string) => {
@@ -177,6 +182,17 @@ const MyTestsTab = () => {
     if (daysUntilClose <= 3) return 'border-orange-200 bg-orange-50';
     if (daysUntilClose <= 7) return 'border-yellow-200 bg-yellow-50';
     return 'border-blue-200 bg-blue-50';
+  };
+
+  // Pagination calculations
+  const totalPages = Math.ceil(filteredTests.length / testsPerPage);
+  const indexOfLastTest = currentPage * testsPerPage;
+  const indexOfFirstTest = indexOfLastTest - testsPerPage;
+  const currentTests = filteredTests.slice(indexOfFirstTest, indexOfLastTest);
+
+  const handlePageChange = (pageNumber: number) => {
+    setCurrentPage(pageNumber);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   return (
@@ -287,6 +303,22 @@ const MyTestsTab = () => {
         </div>
       </div>
 
+      {/* Pagination Info */}
+      {filteredTests.length > 0 && (
+        <div className="bg-blue-50 rounded-xl p-4 border border-blue-200">
+          <div className="flex items-center justify-between text-sm text-gray-700">
+            <span className="font-medium">
+              Hiển thị <span className="text-[#2563EB] font-bold">{indexOfFirstTest + 1}</span> đến{' '}
+              <span className="text-[#2563EB] font-bold">{Math.min(indexOfLastTest, filteredTests.length)}</span> trong tổng số{' '}
+              <span className="text-[#2563EB] font-bold">{filteredTests.length}</span> bài kiểm tra
+            </span>
+            <span className="font-medium">
+              Trang <span className="text-[#2563EB] font-bold">{currentPage}</span> / <span className="text-[#2563EB] font-bold">{totalPages}</span>
+            </span>
+          </div>
+        </div>
+      )}
+
       <div className="bg-white rounded-2xl overflow-hidden shadow-lg border border-gray-200">
         <div className="overflow-x-auto">
           <table className="w-full">
@@ -317,7 +349,7 @@ const MyTestsTab = () => {
                   </td>
                 </tr>
               ) : (
-                filteredTests.map((test) => (
+                currentTests.map((test) => (
                   <tr key={test.id} className="hover:bg-[#F1F5F9] transition-colors">
                     <td className="px-6 py-4">
                       <p className="text-sm font-semibold text-[#0F172A] leading-relaxed">{test.title}</p>
@@ -355,33 +387,36 @@ const MyTestsTab = () => {
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex flex-col gap-2">
-                        {
-                          test.isSubmited === false  && (
-                             <button 
-                          onClick={() => router.push(`/student/test/${test.id}`)}
-                          className="bg-[#2563EB] text-white text-xs px-4 py-2 rounded-lg hover:bg-[#1d4ed8] transition-all duration-200 shadow-sm focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:ring-offset-2 font-medium"
-                        > 
-                          Làm bài
-                        </button>
-                          ) 
-                        }
-                        {
-                          test.isSubmited === true  && (
-                             <button 
-                          onClick={() => router.push(`/student/test/grading/${test.id}`)}
-                          className="bg-green-50 text-green-700 text-xs px-4 py-2 rounded-lg hover:bg-green-100 transition-all duration-200 border border-green-200 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 font-medium"
-                        > 
-                          Xem kết quả
-                        </button>
-                          ) 
-                        }
-                        {
-                          test.isSubmited === true && test.isGraded && (
-                            <span className="inline-flex items-center gap-1 text-xs text-green-600 font-medium">
-                              ✓ Đã chấm điểm
-                            </span>
-                          )
-                        }
+                        {!test.isSubmited ? (
+                          <button 
+                            onClick={() => router.push(`/student/test/${test.id}`)}
+                            className="bg-[#2563EB] hover:bg-[#1d4ed8] text-white text-xs px-4 py-2 rounded-lg transition-all duration-200 shadow-sm focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:ring-offset-2 font-medium"
+                          > 
+                            Làm bài
+                          </button>
+                        ) : (
+                          <>
+                            <div className="flex items-center gap-2 bg-gray-100 px-4 py-2 rounded-lg">
+                              <CheckCircle className="w-4 h-4 text-green-600" />
+                              <span className="text-xs text-gray-700 font-medium">Đã nộp bài</span>
+                            </div>
+                            {test.isGraded && (
+                              <>
+                                <button 
+                                  onClick={() => router.push(`/student/test/grading/${test.id}`)}
+                                  className="bg-green-50 text-green-700 text-xs px-4 py-2 rounded-lg hover:bg-green-100 transition-all duration-200 border border-green-200 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 font-medium flex items-center justify-center gap-1"
+                                > 
+                                  <Award className="w-3 h-3" />
+                                  Xem điểm
+                                </button>
+                                <div className="flex items-center gap-1 text-xs text-green-600 font-medium justify-center">
+                                  <CheckCircle className="w-3 h-3" />
+                                  Đã chấm điểm
+                                </div>
+                              </>
+                            )}
+                          </>
+                        )}
                       </div>
                     </td>
                   </tr>
@@ -391,6 +426,73 @@ const MyTestsTab = () => {
           </table>
         </div>
       </div>
+
+      {/* Pagination Controls */}
+      {totalPages > 1 && (
+        <div className="flex items-center justify-center gap-2 mt-6">
+          {/* Previous Button */}
+          <button
+            onClick={() => handlePageChange(currentPage - 1)}
+            disabled={currentPage === 1}
+            className={`px-4 py-2 rounded-lg font-medium text-sm transition-all duration-200 ${
+              currentPage === 1
+                ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                : 'bg-white text-[#2563EB] border-2 border-[#2563EB] hover:bg-[#2563EB] hover:text-white shadow-sm'
+            }`}
+          >
+            ← Trước
+          </button>
+
+          {/* Page Numbers */}
+          <div className="flex items-center gap-2">
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNumber) => {
+              // Show first page, last page, current page, and pages around current
+              if (
+                pageNumber === 1 ||
+                pageNumber === totalPages ||
+                (pageNumber >= currentPage - 1 && pageNumber <= currentPage + 1)
+              ) {
+                return (
+                  <button
+                    key={pageNumber}
+                    onClick={() => handlePageChange(pageNumber)}
+                    className={`min-w-[40px] h-10 rounded-lg font-bold text-sm transition-all duration-200 ${
+                      currentPage === pageNumber
+                        ? 'bg-gradient-to-r from-[#2563EB] to-[#1d4ed8] text-white shadow-lg scale-110'
+                        : 'bg-white text-gray-700 border-2 border-gray-300 hover:border-[#2563EB] hover:text-[#2563EB] shadow-sm'
+                    }`}
+                  >
+                    {pageNumber}
+                  </button>
+                );
+              } else if (
+                pageNumber === currentPage - 2 ||
+                pageNumber === currentPage + 2
+              ) {
+                return (
+                  <span key={pageNumber} className="text-gray-400 font-bold">
+                    ...
+                  </span>
+                );
+              }
+              return null;
+            })}
+          </div>
+
+          {/* Next Button */}
+          <button
+            onClick={() => handlePageChange(currentPage + 1)}
+            disabled={currentPage === totalPages}
+            className={`px-4 py-2 rounded-lg font-medium text-sm transition-all duration-200 ${
+              currentPage === totalPages
+                ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                : 'bg-white text-[#2563EB] border-2 border-[#2563EB] hover:bg-[#2563EB] hover:text-white shadow-sm'
+            }`}
+          >
+            Sau →
+          </button>
+        </div>
+      )}
     </div>
   );
 };

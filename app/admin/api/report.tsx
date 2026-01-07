@@ -1,5 +1,7 @@
 import axios from "axios";
-const API_BASE_URL = 'http://localhost:4000/api/admin';
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
+const API_BASE_URL = `${API_URL}/api/admin`;
 
 const getAdminToken = () => {
   if (typeof window !== "undefined") {

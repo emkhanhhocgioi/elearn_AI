@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const api_url = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
 
 const getAdminToken = () => {
   if (typeof window !== "undefined") {
@@ -18,7 +18,7 @@ const getAuthConfig = () => {
 
 export const getTeacherInfo = async () => {
     try {
-        const res = await axios.get(`${api_url}/api/teacher/profile`, getAuthConfig());
+        const res = await axios.get(`${API_URL}/api/teacher/profile`, getAuthConfig());
         console.log("Fetched teacher info:", res.data); 
         return res.data.teacher;
     } catch (error) {
@@ -29,7 +29,7 @@ export const getTeacherInfo = async () => {
 
 export const updateAccountSettings = async (settingsData: any) => {
     try {
-        const res = await axios.patch(`${api_url}/api/teacher/settings`, settingsData, getAuthConfig());    
+        const res = await axios.patch(`${API_URL}/api/teacher/settings`, settingsData, getAuthConfig());    
         console.log("Updated account settings response:", res.data);
         return res.data;
     }
@@ -40,7 +40,7 @@ export const updateAccountSettings = async (settingsData: any) => {
 };
 export const changePassword = async (passwordData: any) => {
     try {
-        const res = await axios.patch(`${api_url}/api/teacher/settings/password`, passwordData, getAuthConfig());
+        const res = await axios.patch(`${API_URL}/api/teacher/settings/password`, passwordData, getAuthConfig());
         console.log("Changed password response:", res.data);
         return res.data;
     }

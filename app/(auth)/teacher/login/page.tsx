@@ -143,15 +143,14 @@ export default function TeacherLoginPage() {
 
       {/* School Logo at top left */}
       <div className="absolute top-4 left-4 z-20 flex items-center bg-white/80 backdrop-blur-sm rounded-full px-4 py-2 shadow-lg transition-all duration-300 hover:scale-105">
-        <Image
-          src="/schoolimg.jpg"
-          alt="School Logo"
-          width={80}
-          height={80}
-          className="h-10 w-10 md:h-12 md:w-12 object-cover rounded-full mr-3 shadow-sm"
-        />
+        <img
+            src="https://images.vexels.com/content/216748/preview/e-learning-logo-design-d42848.png"
+            alt="Môi trường học thuật"
+          
+            className="absolute inset-0 w-full h-full object-cover"
+          />
         <span className="text-lg md:text-xl font-bold text-[#0694FE] hidden sm:block">
-          FPT University
+          Hệ thống Quản lý Giáo dục
         </span>
       </div>
 
@@ -164,7 +163,7 @@ export default function TeacherLoginPage() {
         {/* Left - Image and text - Hidden on mobile */}
         <div className="hidden lg:flex w-1/2 h-full relative flex-col justify-end">
           <Image
-            src="/authbgimg.avif"
+            src="https://tdacademy.edu.vn/wp-content/uploads/2022/03/Nhieu-thuong-thuong-co-thac-mac-Truong-Trung-hoc-co-so-la-gi-1.jpg"
             alt="Môi trường học thuật"
             fill
             className="absolute inset-0 w-full h-full object-cover"
@@ -210,7 +209,7 @@ export default function TeacherLoginPage() {
             {/* Profile image */}
             <div className="relative mb-6 lg:mb-8 group">
               <Image
-                src="/schoolimg.jpg"
+                src="https://images.vexels.com/content/216748/preview/e-learning-logo-design-d42848.png"
                 width={120}
                 height={120}
                 alt="Teacher Avatar"

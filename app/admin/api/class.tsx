@@ -1,6 +1,6 @@
 import axios from "axios"; 
 
-const api_url = "http://localhost:4000"
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
 
 const getAdminToken = () => {
   if (typeof window !== "undefined") {
@@ -39,7 +39,7 @@ export const createClass = async (classCode: string,teacher_id:string , class_ye
     try {
         const token = getAdminToken();
         if (!token) throw new Error('Token not found');
-        const res = await axios.post(`${api_url}/api/admin/classes/create`, {
+        const res = await axios.post(`${API_URL}/api/admin/classes/create`, {
             class_code: classCode,
             class_year: class_year,
             teacher_id: teacher_id,
@@ -62,7 +62,7 @@ export const getClassById = async (classId: string) => {
     try {
         const token = getAdminToken();
         if (!token) throw new Error('Token not found');
-        const res = await axios.get(`${api_url}/api/admin/class/${classId}`, {
+        const res = await axios.get(`${API_URL}/api/admin/class/${classId}`, {
             ...getAuthConfig(),
             headers: {
                 ...getAuthConfig().headers,
@@ -79,7 +79,7 @@ export const getClassById = async (classId: string) => {
 
 export const getAllClasses = async () => {
     try {
-        const res = await axios.get(`${api_url}/api/admin/classes`, {
+        const res = await axios.get(`${API_URL}/api/admin/classes`, {
             ...getAuthConfig(),
             headers: {
                 ...getAuthConfig().headers,
@@ -100,7 +100,7 @@ export const createMutilpleStudentAccount = async (students: StudentData[], clas
         const token = getAdminToken();
         if (!token) throw new Error('Token not found');
         const res = await axios.post(
-            `${api_url}/api/admin/class/add-students/${classid}`,
+            `${API_URL}/api/admin/class/add-students/${classid}`,
             { classid, students },
             {
                 ...getAuthConfig(),
@@ -122,7 +122,7 @@ export const EnrollStudentToClass = async (studentId: string, classId: string) =
     try {
         const token = getAdminToken();
         if (!token) throw new Error('Token not found');
-        const res = await axios.post(`${api_url}/api/class/enroll`, {
+        const res = await axios.post(`${API_URL}/api/class/enroll`, {
             studentid: studentId,
             classid: classId
         }, {
@@ -142,7 +142,7 @@ export const deleteClass = async (classId: string) => {
     try {
         const token = getAdminToken();
         if (!token) throw new Error('Token not found');
-        const res = await axios.delete(`${api_url}/api/admin/class/delete/${classId}`, {
+        const res = await axios.delete(`${API_URL}/api/admin/class/delete/${classId}`, {
             ...getAuthConfig(),
             headers: {
                 ...getAuthConfig().headers,
@@ -173,7 +173,7 @@ export const updateClass = async (
         if (classYear !== undefined) updateData.class_year = classYear;
         if (averageGrade !== undefined) updateData.class_avarage_grade = averageGrade;
         
-        const res = await axios.put(`${api_url}/api/admin/class/update/${classId}`, updateData, {
+        const res = await axios.put(`${API_URL}/api/admin/class/update/${classId}`, updateData, {
             ...getAuthConfig(),
             headers: {
                 ...getAuthConfig().headers,
@@ -190,7 +190,7 @@ export const getClassSubjectTeachers = async (classId: string) => {
     try {
         const token = getAdminToken();
         if (!token) throw new Error('Token not found'); 
-        const res = await axios.get(`${api_url}/api/admin/class/${classId}/subject-teachers`, {
+        const res = await axios.get(`${API_URL}/api/admin/class/${classId}/subject-teachers`, {
             ...getAuthConfig(),
             headers: {
                 ...getAuthConfig().headers,
@@ -214,7 +214,7 @@ export const updateSubjectTeacher = async (
         if (!token) throw new Error('Token not found');
         
         const res = await axios.put(
-            `${api_url}/api/admin/class/subject-teacher/${classId}`,
+            `${API_URL}/api/admin/class/subject-teacher/${classId}`,
             {
                 subjectField,
                 teacherId
@@ -294,7 +294,7 @@ export const assignTeacherToTimeSlot = async (data: AssignTeacherToTimeSlotData)
         if (!token) throw new Error('Token not found');
         
         const res = await axios.post(
-            `${api_url}/api/admin/schedule/assign`,
+            `${API_URL}/api/admin/schedule/assign`,
             data,
             {
                 ...getAuthConfig(),
@@ -317,8 +317,8 @@ export const getClassSchedule = async (classId: string, semester?: string): Prom
         if (!token) throw new Error('Token not found');
         
         const url = semester 
-            ? `${api_url}/api/admin/schedule/class/${classId}?semester=${semester}`
-            : `${api_url}/api/admin/schedule/class/${classId}`;
+            ? `${API_URL}/api/admin/schedule/class/${classId}?semester=${semester}`
+            : `${API_URL}/api/admin/schedule/class/${classId}`;
         
         const res = await axios.get(url, {
             ...getAuthConfig(),
@@ -340,7 +340,7 @@ export const getAllTimeSlots = async (): Promise<TimeSlot[]> => {
         const token = getAdminToken();
         if (!token) throw new Error('Token not found');
         
-        const res = await axios.get(`${api_url}/api/admin/time_slot`, {
+        const res = await axios.get(`${API_URL}/api/admin/time_slot`, {
             ...getAuthConfig(),
             headers: {
                 ...getAuthConfig().headers,

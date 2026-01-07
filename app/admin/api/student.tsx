@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const api_url = "http://localhost:4000"
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
 
 const getAdminToken = () => {
   if (typeof window !== "undefined") {
@@ -31,7 +31,7 @@ export const getAllStudent = async () => {
     try {
         const token = getAdminToken();
         if (!token) throw new Error('Token not found');
-        const res = await axios.get(`${api_url}/api/admin/students`, {
+        const res = await axios.get(`${API_URL}/api/admin/students`, {
             ...getAuthConfig(),
             headers: {
                 ...getAuthConfig().headers,
@@ -50,7 +50,7 @@ export const getStudentById = async (StudentID: string) => {
     try {
         const token = getAdminToken();
         if (!token) throw new Error('Token not found');
-        const res = await axios.get(`${api_url}/api/admin/students/${StudentID}`, {
+        const res = await axios.get(`${API_URL}/api/admin/students/${StudentID}`, {
             ...getAuthConfig(),
             headers: {
                 ...getAuthConfig().headers,
@@ -69,7 +69,7 @@ export const deleteStudentById = async (StudentID: string) => {
     try {
         const token = getAdminToken();
         if (!token) throw new Error('Token not found');
-        const res = await axios.delete(`${api_url}/api/admin/student/delete/${StudentID}`, {
+        const res = await axios.delete(`${API_URL}/api/admin/student/delete/${StudentID}`, {
             ...getAuthConfig(),
             headers: {
                 ...getAuthConfig().headers,
@@ -89,7 +89,7 @@ export const getStudentByClass = async (classid: string ) => {
     try {
         const token = getAdminToken();
         if (!token) throw new Error('Token not found');
-        const res = await axios.get(`${api_url}/api/admin/students/class/${classid}`, {
+        const res = await axios.get(`${API_URL}/api/admin/students/class/${classid}`, {
             ...getAuthConfig(),
             headers: {
                 ...getAuthConfig().headers,
@@ -106,7 +106,7 @@ export const enrollStudentToClass = async (studentID: string, classCode: string)
     try {
         const token = getAdminToken();
         if (!token) throw new Error('Token not found');
-        const res = await axios.post(`${api_url}/api/class/enroll`, {
+        const res = await axios.post(`${API_URL}/api/class/enroll`, {
             student_id: studentID,
             class_code: classCode
         }, {
@@ -128,7 +128,7 @@ export const updateStudent = async (studentID: string, data: StudentFormData) =>
     try {
         const token = getAdminToken();
         if (!token) throw new Error('Token not found');
-        const res = await axios.put(`${api_url}/api/admin/student/update/${studentID}`, data, {
+        const res = await axios.put(`${API_URL}/api/admin/student/update/${studentID}`, data, {
             ...getAuthConfig(),
             headers: {
                 ...getAuthConfig().headers,

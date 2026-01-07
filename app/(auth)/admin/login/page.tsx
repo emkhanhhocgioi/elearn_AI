@@ -140,8 +140,8 @@ export default function AdminLoginPage() {
 
       {/* School Logo at top left */}
       <div className="absolute top-4 left-4 z-20 flex items-center bg-white/80 backdrop-blur-sm rounded-full px-4 py-2 shadow-lg transition-all duration-300 hover:scale-105">
-        <Image
-          src="https://www.bing.com/th/id/OIP.r4JwfITtHQW0PmuLMIvJQAHaFg?w=243&h=211&c=8&rs=1&qlt=90&o=6&dpr=1.1&pid=3.1&rm=2"
+        <img
+          src="https://images.vexels.com/content/216748/preview/e-learning-logo-design-d42848.png"
           alt="School Logo"
           width={80}
           height={80}
@@ -160,10 +160,10 @@ export default function AdminLoginPage() {
       >
         {/* Left - Image and text - Hidden on mobile */}
         <div className="hidden lg:flex w-1/2 h-full relative flex-col justify-end">
-          <Image
-            src="https://www.bing.com/th/id/OIP.r4JwfITtHQW0PmuLMIvJQAHaFg?w=243&h=211&c=8&rs=1&qlt=90&o=6&dpr=1.1&pid=3.1&rm=2"
+          <img
+            src="https://tdacademy.edu.vn/wp-content/uploads/2022/03/Nhieu-thuong-thuong-co-thac-mac-Truong-Trung-hoc-co-so-la-gi-1.jpg"
             alt="Môi trường học thuật"
-            fill
+          
             className="absolute inset-0 w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
@@ -206,8 +206,8 @@ export default function AdminLoginPage() {
           <div className="w-full max-w-[90%] lg:max-w-[85%] px-4 lg:px-8 py-6 lg:py-8 flex flex-col items-center overflow-y-auto">
             {/* Profile image */}
             <div className="relative mb-6 lg:mb-8 group">
-              <Image
-                src="https://www.bing.com/th/id/OIP.r4JwfITtHQW0PmuLMIvJQAHaFg?w=243&h=211&c=8&rs=1&qlt=90&o=6&dpr=1.1&pid=3.1&rm=2"
+              <img
+                src="https://images.vexels.com/content/216748/preview/e-learning-logo-design-d42848.png"
                 width={120}
                 height={120}
                 alt="Admin Avatar"

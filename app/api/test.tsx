@@ -1,7 +1,7 @@
 
 import axios from "axios"; 
 
-const api_url = "http://localhost:4000"
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
 
 export const createTest = async (classID: string , testtitle: string , 
     participants: number, closedDate: string, subject: string ) =>{
@@ -10,7 +10,7 @@ export const createTest = async (classID: string , testtitle: string ,
             if (!teacherToken) {
                 throw new Error('Token not found in localStorage');
             }   
-            const res = await axios.post(`${api_url}/api/test/create`, {
+            const res = await axios.post(`${API_URL}/api/test/create`, {
                 classID: classID,
                 testtitle: testtitle,
                 participants: participants,
@@ -35,7 +35,7 @@ export const getClassTeacherTest = async () => {
         if (!teacherToken) {
             throw new Error('Token not found in localStorage');
         }
-        const res = await axios.get(`${api_url}/api/test/get`, {
+        const res = await axios.get(`${API_URL}/api/test/get`, {
             headers: {
                 'Content-Type': 'application/json',     
                 'Authorization': `Bearer ${teacherToken}`
@@ -55,7 +55,7 @@ export const getTestDetailById = async (testid: string) => {
         if (!teacherToken) {
             throw new Error('Token not found in localStorage');
         }       
-        const res = await axios.get(`${api_url}/api/test/data/${testid}`, {
+        const res = await axios.get(`${API_URL}/api/test/data/${testid}`, {
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${teacherToken}`

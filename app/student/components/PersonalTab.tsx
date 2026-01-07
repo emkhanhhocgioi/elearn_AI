@@ -350,14 +350,14 @@ const MyClassesTab = () => {
             <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
               {[
           'Toán',
-          'Ngữ văn',
+          'Ngữ Văn',
           'Tiếng Anh',
-          'Vật lý',
-          'Hóa học',
-          'Sinh học',
-          'Lịch sử',
-          'Địa lý',
-          'Tin học',
+          'Vật Lý',
+          'Hóa Học',
+          'Sinh Học',
+          'Lịch Sử',
+          'Địa Lý',
+          'Tin Học',
           'GDCD'
               ].map((subject) => (
           <button
@@ -494,14 +494,14 @@ const MyClassesTab = () => {
             <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
               {[
                 'Toán',
-                'Ngữ văn',
+                'Ngữ Văn',
                 'Tiếng Anh',
-                'Vật lý',
-                'Hóa học',
-                'Sinh học',
-                'Lịch sử',
-                'Địa lý',
-                'Tin học',
+                'Vật Lý',
+                'Hóa Học',
+                'Sinh Học',
+                'Lịch Sử',
+                'Địa Lý',
+                'Tin Học',
                 'GDCD'
               ].map((subject) => (
                 <button
@@ -545,13 +545,14 @@ const MyClassesTab = () => {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="Toán">Toán</SelectItem>
-                  <SelectItem value="Ngữ văn">Văn</SelectItem>
-                  <SelectItem value="Tiếng Anh">Anh</SelectItem>
-                  <SelectItem value="Vật lý">Lý</SelectItem>
-                  <SelectItem value="Hóa học">Hóa</SelectItem>
-                  <SelectItem value="Sinh học">Sinh</SelectItem>
-                  <SelectItem value="Lịch sử">Sử</SelectItem>
-                  <SelectItem value="Địa lý">Địa</SelectItem>
+                  <SelectItem value="Ngữ Văn">Ngữ Văn</SelectItem>
+                  <SelectItem value="Tiếng Anh">Tiếng Anh</SelectItem>
+                  <SelectItem value="Vật Lý">Vật Lý</SelectItem>
+                  <SelectItem value="Hóa Học">Hóa Học</SelectItem>
+                  <SelectItem value="Sinh Học">Sinh Học</SelectItem>
+                  <SelectItem value="Lịch Sử">Lịch Sử</SelectItem>
+                  <SelectItem value="Địa Lý">Địa Lý</SelectItem>
+                  <SelectItem value="Tin Học">Tin Học</SelectItem>
                   <SelectItem value="GDCD">GDCD</SelectItem>
                 </SelectContent>
               </Select>
