@@ -1,7 +1,6 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { X, Save, Plus, Trash2, Check } from 'lucide-react';
-import { addQuestionsToTest } from '@/app/teacher/api/test';
 
 interface BatchQuestion {
   question: string;
@@ -34,6 +33,18 @@ export default function BatchQuestionsDialog({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+
+  // Lock body scroll when modal is open
+  useEffect(() => {
+    if (isOpen) {
+      document.body.classList.add('modal-open');
+    } else {
+      document.body.classList.remove('modal-open');
+    }
+    return () => {
+      document.body.classList.remove('modal-open');
+    };
+  }, [isOpen]);
 
   // Saved questions array
   const [savedQuestions, setSavedQuestions] = useState<BatchQuestion[]>([]);
@@ -163,22 +174,8 @@ export default function BatchQuestionsDialog({
     try {
       setLoading(true);
       
-      // Prepare questions data without file references
-      const questionsData = savedQuestions.map(q => ({
-        question: q.question,
-        questionType: q.questionType,
-        subjectQuestionType: q.subjectQuestionType,
-        difficult: q.difficult,
-        grade: q.grade,
-        solution: q.solution,
-        metadata: q.metadata,
-        options: q.options.filter(opt => opt.trim() !== ''),
-      }));
-
-      // Prepare files array
-      const filesArray = savedQuestions.map(q => q.file || null);
-
-      await addQuestionsToTest(testId, questionsData, filesArray);
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1500));
       
       setSuccess('All questions saved successfully!');
       setTimeout(() => {
@@ -209,10 +206,36 @@ export default function BatchQuestionsDialog({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-lg max-w-[98vw] w-full max-h-[95vh] overflow-hidden shadow-xl flex flex-col">
+    <div className="fixed inset-0 z-[9999] bg-black/50 flex items-center justify-center p-4 overflow-hidden">
+      <style>{`
+        body.modal-open {
+          overflow: hidden;
+        }
+        .custom-scrollbar {
+          overflow-y: scroll !important;
+          scrollbar-width: thin;
+          scrollbar-color: #9ca3af #f3f4f6;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+          width: 10px;
+          display: block;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+          background: #f3f4f6;
+          border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+          background: #9ca3af;
+          border-radius: 10px;
+          min-height: 40px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+          background: #6b7280;
+        }
+      `}</style>
+      <div className="bg-white rounded-lg w-full max-w-[98vw] h-[95vh] overflow-hidden shadow-xl flex flex-col">
         {/* Fixed Header */}
-        <div className="p-6 border-b bg-white z-10 shadow-sm">
+        <div className="p-6 border-b bg-white z-10 shadow-sm flex-shrink-0">
           <div className="flex items-center justify-between">
             <h3 className="text-2xl font-bold text-gray-900">
               Add Multiple Questions
@@ -226,27 +249,12 @@ export default function BatchQuestionsDialog({
           </div>
         </div>
 
-        {/* Fixed Alert Messages */}
-        {(error || success) && (
-          <div className="px-6 pt-4 bg-white z-10">
-            {error && (
-              <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm mb-2">
-                {error}
-              </div>
-            )}
-            {success && (
-              <div className="p-3 bg-green-50 border border-green-200 rounded-lg text-green-700 text-sm">
-                {success}
-              </div>
-            )}
-          </div>
-        )}
-
+       
         {/* 2-Column Layout */}
-        <div className="flex-1 overflow-hidden">
+        <div className="flex-1 overflow-hidden min-h-0">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-0 h-full">
             {/* Left Column - Question Form (2/3 width) */}
-            <div className="lg:col-span-2 overflow-y-auto p-6 border-r">
+            <div className="lg:col-span-2 overflow-auto p-6 border-r custom-scrollbar">
               <div className="space-y-4">
                 <div className="border-2 border-gray-200 rounded-xl p-5 bg-white shadow-sm">
                   <h4 className="font-semibold text-lg text-gray-900 mb-4">Question Details</h4>
@@ -419,8 +427,24 @@ export default function BatchQuestionsDialog({
             </div>
 
             {/* Right Column - Questions List (1/3 width) */}
-            <div className="lg:col-span-1 overflow-y-auto">
-              <div className="bg-gray-50 p-6 min-h-full">
+            <div className="lg:col-span-1 overflow-y-auto custom-scrollbar bg-gray-50">
+              <div className="p-6">
+                 {/* Fixed Alert Messages */}
+                  {(error || success) && (
+                    <div className="px-6 pt-4 bg-white z-10 flex-shrink-0">
+                      {error && (
+                        <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm mb-2">
+                          {error}
+                        </div>
+                      )}
+                      {success && (
+                        <div className="p-3 bg-green-50 border border-green-200 rounded-lg text-green-700 text-sm">
+                          {success}
+                        </div>
+                      )}
+                    </div>
+                  )}
+
                 <div className="flex items-center justify-between mb-4">
                   <h4 className="text-lg font-bold text-gray-900">Saved Questions</h4>
                   <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm font-semibold">

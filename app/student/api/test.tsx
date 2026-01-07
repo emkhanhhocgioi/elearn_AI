@@ -15,6 +15,26 @@ const getAuthConfig = () => {
     : {};
 };
 
+export const getTestsBySubject = async (subject: string) => {
+    try {
+        const studentToken = getStudentToken(); 
+        if (!studentToken) {
+            throw new Error('Token not found in localStorage');
+        }   
+        const res = await axios.get(`${API_URL}/api/student/test/subject/${subject}`, {
+            ...getAuthConfig(), 
+            headers: {  
+                ...getAuthConfig().headers, 
+                'Content-Type': 'application/json'  
+            }
+        });
+        console.log('Fetched tests by subject:', res.data);  
+        return res.data;
+    } catch (error) {   
+        console.error('Error fetching tests by subject:', error);
+    }
+};
+
 export const getStudentClassTest = async () => { 
     try {
         const studentToken = getStudentToken();

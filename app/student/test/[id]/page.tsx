@@ -324,7 +324,7 @@ const TestDetailPage = () => {
   const isOverdue = daysUntilClose < 0;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 py-8 px-4">
+    <div className="min-h-screen bg-blue-50 py-8 px-4">
       <div className="max-w-5xl mx-auto">
         {/* Header */}
         <div className="mb-6">
@@ -340,14 +340,14 @@ const TestDetailPage = () => {
         {!showQuestions ? (
           /* Test Information */
           <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
-            {/* Title Section with Gradient */}
-            <div className="mb-8 pb-6 border-b-2 border-gradient-to-r from-blue-400 to-purple-400">
+            {/* Title Section */}
+            <div className="mb-8 pb-6 border-b-2 border-blue-400">
               <div className="flex items-start gap-4">
-                <div className="bg-gradient-to-br from-blue-500 to-purple-600 p-4 rounded-xl shadow-lg">
+                <div className="bg-blue-600 p-4 rounded-xl shadow-lg">
                   <BookOpen className="w-8 h-8 text-white" />
                 </div>
                 <div className="flex-1">
-                  <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-2">
+                  <h1 className="text-3xl font-bold text-blue-600 mb-2">
                     {test.testtitle}
                   </h1>
                   <div className="flex items-center gap-3">
@@ -373,8 +373,8 @@ const TestDetailPage = () => {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-              <div className="flex items-center gap-4 bg-gradient-to-br from-blue-50 to-blue-100 p-5 rounded-xl border-2 border-blue-200 hover:shadow-lg transition-all duration-300">
-                <div className="bg-gradient-to-br from-blue-500 to-blue-600 p-4 rounded-xl shadow-md">
+              <div className="flex items-center gap-4 bg-blue-50 p-5 rounded-xl border-2 border-blue-200 hover:shadow-lg transition-all duration-300">
+                <div className="bg-blue-600 p-4 rounded-xl shadow-md">
                   <Clock className="w-7 h-7 text-white" />
                 </div>
                 <div>
@@ -383,8 +383,8 @@ const TestDetailPage = () => {
                 </div>
               </div>
 
-              <div className="flex items-center gap-4 bg-gradient-to-br from-purple-50 to-purple-100 p-5 rounded-xl border-2 border-purple-200 hover:shadow-lg transition-all duration-300">
-                <div className="bg-gradient-to-br from-purple-500 to-purple-600 p-4 rounded-xl shadow-md">
+              <div className="flex items-center gap-4 bg-purple-50 p-5 rounded-xl border-2 border-purple-200 hover:shadow-lg transition-all duration-300">
+                <div className="bg-purple-600 p-4 rounded-xl shadow-md">
                   <BookOpen className="w-7 h-7 text-white" />
                 </div>
                 <div>
@@ -393,8 +393,8 @@ const TestDetailPage = () => {
                 </div>
               </div>
 
-              <div className="flex items-center gap-4 bg-gradient-to-br from-green-50 to-green-100 p-5 rounded-xl border-2 border-green-200 hover:shadow-lg transition-all duration-300">
-                <div className={`bg-gradient-to-br ${isOverdue ? 'from-red-500 to-red-600' : 'from-green-500 to-green-600'} p-4 rounded-xl shadow-md`}>
+              <div className="flex items-center gap-4 bg-green-50 p-5 rounded-xl border-2 border-green-200 hover:shadow-lg transition-all duration-300">
+                <div className={`${isOverdue ? 'bg-red-600' : 'bg-green-600'} p-4 rounded-xl shadow-md`}>
                   <Calendar className="w-7 h-7 text-white" />
                 </div>
                 <div>
@@ -411,8 +411,8 @@ const TestDetailPage = () => {
                 </div>
               </div>
 
-              <div className="flex items-center gap-4 bg-gradient-to-br from-orange-50 to-orange-100 p-5 rounded-xl border-2 border-orange-200 hover:shadow-lg transition-all duration-300">
-                <div className="bg-gradient-to-br from-orange-500 to-orange-600 p-4 rounded-xl shadow-md">
+              <div className="flex items-center gap-4 bg-orange-50 p-5 rounded-xl border-2 border-orange-200 hover:shadow-lg transition-all duration-300">
+                <div className="bg-orange-600 p-4 rounded-xl shadow-md">
                   <Users className="w-7 h-7 text-white" />
                 </div>
                 <div>
@@ -422,7 +422,7 @@ const TestDetailPage = () => {
               </div>
             </div>
 
-            <div className="bg-gradient-to-br from-gray-50 to-gray-100 border-2 border-gray-200 rounded-xl p-6 mb-6">
+            <div className="bg-gray-50 border-2 border-gray-200 rounded-xl p-6 mb-6">
               <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
                 <AlertCircle className="w-5 h-5 text-blue-600" />
                 Thông tin chi tiết
@@ -458,7 +458,7 @@ const TestDetailPage = () => {
                 className={`flex-1 py-4 px-6 rounded-xl font-bold text-white text-lg transition-all duration-300 transform hover:scale-105 shadow-lg ${
                   isOverdue && test.status !== 'ongoing'
                     ? 'bg-gray-400 cursor-not-allowed'
-                    : 'bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 hover:shadow-2xl animate-gradient'
+                    : 'bg-blue-600 hover:shadow-2xl hover:bg-blue-700'
                 }`}
               >
                 {isOverdue && test.status !== 'ongoing' ? '⚠️ Bài test đã hết hạn' : '🚀 Bắt đầu làm bài'}
@@ -472,7 +472,7 @@ const TestDetailPage = () => {
             <div className="mb-8 pb-6 border-b-2 border-gray-200">
               <div className="flex items-center justify-between">
                 <div>
-                  <h2 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-2">
+                  <h2 className="text-2xl font-bold text-blue-600 mb-2">
                     {test.testtitle}
                   </h2>
                   <div className="flex items-center gap-4 text-sm text-gray-600">
@@ -498,7 +498,7 @@ const TestDetailPage = () => {
                   <div className="flex items-center gap-2">
                     <div className="w-32 h-2 bg-gray-200 rounded-full overflow-hidden">
                       <div 
-                        className="h-full bg-gradient-to-r from-blue-500 to-purple-500 transition-all duration-300"
+                        className="h-full bg-blue-600 transition-all duration-300"
                         style={{ width: `${(answers.length / questions.length) * 100}%` }}
                       />
                     </div>
@@ -510,11 +510,11 @@ const TestDetailPage = () => {
 
             <div className="space-y-6">
               {questions.map((question, index) => (
-                <div key={question._id} className="bg-gradient-to-br from-gray-50 to-white border-2 border-gray-200 rounded-xl p-6 hover:shadow-lg transition-all duration-300">
+                <div key={question._id} className="bg-white border-2 border-gray-200 rounded-xl p-6 hover:shadow-lg transition-all duration-300">
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex-1">
                       <div className="flex items-center gap-3 mb-3">
-                        <div className="bg-gradient-to-r from-blue-500 to-purple-600 text-white w-10 h-10 rounded-full flex items-center justify-center font-bold text-lg shadow-md">
+                        <div className="bg-blue-600 text-white w-10 h-10 rounded-full flex items-center justify-center font-bold text-lg shadow-md">
                           {index + 1}
                         </div>
                         {getDifficultyBadge(question.difficult)}
@@ -627,7 +627,7 @@ const TestDetailPage = () => {
                   {!isEditMode ? (
                     <button
                       onClick={() => setIsEditMode(true)}
-                      className="flex-1 py-3 px-6 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl font-bold hover:shadow-xl transition-all duration-300 flex items-center justify-center gap-2"
+                      className="flex-1 py-3 px-6 bg-blue-600 text-white rounded-xl font-bold hover:shadow-xl hover:bg-blue-700 transition-all duration-300 flex items-center justify-center gap-2"
                     >
                       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -649,7 +649,7 @@ const TestDetailPage = () => {
                       <button
                         onClick={saveEditedAnswers}
                         disabled={isSubmitting}
-                        className="flex-1 py-3 px-6 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-xl font-bold hover:shadow-xl transition-all duration-300 flex items-center justify-center gap-2 disabled:bg-gray-400 disabled:cursor-not-allowed"
+                        className="flex-1 py-3 px-6 bg-green-600 text-white rounded-xl font-bold hover:shadow-xl hover:bg-green-700 transition-all duration-300 flex items-center justify-center gap-2 disabled:bg-gray-400 disabled:cursor-not-allowed"
                       >
                         {isSubmitting ? (
                           <>
@@ -670,7 +670,7 @@ const TestDetailPage = () => {
                 <button
                   onClick={handleSubmitTest}
                   disabled={isSubmitting}
-                  className="flex-1 py-3 px-6 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-xl font-bold hover:shadow-xl transition-all duration-300 flex items-center justify-center gap-2 disabled:bg-gray-400 disabled:cursor-not-allowed"
+                  className="flex-1 py-3 px-6 bg-green-600 text-white rounded-xl font-bold hover:shadow-xl hover:bg-green-700 transition-all duration-300 flex items-center justify-center gap-2 disabled:bg-gray-400 disabled:cursor-not-allowed"
                 >
                   {isSubmitting ? (
                     <>

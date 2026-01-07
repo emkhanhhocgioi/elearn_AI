@@ -126,7 +126,7 @@ function TestDetailContent() {
       {/* Header */}
       <div className="mb-8">
         <button
-          onClick={() => router.push('/teacher/class/tests/' + testDetail?.classID._id)}
+          onClick={() => router.push('/teacher/class/' + testDetail?.classID)}
           className="flex items-center gap-2 text-blue-600 hover:text-blue-700 mb-4 px-3 py-2 rounded-xl hover:bg-blue-50 transition-all hover:scale-105 font-semibold group"
         >
           <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
@@ -221,6 +221,7 @@ function TestDetailContent() {
         testId={testId}
         onSuccess={fetchTestData}
         subject={subject}
+        
       />
 
       <EditTestDialog

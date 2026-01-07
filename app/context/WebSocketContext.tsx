@@ -240,6 +240,22 @@ export function WebSocketProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  // Auto-connect on mount if token exists
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const studentToken = localStorage.getItem('studentToken');
+      const teacherToken = localStorage.getItem('teacherToken');
+      
+      if (studentToken) {
+        console.log('Auto-connecting as student...');
+        connect('student', studentToken);
+      } else if (teacherToken) {
+        console.log('Auto-connecting as teacher...');
+        connect('teacher', teacherToken);
+      }
+    }
+  }, []);
+
   // Cleanup on unmount
   useEffect(() => {
     return () => {

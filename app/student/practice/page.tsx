@@ -90,16 +90,24 @@ const PracticePage = () => {
               </div>
               <div>
                 <h1 className="text-3xl font-bold">Luyện tập: {practiceData.subject}</h1>
-                <p className="text-blue-100 text-sm mt-1 flex items-center gap-2">
+                <div className="flex items-center gap-3 mt-2">
                   {practiceData.difficulty && (
-                    <>
+                    <span className="bg-white/20 px-3 py-1 rounded-full font-semibold text-sm flex items-center gap-2">
                       <Target className="w-4 h-4" />
-                      <span className="bg-white/20 px-3 py-1 rounded-full font-semibold">
-                        Độ khó: {practiceData.difficulty}
-                      </span>
-                    </>
+                      Độ khó: {practiceData.difficulty}
+                    </span>
                   )}
-                </p>
+                  {practiceData.source && (
+                    <span className="bg-white/20 px-3 py-1 rounded-full font-semibold text-sm">
+                      {practiceData.source === 'teacher_comment' ? '📚 Từ nhận xét giáo viên' : '📝 Từ bài kiểm tra gần đây'}
+                    </span>
+                  )}
+                  {practiceData.topic && (
+                    <span className="bg-white/20 px-3 py-1 rounded-full font-semibold text-sm">
+                      📌 {practiceData.topic}
+                    </span>
+                  )}
+                </div>
               </div>
             </div>
           </div>
@@ -259,11 +267,27 @@ const PracticePage = () => {
                       <div className="bg-blue-50 p-6 rounded-2xl border-2 border-blue-300 shadow-md">
                         <div className="flex items-start gap-4 mb-4">
                           <Lightbulb className="w-6 h-6 text-blue-600 mt-0.5 flex-shrink-0" />
-                          <h3 className="font-bold text-gray-900 text-lg">💡 Nhận xét chung</h3>
+                          <h3 className="font-bold text-gray-900 text-lg">💡 Nhận xét chi tiết</h3>
                         </div>
-                        <p className="text-gray-800 leading-relaxed pl-10 text-base">
-                          {gradingResult.grading_response?.comments || gradingResult.result?.comments}
-                        </p>
+                        {typeof (gradingResult.grading_response?.comments || gradingResult.result?.comments) === 'object' ? (
+                          <div className="space-y-4">
+                            {Object.entries(gradingResult.grading_response?.comments || gradingResult.result?.comments).map(([criteria, comment]: [string, any]) => (
+                              <div key={criteria} className="bg-white p-5 rounded-xl border-2 border-blue-200 shadow-sm">
+                                <h4 className="font-bold text-blue-900 mb-2 flex items-center gap-2">
+                                  <span className="bg-blue-600 text-white px-3 py-1 rounded-full text-sm">✓</span>
+                                  {criteria}
+                                </h4>
+                                <p className="text-gray-700 leading-relaxed pl-9">
+                                  {comment}
+                                </p>
+                              </div>
+                            ))}
+                          </div>
+                        ) : (
+                          <p className="text-gray-800 leading-relaxed pl-10 text-base">
+                            {gradingResult.grading_response?.comments || gradingResult.result?.comments}
+                          </p>
+                        )}
                       </div>
                     )}
 
@@ -428,6 +452,22 @@ const PracticePage = () => {
                     </>
                   )}
                 </ul>
+                
+                {/* Hiển thị thông tin nguồn dữ liệu */}
+                {practiceData.source && (
+                  <div className="mt-6 pt-6 border-t-2 border-gray-200">
+                    <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                      <p className="text-xs font-bold text-blue-900 mb-2 uppercase tracking-wide">
+                        {practiceData.source === 'teacher_comment' ? '📚 Nguồn: Nhận xét giáo viên' : '📝 Nguồn: Bài kiểm tra gần đây'}
+                      </p>
+                      <p className="text-xs text-gray-600">
+                        {practiceData.source === 'teacher_comment' 
+                          ? 'Câu hỏi này được tạo dựa trên nhận xét và đánh giá của giáo viên về bài làm của bạn.'
+                          : 'Câu hỏi này được tạo dựa trên các lỗi sai bạn mắc phải trong bài kiểm tra gần đây để giúp bạn cải thiện.'}
+                      </p>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>

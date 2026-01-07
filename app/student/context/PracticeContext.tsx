@@ -6,6 +6,8 @@ interface PracticeData {
   exercise_question: string;
   difficulty?: string;
   improve_suggestion?: string;
+  source?: 'teacher_comment' | 'recent_test'; // Nguồn dữ liệu
+  topic?: string; // Topic từ recent test
 }
 
 interface PracticeContextType {

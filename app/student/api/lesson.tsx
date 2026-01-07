@@ -25,3 +25,13 @@ export const getStudentLessons = async () => {
         throw error;
     }   
     }   
+
+export const getLessonBySubjectforStudent = async (subject: string) => {
+    try {
+        const response = await axios.get(`${API_URL}/api/student/lesson/subject/${subject}`, getAuthConfig()); 
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching lessons by subject:", error);
+        throw error;
+    } 
+    }

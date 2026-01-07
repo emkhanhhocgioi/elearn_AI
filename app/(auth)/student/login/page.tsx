@@ -2,7 +2,7 @@
 export const dynamic = "force-dynamic";
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import Image from 'next/image';
+
 import { 
   Mail, 
   Lock, 
@@ -346,24 +346,10 @@ export default function StudentLoginPage() {
                 </div>
                 <div className="relative flex justify-center text-sm">
                   <span className="px-4 bg-[#F1F1E6] text-gray-500 font-medium">
-                    Mới sử dụng nền tảng?
+                    Nền tảng học tập thông minh
                   </span>
                 </div>
               </div>
-            </div>
-
-            {/* Register link */}
-            <div className="text-center w-full">
-              <span className="text-gray-600 text-sm lg:text-base">
-                Chưa có tài khoản?{" "}
-              </span>
-              <button
-                type="button"
-                onClick={() => router.push("/register")}
-                className="text-[#0694FE] hover:text-[#1E293B] font-semibold transition-colors duration-200 hover:underline text-sm lg:text-base"
-              >
-                Tạo tài khoản
-              </button>
             </div>
           </div>
         </div>

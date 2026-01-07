@@ -41,9 +41,9 @@ export const getDailyQuestionAnswer = async () => {
 }
 
 
-export const generateTeacherComment = async (subject: string) => {
+export const generateTeacherComment = async (subject: string,lessonid:string) => {
     try {
-        const response = await axios.post(`${API_URL}/api/student/ai/generate/teacher_comment`, { subject }, getAuthConfig());
+        const response = await axios.post(`${API_URL}/api/student/ai/generate/teacher_comment`, { subject, lessonid }, getAuthConfig());
         console.log("AI Response:", response.data);
         return response.data;
 
@@ -63,9 +63,9 @@ export const getStudentInfo = async () => {
     }
 }
 
-export const AI_suggest_on_recentTest = async (subject: string) => {
+export const AI_suggest_on_recentTest = async (subject: string,testid: string) => {
     try {
-        const response = await axios.post(`${API_URL}/api/student/ai/recent-incorrect-answers`, { subject }, getAuthConfig());
+        const response = await axios.post(`${API_URL}/api/student/ai/recent-incorrect-answers`, { subject, testid }, getAuthConfig());
         console.log("Recent Incorrect Answers Response:", response.data);
         return response.data;
     } catch (error) {

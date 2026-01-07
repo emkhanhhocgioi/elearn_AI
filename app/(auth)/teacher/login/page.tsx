@@ -162,10 +162,10 @@ export default function TeacherLoginPage() {
       >
         {/* Left - Image and text - Hidden on mobile */}
         <div className="hidden lg:flex w-1/2 h-full relative flex-col justify-end">
-          <Image
+          <img
             src="https://tdacademy.edu.vn/wp-content/uploads/2022/03/Nhieu-thuong-thuong-co-thac-mac-Truong-Trung-hoc-co-so-la-gi-1.jpg"
             alt="Môi trường học thuật"
-            fill
+            
             className="absolute inset-0 w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
@@ -208,7 +208,7 @@ export default function TeacherLoginPage() {
           <div className="w-full max-w-[90%] lg:max-w-[85%] px-4 lg:px-8 py-6 lg:py-8 flex flex-col items-center overflow-y-auto">
             {/* Profile image */}
             <div className="relative mb-6 lg:mb-8 group">
-              <Image
+              <img
                 src="https://images.vexels.com/content/216748/preview/e-learning-logo-design-d42848.png"
                 width={120}
                 height={120}
