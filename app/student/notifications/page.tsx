@@ -18,6 +18,7 @@ interface Notification {
   recipients: string[];
   sender: Sender;
   isReadBy: string[];
+  isRead: boolean;
   relatedId?: string;
   relatedModel?: string;
   important: boolean;
@@ -146,45 +147,30 @@ export default function NotificationPage() {
   };
 
   const filteredNotifications = notifications.filter((notif) => {
-    const isRead = studentId ? notif.isReadBy.includes(studentId) : false;
-    
-    if (filter === "unread") return !isRead;
+    if (filter === "unread") return !notif.isRead;
     if (filter === "important") return notif.important;
     return true;
   });
 
-  const unreadCount = notifications.filter((n) => 
-    studentId ? !n.isReadBy.includes(studentId) : true
-  ).length;
+  const unreadCount = notifications.filter((n) => !n.isRead).length;
 
   const importantCount = notifications.filter((n) => n.important).length;
 
   const handleNotificationClick = async (notification: Notification) => {
-    const isRead = studentId ? notification.isReadBy.includes(studentId) : false;
-    
     // Mark as read if not already read
-    if (!isRead) {
+    if (!notification.isRead) {
       try {
         await markNotificationAsRead(notification._id);
         // Update local state
         setNotifications(prevNotifications =>
           prevNotifications.map(n =>
-            n._id === notification._id && studentId
-              ? { ...n, isReadBy: [...n.isReadBy, studentId] }
+            n._id === notification._id
+              ? { ...n, isRead: true, isReadBy: studentId ? [...n.isReadBy, studentId] : n.isReadBy }
               : n
           )
         );
       } catch (error) {
         console.error("Failed to mark notification as read:", error);
-      }
-    }
-
-    // Navigate to related content if available
-    if (notification.relatedId && notification.relatedModel) {
-      if (notification.relatedModel === "Test") {
-        router.push(`/student/tests/${notification.relatedId}`);
-      } else if (notification.relatedModel === "Lesson") {
-        router.push(`/student/lessons/${notification.relatedId}`);
       }
     }
   };
@@ -296,8 +282,6 @@ export default function NotificationPage() {
         ) : (
           <div className="space-y-4">
             {filteredNotifications.map((notification) => {
-              const isRead = studentId ? notification.isReadBy.includes(studentId) : false;
-              
               return (
                 <div
                   key={notification._id}
@@ -306,7 +290,7 @@ export default function NotificationPage() {
                     notification.type,
                     notification.important
                   )} p-6 transition-all duration-200 hover:shadow-md hover:border-[#2563EB] cursor-pointer ${
-                    getNotificationBgColor(notification.type, notification.important, isRead)
+                    getNotificationBgColor(notification.type, notification.important, notification.isRead)
                   } border border-gray-200`}
                 >
                   <div className="flex gap-4">
@@ -319,12 +303,12 @@ export default function NotificationPage() {
                           <div className="flex items-center gap-2 flex-wrap mb-2">
                             <h3
                               className={`text-lg font-bold leading-relaxed ${
-                                !isRead ? "text-[#0F172A]" : "text-gray-600"
+                                !notification.isRead ? "text-[#0F172A]" : "text-gray-600"
                               }`}
                             >
                               {notification.title}
                             </h3>
-                            {!isRead && (
+                            {!notification.isRead && (
                               <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-[#2563EB] text-white">
                                 Mới
                               </span>
@@ -349,13 +333,6 @@ export default function NotificationPage() {
                       <p className="text-gray-700 leading-relaxed">
                         {notification.message}
                       </p>
-                      {notification.relatedId && (
-                        <div className="mt-4 pt-4 border-t border-gray-200">
-                          <span className="inline-flex items-center text-sm text-[#2563EB] font-semibold hover:text-[#1d4ed8]">
-                            Nhấn để xem chi tiết →
-                          </span>
-                        </div>
-                      )}
                     </div>
                   </div>
                 </div>

@@ -142,7 +142,7 @@ function TestDetailContent() {
               <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
               
                 <p className="text-gray-600">
-                  <strong>Bài học:</strong> {testDetail?.lessonID.title || 0}
+                  <strong>Bài học:</strong> {testDetail?.testtitle || 0}
                 </p>
                 <p className="text-gray-600">
                   <strong>Giáo viên:</strong> {testDetail?.teacherID.name || 'N/A'}

@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { ArrowLeft, FileText, Calendar, Clock, CheckCircle, XCircle, X, Sparkles, Plus, Trash2, Award, TrendingUp, TrendingDown, MessageSquare } from 'lucide-react';
-import { getSubmittedAnswers, TeacherGradingAsnwer, Teacher_AI_grading_Base_on_rubic } from '@/app/teacher/api/test';
+import { getSubmittedAnswers, TeacherGradingAsnwer, Teacher_AI_grading_Base_on_rubic, Ai_grade_from_file, Ai_grade_from_image } from '@/app/teacher/api/test';
 
 interface Question {
   questionID: {
@@ -123,6 +123,8 @@ export default function SubmissionPage() {
   ]);
   const [aiGradingResult, setAiGradingResult] = useState<AIGradingResult | null>(null);
   const [isAiGrading, setIsAiGrading] = useState(false);
+  const [answerGradingResults, setAnswerGradingResults] = useState<{[key: string]: any}>({});
+  const [gradingAnswerId, setGradingAnswerId] = useState<string | null>(null);
 
   // Helper function to check if URL is an image
   const isImageUrl = (url: string) => {
@@ -223,6 +225,45 @@ export default function SubmissionPage() {
 
   const getTotalWeight = () => {
     return rubricCriteria.reduce((sum, item) => sum + item.weight, 0);
+  };
+
+  // AI Grading for individual answer
+  const handleGradeAnswerByAI = async (answer: Question, index: number) => {
+    if (!selectedSubmission || !answer.questionID || !answer.answer) return;
+    
+    const isImage = isImageUrl(answer.answer);
+    const subject = selectedSubmission.testID.subject;
+    
+    try {
+      setGradingAnswerId(answer._id);
+      
+      let result;
+      if (isImage) {
+        result = await Ai_grade_from_image(
+          answer.questionID.question,
+          answer.answer,
+          subject
+        );
+      } else {
+        result = await Ai_grade_from_file(
+          answer.questionID.question,
+          answer.answer,
+          subject
+        );
+      }
+      
+      if (result) {
+        setAnswerGradingResults(prev => ({
+          ...prev,
+          [answer._id]: result
+        }));
+      }
+    } catch (error) {
+      console.error('Error grading answer:', error);
+      alert('Lỗi khi chấm điểm câu trả lời này');
+    } finally {
+      setGradingAnswerId(null);
+    }
   };
 
   // AI Grading with Rubric
@@ -644,6 +685,58 @@ export default function SubmissionPage() {
                             <p className="text-gray-900 bg-white p-2 rounded border border-gray-200 text-sm">{answer.answer}</p>
                           )}
                         </div>
+                        
+                        {/* AI Grading Button for File Upload */}
+                        {answer.questionID?.questionType === 'file_upload' && (
+                          <div className="mt-3">
+                            <button
+                              onClick={() => handleGradeAnswerByAI(answer, index)}
+                              disabled={gradingAnswerId === answer._id}
+                              className="w-full px-3 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition disabled:opacity-50 disabled:cursor-not-allowed font-medium text-sm flex items-center justify-center gap-2"
+                            >
+                              {gradingAnswerId === answer._id ? (
+                                <>
+                                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                                  Đang chấm điểm...
+                                </>
+                              ) : (
+                                <>
+                                  <Sparkles className="w-4 h-4" />
+                                  Chấm điểm bằng AI
+                                </>
+                              )}
+                            </button>
+                            
+                            {/* Display AI Grading Result */}
+                            {answerGradingResults[answer._id] && answerGradingResults[answer._id].grading_response && (
+                              <div className="mt-3 bg-purple-50 border border-purple-200 rounded-lg p-3">
+                                <div className="flex items-center gap-2 mb-2">
+                                  <Award className="w-4 h-4 text-purple-600" />
+                                  <p className="font-semibold text-purple-900 text-sm">Kết quả chấm AI:</p>
+                                </div>
+                                <div className="flex items-center gap-2 mb-2">
+                                  {answerGradingResults[answer._id].grading_response.isCorrect ? (
+                                    <>
+                                      <CheckCircle className="w-5 h-5 text-green-600" />
+                                      <span className="text-sm font-semibold text-green-700">Đúng</span>
+                                    </>
+                                  ) : (
+                                    <>
+                                      <XCircle className="w-5 h-5 text-red-600" />
+                                      <span className="text-sm font-semibold text-red-700">Sai</span>
+                                    </>
+                                  )}
+                                </div>
+                                {answerGradingResults[answer._id].grading_response.comments && (
+                                  <div className="text-sm text-purple-800">
+                                    <p className="font-medium mb-1">Nhận xét:</p>
+                                    <p className="whitespace-pre-wrap">{answerGradingResults[answer._id].grading_response.comments}</p>
+                                  </div>
+                                )}
+                              </div>
+                            )}
+                          </div>
+                        )}
                       </div>
                     </div>
                   ))}
