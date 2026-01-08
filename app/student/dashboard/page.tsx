@@ -4,6 +4,8 @@ import { Bell, Search, MoreVertical, BookOpen, FileText, TrendingUp, Award, LogO
 import { useState, lazy, Suspense, useEffect } from 'react';
 import { studentLogout } from '@/app/api/auth';
 import { useRouter } from 'next/navigation';
+import { useWebSocket } from '../../context/WebSocketContext';
+import { toast, Toaster } from 'sonner';
 
 const MyClassesTab = lazy(() => import('../components/PersonalTab'));
 const MyTestsTab = lazy(() => import('../components/MyTestsTab'));
@@ -14,6 +16,8 @@ const MyGradeTab = lazy(() => import('../components/MyGradeTab'));
 const TeacherContactTab = lazy(() => import('../components/TeacherContactTab'));
 const ScheduleTab = lazy(() => import('../components/ScheduleTab'));
 import {searchLessonsAndTests} from '@/app/student/api/search'
+import {getUnreadNotificationCount} from '@/app/student/api/notification'
+import { set } from 'date-fns';
 
 const TabLoader = () => (
   <div className="flex items-center justify-center py-12">
@@ -69,7 +73,39 @@ export default function StudentDashboard() {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<{ lessons: Lesson[]; tests: TestApiResponse[] } | null>(null);
   const [isSearching, setIsSearching] = useState(false);
- 
+  
+  // Use WebSocket context for real-time notifications
+  const { unreadCount, setUnreadCount, latestNotification } = useWebSocket();
+
+  // Fetch initial unread notification count
+  useEffect(() => {
+    const fetchUnreadCount = async () => {
+      try {
+        const response = await getUnreadNotificationCount();
+        console.log("Unread Count Response:", response);
+        setUnreadCount(response.unreadCount || 0);
+      } catch (error) {
+        console.error("Error fetching unread count:", error);
+      }
+    };
+    
+    fetchUnreadCount();
+  }, [setUnreadCount]);
+
+  // Show toast notification when new notification arrives
+  useEffect(() => {
+    if (latestNotification) {
+      console.log('New notification received:', latestNotification);
+      toast('Bạn có thông báo mới', {
+        position: 'top-right',
+        duration: 4000,
+        style: {
+          background: '#2563EB',
+          color: '#fff',
+        },
+      });
+    }
+  }, [latestNotification]);
 
   // Debounce search với 5 giây
   useEffect(() => {
@@ -107,7 +143,9 @@ export default function StudentDashboard() {
   };
 
   return (
-    <div className="flex min-h-screen bg-[#F1F5F9]">
+    <>
+      <Toaster richColors />
+      <div className="flex min-h-screen bg-[#F1F5F9]">
       {/* Sidebar */}
       <aside className="hidden lg:flex flex-col w-64 bg-white border-r border-gray-200 fixed h-full shadow-sm">
         <div className="p-6 border-b border-gray-200">
@@ -297,6 +335,14 @@ export default function StudentDashboard() {
               aria-label="Notifications"
               >
               <Bell className="w-5 h-5 text-gray-600 hover:text-[#0F172A]" />
+              {unreadCount > 0 && (
+              <span
+                className="absolute top-1 flex items-center justify-center min-w-[18px] h-[18px] px-1 text-xs font-bold text-white bg-red-500 rounded-full shadow-sm"
+                style={{ left: '15px' }}
+              >
+                {unreadCount > 99 ? '99+' : unreadCount}
+              </span>
+              )}
               </button>
 
               <div className="relative">
@@ -369,5 +415,6 @@ export default function StudentDashboard() {
         </div>
       </main>
     </div>
+    </>
   );
 }

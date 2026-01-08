@@ -24,7 +24,16 @@ export const getStudentNotifications = async () => {
     throw error;
   }
 };
-
+export const getUnreadNotificationCount = async () => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/student/notifications/unread-count`, getAuthConfig());  
+  
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching unread notification count:", error);
+    throw error;
+  }
+};
 export const markNotificationAsRead = async (notificationId: string) => {
   try {
     const response = await axios.patch(`${API_BASE_URL}/student/notifications/${notificationId}/read`, {}, getAuthConfig());

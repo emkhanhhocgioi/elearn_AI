@@ -128,3 +128,19 @@ export const AI_auto_grade = async (exercise_question: string, student_answer: s
         throw error;
     }   
 }
+
+// AI Recent Test Grading Feedback
+export const AI_recent_test_grading_feedback = async ( grading_datas: any, subject: string) => {
+    try {
+        const response = await axios.post(`${API_URL}/api/student/ai/recent-test-grading-feedback`,  {
+                grading_datas,
+                subject
+            } , getAuthConfig());
+        console.log("AI Recent Test Grading Feedback Response:", response.data);
+        return response.data;   
+    } catch (error) {
+        console.error("Error in AI recent test grading feedback:", error);
+        throw error;
+
+    }
+}

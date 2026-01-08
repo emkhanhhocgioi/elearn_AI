@@ -100,6 +100,7 @@ interface WebSocketContextType {
   addNotification: (notification: Notification) => void;
   clearNotifications: () => void;
   unreadCount: number;
+  setUnreadCount: (count: number | ((prev: number) => number)) => void;
   latestNotification: Notification | null;
 }
 
@@ -117,11 +118,25 @@ export function WebSocketProvider({ children }: { children: ReactNode }) {
   const reconnectAttemptsRef = useRef(0);
   const maxReconnectAttempts = 10;
 
+  const playNotificationSound = useCallback(() => {
+    try {
+      const audio = new Audio('/audio/notification.mp3');
+      audio.volume = 0.5; // Set volume to 50%
+      audio.play().catch(error => {
+        console.error('Error playing notification sound:', error);
+      });
+    } catch (error) {
+      console.error('Error creating audio:', error);
+    }
+  }, []);
+
   const addNotification = useCallback((notification: Notification) => {
     setNotifications(prev => [notification, ...prev]);
     setUnreadCount(prev => prev + 1);
     setLatestNotification(notification);
-  }, []);
+    // Play notification sound
+    playNotificationSound();
+  }, [playNotificationSound]);
 
   const clearNotifications = useCallback(() => {
     setNotifications([]);
@@ -275,6 +290,7 @@ export function WebSocketProvider({ children }: { children: ReactNode }) {
         addNotification,
         clearNotifications,
         unreadCount,
+        setUnreadCount,
         latestNotification
       }}
     >

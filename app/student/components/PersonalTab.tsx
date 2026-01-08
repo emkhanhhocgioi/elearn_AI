@@ -287,6 +287,8 @@ const MyClassesTab = () => {
     router.push('/student/practice');
   };
 
+  
+
   const handleReset = () => {
     setSelectedSubject('');
     setSelectedLesson('');
@@ -680,17 +682,10 @@ const MyClassesTab = () => {
 
                   <button 
                     onClick={() => {
-                      if (recentTestResponse.questions && recentTestResponse.questions.length > 0) {
-                        const firstQuestion = recentTestResponse.questions[0];
-                        setPracticeData({
-                          subject: recentTestResponse.subject_name,
-                          exercise_question: firstQuestion.question,
-                          improve_suggestion: `Luyện tập về: ${firstQuestion.topic}`,
-                          source: 'recent_test',
-                          topic: firstQuestion.topic,
-                          difficulty: firstQuestion.difficulty,
-                        });
-                        router.push('/student/practice');
+                      if (recentTestResponse) {
+                        // Lưu data vào localStorage để truyền sang trang recent
+                        localStorage.setItem('recentTestData', JSON.stringify(recentTestResponse));
+                        router.push('/student/recent');
                       }
                     }}
                     className="w-full bg-yellow-600 text-white py-3 rounded-lg font-semibold hover:bg-yellow-700 hover:shadow-lg transition-all flex items-center justify-center gap-2"
