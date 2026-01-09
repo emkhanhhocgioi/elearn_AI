@@ -9,6 +9,8 @@ export const studentlogin = async (email: string, password: string) => {
       email,
       password
     });
+    console.log("Response data:", response.data);
+    localStorage.setItem('studentSettings', JSON.stringify(response.data.student.settings));    
     return response.data;
   } catch (error) {
     console.log(error);

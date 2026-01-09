@@ -118,7 +118,35 @@ export function WebSocketProvider({ children }: { children: ReactNode }) {
   const reconnectAttemptsRef = useRef(0);
   const maxReconnectAttempts = 10;
 
+  // Helper function to check if notifications are enabled in settings
+  const isNotificationsEnabled = useCallback(() => {
+    try {
+      const studentSettings = localStorage.getItem('studentSettings');
+      const teacherSettings = localStorage.getItem('teacherSettings');
+      
+      if (studentSettings) {
+        const settings = JSON.parse(studentSettings);
+        return settings.notifications !== false; // Default to true if not specified
+      }
+      
+      if (teacherSettings) {
+        const settings = JSON.parse(teacherSettings);
+        return settings.notifications !== false; // Default to true if not specified
+      }
+      
+      return true; // Default to enabled if no settings found
+    } catch (error) {
+      console.error('Error reading settings:', error);
+      return true; // Default to enabled on error
+    }
+  }, []);
+
   const playNotificationSound = useCallback(() => {
+    // Check if notifications are enabled before playing sound
+    if (!isNotificationsEnabled()) {
+      return;
+    }
+    
     try {
       const audio = new Audio('/audio/notification.mp3');
       audio.volume = 0.5; // Set volume to 50%
@@ -128,15 +156,21 @@ export function WebSocketProvider({ children }: { children: ReactNode }) {
     } catch (error) {
       console.error('Error creating audio:', error);
     }
-  }, []);
+  }, [isNotificationsEnabled]);
 
   const addNotification = useCallback((notification: Notification) => {
+    // Check if notifications are enabled before adding
+    if (!isNotificationsEnabled()) {
+      console.log('Notifications are disabled in settings. Skipping notification.');
+      return;
+    }
+    
     setNotifications(prev => [notification, ...prev]);
     setUnreadCount(prev => prev + 1);
     setLatestNotification(notification);
     // Play notification sound
     playNotificationSound();
-  }, [playNotificationSound]);
+  }, [isNotificationsEnabled, playNotificationSound]);
 
   const clearNotifications = useCallback(() => {
     setNotifications([]);

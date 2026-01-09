@@ -373,15 +373,7 @@ const TestDetailPage = () => {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-              <div className="flex items-center gap-4 bg-blue-50 p-5 rounded-xl border-2 border-blue-200 hover:shadow-lg transition-all duration-300">
-                <div className="bg-blue-600 p-4 rounded-xl shadow-md">
-                  <Clock className="w-7 h-7 text-white" />
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-blue-600 mb-1">Thời gian làm bài</p>
-                  <p className="text-2xl font-bold text-blue-900">{test.test_time} <span className="text-lg">phút</span></p>
-                </div>
-              </div>
+              
 
               <div className="flex items-center gap-4 bg-purple-50 p-5 rounded-xl border-2 border-purple-200 hover:shadow-lg transition-all duration-300">
                 <div className="bg-purple-600 p-4 rounded-xl shadow-md">
@@ -411,15 +403,7 @@ const TestDetailPage = () => {
                 </div>
               </div>
 
-              <div className="flex items-center gap-4 bg-orange-50 p-5 rounded-xl border-2 border-orange-200 hover:shadow-lg transition-all duration-300">
-                <div className="bg-orange-600 p-4 rounded-xl shadow-md">
-                  <Users className="w-7 h-7 text-white" />
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-orange-600 mb-1">Học viên tham gia</p>
-                  <p className="text-2xl font-bold text-orange-900">{test.participants} <span className="text-lg">học viên</span></p>
-                </div>
-              </div>
+              
             </div>
 
             <div className="bg-gray-50 border-2 border-gray-200 rounded-xl p-6 mb-6">
@@ -436,12 +420,7 @@ const TestDetailPage = () => {
                     {test.status === 'ongoing' ? '✓ Đang diễn ra' : test.status === 'closed' ? 'Đã đóng' : 'Sắp tới'}
                   </span>
                 </div>
-                <div className="flex justify-between items-center bg-white p-4 rounded-lg">
-                  <span className="text-gray-700 font-medium">Điểm trung bình:</span>
-                  <span className="font-bold text-blue-600 text-lg">
-                    {test.avg_score !== "0" ? `${test.avg_score}%` : 'Chưa có dữ liệu'}
-                  </span>
-                </div>
+               
                 <div className="flex justify-between items-center bg-white p-4 rounded-lg">
                   <span className="text-gray-700 font-medium">Ngày tạo:</span>
                   <span className="font-semibold text-gray-900">

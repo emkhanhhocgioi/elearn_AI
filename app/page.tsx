@@ -207,7 +207,7 @@ export default function Home() {
               </div>
               <CardHeader className="pb-3">
                 <CardTitle className="text-2xl font-bold text-gray-900 group-hover:text-[#0694fa] transition-colors">
-                  Tương Tác Với Giáo Viên
+                 Ứng dụng AI hỗ trợ
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -274,7 +274,7 @@ export default function Home() {
         <div className="container mx-auto px-6 md:px-12">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-              Học Sinh Nói Gì Về FPT E-Learning
+              Học Sinh Nói Gì Về E-Learning
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
               Hàng nghìn học sinh THPT đã cải thiện kết quả học tập với nền tảng của chúng tôi
@@ -290,11 +290,11 @@ export default function Home() {
                 </div>
                 <div>
                   <h4 className="text-gray-900 font-semibold">Mai Nguyễn</h4>
-                  <p className="text-gray-600 text-sm">Khoa Học Máy Tính, Năm 3</p>
+                  
                 </div>
               </div>
               <p className="text-gray-700 mb-6 leading-relaxed">
-                FPT E-Learning giúp em hiểu bài rõ hơn rất nhiều! Các video bài giảng dễ hiểu, có thể xem lại nhiều lần. Điểm môn Toán của em đã tăng từ 6 lên 8!
+                E-Learning giúp em hiểu bài rõ hơn rất nhiều! Các video bài giảng dễ hiểu, có thể xem lại nhiều lần. Điểm môn Toán của em đã tăng từ 6 lên 8!
               </p>
               <div className="flex text-yellow-400">
                 {[...Array(5)].map((_, i) => (
@@ -313,7 +313,7 @@ export default function Home() {
                 </div>
                 <div>
                   <h4 className="text-gray-900 font-semibold">Tuấn Lê</h4>
-                  <p className="text-gray-600 text-sm">Quản Trị Kinh Doanh, Năm 2</p>
+      
                 </div>
               </div>
               <p className="text-gray-700 mb-6 leading-relaxed">
@@ -336,7 +336,7 @@ export default function Home() {
                 </div>
                 <div>
                   <h4 className="text-gray-900 font-semibold">Linh Phạm</h4>
-                  <p className="text-gray-600 text-sm">Thiết Kế Đồ Họa, Năm 4</p>
+                 
                 </div>
               </div>
               <p className="text-gray-700 mb-6 leading-relaxed">
@@ -367,7 +367,7 @@ export default function Home() {
             Sẵn Sàng Bắt Đầu Học Tập?
           </h2>
           <p className="text-xl md:text-2xl text-white/90 max-w-4xl mx-auto mb-10 leading-relaxed">
-            Tham gia FPT E-Learning ngay hôm nay để trải nghiệm phương pháp học tập hiện đại, hiệu quả và đạt kết quả cao trong học tập.
+            Tham gia E-Learning ngay hôm nay để trải nghiệm phương pháp học tập hiện đại, hiệu quả và đạt kết quả cao trong học tập.
           </p>
           
           <div className="flex flex-col sm:flex-row gap-6 justify-center mb-12">

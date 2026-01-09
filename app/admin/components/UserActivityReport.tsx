@@ -134,14 +134,14 @@ export default function UserActivityReport() {
           <div className="w-12 h-12 bg-purple-600 rounded-xl flex items-center justify-center shadow-lg">
             <Activity className="w-6 h-6 text-white" />
           </div>
-          User Activity Logs
+          Nhật Ký Hoạt Động Người Dùng
         </h3>
         <button 
           onClick={handleExportCSV}
           className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-xl flex items-center gap-2 transition-all duration-300 font-semibold hover:scale-105 shadow-lg hover:shadow-xl"
         >
           <Download className="w-5 h-5" />
-          Export CSV
+          Xuất CSV
         </button>
       </div>
 
@@ -149,31 +149,31 @@ export default function UserActivityReport() {
         {/* Filters */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8 p-6 bg-purple-50 rounded-xl border-2 border-purple-100">
           <div>
-            <label className="block text-sm font-bold text-gray-900 mb-2">Role</label>
+            <label className="block text-sm font-bold text-gray-900 mb-2">Vai Trò</label>
             <select
               value={filters.role}
               onChange={(e) => handleFilterChange('role', e.target.value)}
               className="w-full border-2 border-gray-300 rounded-xl px-4 py-3 text-sm outline-none focus:ring-4 focus:ring-purple-200 focus:border-purple-400 cursor-pointer transition-all duration-300"
             >
-              <option value="">All Roles</option>
-              <option value="student">Student</option>
-              <option value="teacher">Teacher</option>
+              <option value="">Tất Cả</option>
+              <option value="student">Học Sinh</option>
+              <option value="teacher">Giáo Viên</option>
             </select>
           </div>
 
           <div>
-            <label className="block text-sm font-bold text-gray-900 mb-2">Action</label>
+            <label className="block text-sm font-bold text-gray-900 mb-2">Hành Động</label>
             <input
               type="text"
               value={filters.action}
               onChange={(e) => handleFilterChange('action', e.target.value)}
-              placeholder="Filter by action"
+              placeholder="Lọc theo hành động"
               className="w-full border-2 border-gray-300 rounded-xl px-4 py-3 text-sm outline-none focus:ring-4 focus:ring-purple-200 focus:border-purple-400 transition-all duration-300"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-bold text-gray-900 mb-2">Start Date</label>
+            <label className="block text-sm font-bold text-gray-900 mb-2">Ngày Bắt Đầu</label>
             <input
               type="date"
               value={filters.startDate}
@@ -183,7 +183,7 @@ export default function UserActivityReport() {
           </div>
 
           <div>
-            <label className="block text-sm font-bold text-gray-900 mb-2">End Date</label>
+            <label className="block text-sm font-bold text-gray-900 mb-2">Ngày Kết Thúc</label>
             <input
               type="date"
               value={filters.endDate}
@@ -197,7 +197,7 @@ export default function UserActivityReport() {
         {loading ? (
           <div className="text-center py-16">
             <div className="inline-block animate-spin rounded-full h-16 w-16 border-4 border-purple-500 border-t-transparent mb-4"></div>
-            <p className="text-lg font-medium text-gray-600">Loading activities...</p>
+            <p className="text-lg font-medium text-gray-600">Đang tải hoạt động...</p>
           </div>
         ) : error ? (
           <div className="text-center py-16 bg-red-50 rounded-xl">
@@ -208,7 +208,7 @@ export default function UserActivityReport() {
             <div className="w-20 h-20 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <Users className="w-10 h-10 text-purple-500" />
             </div>
-            <p className="text-lg font-semibold text-gray-600">No activities found</p>
+            <p className="text-lg font-semibold text-gray-600">Không tìm thấy hoạt động nào</p>
           </div>
         ) : (
           <>
@@ -216,12 +216,12 @@ export default function UserActivityReport() {
               <table className="w-full">
                 <thead className="bg-purple-50 border-b-2 border-purple-100">
                   <tr>
-                    <th className="px-4 py-4 text-left text-xs font-bold text-gray-900 uppercase tracking-wider">User</th>
-                    <th className="px-4 py-4 text-left text-xs font-bold text-gray-900 uppercase tracking-wider">Role</th>
-                    <th className="px-4 py-4 text-left text-xs font-bold text-gray-900 uppercase tracking-wider">Action</th>
-                    <th className="px-4 py-4 text-left text-xs font-bold text-gray-900 uppercase tracking-wider">Related</th>
-                    <th className="px-4 py-4 text-left text-xs font-bold text-gray-900 uppercase tracking-wider">Time</th>
-                    <th className="px-4 py-4 text-left text-xs font-bold text-gray-900 uppercase tracking-wider">Actions</th>
+                    <th className="px-4 py-4 text-left text-xs font-bold text-gray-900 uppercase tracking-wider">Người Dùng</th>
+                    <th className="px-4 py-4 text-left text-xs font-bold text-gray-900 uppercase tracking-wider">Vai Trò</th>
+                    <th className="px-4 py-4 text-left text-xs font-bold text-gray-900 uppercase tracking-wider">Hành Động</th>
+                    <th className="px-4 py-4 text-left text-xs font-bold text-gray-900 uppercase tracking-wider">Liên Quan</th>
+                    <th className="px-4 py-4 text-left text-xs font-bold text-gray-900 uppercase tracking-wider">Thời Gian</th>
+                    <th className="px-4 py-4 text-left text-xs font-bold text-gray-900 uppercase tracking-wider">Hành Động</th>
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
@@ -244,7 +244,7 @@ export default function UserActivityReport() {
                               ? 'bg-purple-100 text-purple-800' 
                               : 'bg-blue-100 text-blue-800'
                           }`}>
-                            {activity.role}
+                            {activity.role === 'teacher' ? 'Giáo Viên' : 'Học Sinh'}
                           </span>
                         </td>
                         <td className="px-4 py-4">
@@ -252,8 +252,8 @@ export default function UserActivityReport() {
                         </td>
                         <td className="px-4 py-4">
                           <div className="text-xs text-gray-600">
-                            {activity.testId && <div>Test: {activity.testId.title}</div>}
-                            {activity.lessonId && <div>Lesson: {activity.lessonId.title}</div>}
+                            {activity.testId && <div>Bài kiểm tra: {activity.testId.title}</div>}
+                            {activity.lessonId && <div>Bài học: {activity.lessonId.title}</div>}
                             {!activity.testId && !activity.lessonId && <span className="text-gray-400">-</span>}
                           </div>
                         </td>
@@ -266,7 +266,7 @@ export default function UserActivityReport() {
                             className="text-purple-600 hover:text-purple-800 flex items-center gap-2 font-semibold hover:scale-110 transition-all duration-300"
                           >
                             <Eye className="w-5 h-5" />
-                            View
+                            Xem
                           </button>
                         </td>
                       </tr>
@@ -279,7 +279,7 @@ export default function UserActivityReport() {
             {/* Pagination */}
             <div className="mt-6 flex items-center justify-between">
               <div className="text-sm text-gray-700">
-                Showing {((pagination.page - 1) * pagination.limit) + 1} to {Math.min(pagination.page * pagination.limit, pagination.total)} of {pagination.total} results
+                Hiển thị {((pagination.page - 1) * pagination.limit) + 1} đến {Math.min(pagination.page * pagination.limit, pagination.total)} trong {pagination.total} kết quả
               </div>
               <div className="flex gap-2">
                 <button
@@ -287,7 +287,7 @@ export default function UserActivityReport() {
                   disabled={pagination.page === 1}
                   className="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  Previous
+                  Trước
                 </button>
                 <div className="flex items-center gap-2">
                   {Array.from({ length: Math.min(5, pagination.totalPages) }, (_, i) => {
@@ -312,7 +312,7 @@ export default function UserActivityReport() {
                   disabled={pagination.page === pagination.totalPages}
                   className="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  Next
+                  Tiếp
                 </button>
               </div>
             </div>
@@ -325,7 +325,7 @@ export default function UserActivityReport() {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-xl p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-xl font-bold text-gray-900">Activity Detail</h3>
+              <h3 className="text-xl font-bold text-gray-900">Chi Tiết Hoạt Động</h3>
               <button
                 onClick={() => setShowDetailModal(false)}
                 className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
@@ -337,25 +337,25 @@ export default function UserActivityReport() {
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="text-sm font-medium text-gray-500">ID</label>
+                  <label className="text-sm font-medium text-gray-500">Mã Số</label>
                   <p className="text-sm text-gray-900 break-all">{selectedActivity._id}</p>
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-gray-500">Role</label>
+                  <label className="text-sm font-medium text-gray-500">Vai Trò</label>
                   <p className="text-sm">
                     <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
                       selectedActivity.role === 'teacher' 
                         ? 'bg-purple-100 text-purple-800' 
                         : 'bg-blue-100 text-blue-800'
                     }`}>
-                      {selectedActivity.role}
+                      {selectedActivity.role === 'teacher' ? 'Giáo Viên' : 'Học Sinh'}
                     </span>
                   </p>
                 </div>
               </div>
 
               <div>
-                <label className="text-sm font-medium text-gray-500">User</label>
+                <label className="text-sm font-medium text-gray-500">Người Dùng</label>
                 <div className="mt-1">
                   <p className="text-sm font-medium text-gray-900">
                     {selectedActivity.role === 'teacher' 
@@ -371,26 +371,26 @@ export default function UserActivityReport() {
               </div>
 
               <div>
-                <label className="text-sm font-medium text-gray-500">Action</label>
+                <label className="text-sm font-medium text-gray-500">Hành Động</label>
                 <p className="text-sm text-gray-900 mt-1">{selectedActivity.action}</p>
               </div>
 
               {selectedActivity.testId && (
                 <div>
-                  <label className="text-sm font-medium text-gray-500">Related Test</label>
+                  <label className="text-sm font-medium text-gray-500">Bài Kiểm Tra Liên Quan</label>
                   <p className="text-sm text-gray-900 mt-1">{selectedActivity.testId.title}</p>
                 </div>
               )}
 
               {selectedActivity.lessonId && (
                 <div>
-                  <label className="text-sm font-medium text-gray-500">Related Lesson</label>
+                  <label className="text-sm font-medium text-gray-500">Bài Học Liên Quan</label>
                   <p className="text-sm text-gray-900 mt-1">{selectedActivity.lessonId.title}</p>
                 </div>
               )}
 
               <div>
-                <label className="text-sm font-medium text-gray-500">Created At</label>
+                <label className="text-sm font-medium text-gray-500">Thời Gian Tạo</label>
                 <p className="text-sm text-gray-900 mt-1">
                   {new Date(selectedActivity.createdAt).toLocaleString()}
                 </p>
@@ -402,7 +402,7 @@ export default function UserActivityReport() {
                 onClick={() => setShowDetailModal(false)}
                 className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors"
               >
-                Close
+                Đóng
               </button>
             </div>
           </div>

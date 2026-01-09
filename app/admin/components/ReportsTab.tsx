@@ -14,8 +14,8 @@ export default function ReportsTab() {
       {/* Header Section */}
       <div className="bg-purple-600 rounded-2xl p-8 shadow-xl">
         <div className="flex flex-col gap-2">
-          <h2 className="text-3xl font-bold text-white">Reports & Analytics</h2>
-          <p className="text-purple-100">View comprehensive reports on class performance and user activity</p>
+          <h2 className="text-3xl font-bold text-white">Báo Cáo & Phân Tích</h2>
+          <p className="text-purple-100">Xem các báo cáo toàn diện về hiệu suất lớp học và hoạt động người dùng</p>
         </div>
       </div>
 
@@ -37,7 +37,7 @@ export default function ReportsTab() {
             }`}>
               <FileText className={`w-5 h-5 ${activeTab === 'test-reports' ? 'text-white' : 'text-gray-500'}`} />
             </div>
-            <span className="text-base">Test Reports</span>
+            <span className="text-base">Báo Cáo Bài Kiểm Tra</span>
             {activeTab === 'test-reports' && (
               <div className="absolute bottom-0 left-0 right-0 h-1 bg-purple-500"></div>
             )}
@@ -57,7 +57,7 @@ export default function ReportsTab() {
             }`}>
               <Activity className={`w-5 h-5 ${activeTab === 'user-activity' ? 'text-white' : 'text-gray-500'}`} />
             </div>
-            <span className="text-base">User Activity</span>
+            <span className="text-base">Hoạt Động Người Dùng</span>
             {activeTab === 'user-activity' && (
               <div className="absolute bottom-0 left-0 right-0 h-1 bg-purple-500"></div>
             )}

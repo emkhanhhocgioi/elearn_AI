@@ -344,10 +344,10 @@ const MyClassesTab = () => {
           <span className="px-4 py-2 bg-blue-50 text-blue-700 text-sm font-semibold rounded-full border border-blue-200">{learningPaths.length} môn học</span>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
           {/* Left Side - AI Response Display */}
-          <div className="lg:col-span-1">
-            <div className="bg-purple-50 rounded-2xl p-6 border-2 border-purple-200 shadow-xl sticky top-4 hover:shadow-2xl transition-shadow">
+          <div className="lg:col-span-1 flex">
+            <div className="bg-purple-50 rounded-2xl p-6 border-2 border-purple-200 shadow-xl hover:shadow-2xl transition-shadow w-full flex flex-col">
               <div className="flex items-center gap-3 mb-5">
                 <div className="bg-purple-500 p-3 rounded-xl shadow-lg">
                   <Sparkles className="w-6 h-6 text-white animate-pulse" />
@@ -440,7 +440,7 @@ const MyClassesTab = () => {
           </div>
 
           {/* Right Side - Subject Selection or Lessons Display */}
-          <div className="lg:col-span-2 bg-white rounded-2xl p-6 border border-gray-200 shadow-lg">
+          <div className="lg:col-span-1 bg-white rounded-2xl p-6 border border-gray-200 shadow-lg">
             {!selectedSubject ? (
               <>
                 <h3 className="text-sm font-bold text-gray-700 mb-5 flex items-center gap-2">
@@ -938,23 +938,7 @@ const MyClassesTab = () => {
         </div>
       </div>
 
-      {/* AI Insights */}
-      <div className="bg-purple-50 rounded-xl p-6 border border-purple-200">
-        <div className="flex items-start gap-4">
-          <div className="bg-purple-100 p-3 rounded-lg">
-            <Award className="w-6 h-6 text-purple-600" />
-          </div>
-          <div className="flex-1">
-            <h3 className="font-bold text-gray-900 mb-2">Phân Tích AI</h3>
-            <p className="text-gray-700 text-sm leading-relaxed">
-              Hệ thống AI nhận thấy bạn đang tiến bộ tốt ở <strong>Hóa học</strong>. 
-              Tuy nhiên, bạn cần chú ý hơn đến <strong>Vật lý</strong> - đặc biệt là các bài tập về định luật Ôm. 
-              Hệ thống đã điều chỉnh độ khó và tốc độ học phù hợp với khả năng hiện tại của bạn. 
-              Tiếp tục duy trì nhịp độ này, bạn sẽ đạt mục tiêu trong <strong>4 tuần</strong>!
-            </p>
-          </div>
-        </div>
-      </div>
+     
     </div>
   );
 };

@@ -166,7 +166,7 @@ export default function ClassDetailPage() {
                   className="bg-purple-600 text-white px-4 sm:px-5 py-2.5 rounded-lg flex items-center gap-2 hover:bg-purple-700 transition-colors shadow-sm font-semibold focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2"
                 >
                   <Plus className="w-5 h-5" />
-                  <span className="hidden sm:inline">Thêm bài học</span>
+                  <span className="hidden sm:inline">Thêm Bài Học</span>
                   <span className="sm:hidden">Thêm</span>
                 </button>
               ) : (
@@ -175,7 +175,7 @@ export default function ClassDetailPage() {
                   className="bg-blue-600 text-white px-4 sm:px-5 py-2.5 rounded-lg flex items-center gap-2 hover:bg-blue-700 transition-colors shadow-sm font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                 >
                   <Plus className="w-5 h-5" />
-                  <span className="hidden sm:inline">Tạo bài kiểm tra</span>
+                  <span className="hidden sm:inline">Tạo Bài Kiểm Tra</span>
                   <span className="sm:hidden">Tạo</span>
                 </button>
               )}
@@ -293,7 +293,7 @@ export default function ClassDetailPage() {
               <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-gray-600 mb-1.5 font-medium">Total Lessons</p>
+                    <p className="text-sm text-gray-600 mb-1.5 font-medium">Tổng Số Bài Học</p>
                     <p className="text-3xl font-bold text-[#0F172A]">{lessons.length}</p>
                   </div>
                   <div className="p-3 bg-blue-100 rounded-lg">
@@ -499,12 +499,12 @@ export default function ClassDetailPage() {
               <table className="w-full">
                 <thead className="bg-gradient-to-r from-gray-50 to-slate-50 border-b border-gray-200">
                   <tr>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Tên bài học</th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Môn học</th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Trạng thái</th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Tên Bài Học</th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Môn Học</th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Trạng Thái</th>
                     <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Tệp</th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Ngày tạo</th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Hành động</th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Ngày Tạo</th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Hành Động</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200">
@@ -543,10 +543,10 @@ export default function ClassDetailPage() {
                               onClick={(e) => e.stopPropagation()}
                             >
                               <FileText className="w-4 h-4" />
-                              <span className="text-sm">View File</span>
+                              <span className="text-sm">Xem Tệp</span>
                             </a>
                           ) : (
-                            <span className="text-sm text-gray-400">No file</span>
+                            <span className="text-sm text-gray-400">Không có tệp</span>
                           )}
                         </td>
                         <td className="px-6 py-4">
@@ -570,13 +570,13 @@ export default function ClassDetailPage() {
                             <button 
                               onClick={async (e) => {
                                 e.stopPropagation();
-                                if (confirm('Are you sure you want to delete this lesson?')) {
+                                if (confirm('Bạn có chắc chắn muốn xóa bài học này không?')) {
                                   try {
                                     await deleteLesson(lesson._id);
                                     setLessons(lessons.filter(l => l._id !== lesson._id));
                                   } catch (error) {
                                     console.error('Error deleting lesson:', error);
-                                    alert('Failed to delete lesson');
+                                    alert('Không thể xóa bài học');
                                   }
                                 }
                               }}
@@ -595,7 +595,7 @@ export default function ClassDetailPage() {
                         <div className="flex flex-col items-center justify-center">
                           <BookOpen className="w-16 h-16 text-gray-300 mb-4" />
                           <p className="text-gray-500 text-lg font-semibold">Chưa có bài học nào cho lớp này</p>
-                          <p className="text-gray-400 text-sm mt-2">Nhấn "Add Lesson" để tạo bài học đầu tiên</p>
+                          <p className="text-gray-400 text-sm mt-2">Nhấn "Thêm Bài Học" để tạo bài học đầu tiên</p>
                         </div>
                       </td>
                     </tr>
@@ -617,8 +617,8 @@ export default function ClassDetailPage() {
                   <Mail className="w-6 h-6 text-green-600" />
                 </div>
                 <div>
-                  <h2 className="text-2xl font-bold text-[#0F172A] leading-tight">Send Email to Class</h2>
-                  <p className="text-sm text-gray-600 mt-1">Send message to all students in {classInfo.class_code}</p>
+                  <h2 className="text-2xl font-bold text-[#0F172A] leading-tight">Gửi Email Đến Lớp</h2>
+                  <p className="text-sm text-gray-600 mt-1">Gửi tin nhắn đến tất cả học sinh trong lớp {classInfo.class_code}</p>
                 </div>
               </div>
               <button
@@ -638,13 +638,13 @@ export default function ClassDetailPage() {
               {/* Subject Input */}
               <div>
                 <label className="block text-sm font-semibold text-[#0F172A] mb-2">
-                  Email Subject *
+                  Tiêu Đề Email *
                 </label>
                 <input
                   type="text"
                   value={emailSubject}
                   onChange={(e) => setEmailSubject(e.target.value)}
-                  placeholder="Enter email subject..."
+                  placeholder="Nhập tiêu đề email..."
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition bg-white text-[#0F172A] placeholder:text-gray-400"
                   disabled={sendingEmail}
                 />
@@ -653,12 +653,12 @@ export default function ClassDetailPage() {
               {/* Message Input */}
               <div>
                 <label className="block text-sm font-semibold text-[#0F172A] mb-2">
-                  Message *
+                  Nội Dung *
                 </label>
                 <textarea
                   value={emailMessage}
                   onChange={(e) => setEmailMessage(e.target.value)}
-                  placeholder="Enter your message..."
+                  placeholder="Nhập nội dung tin nhắn..."
                   rows={8}
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition resize-none bg-white text-[#0F172A] placeholder:text-gray-400 leading-relaxed"
                   disabled={sendingEmail}
@@ -670,8 +670,8 @@ export default function ClassDetailPage() {
                 <div className="flex items-start gap-3">
                   <Users className="w-5 h-5 text-[#2563EB] mt-0.5" />
                   <div>
-                    <p className="text-sm font-semibold text-[#0F172A]">Recipients</p>
-                    <p className="text-sm text-gray-600 mt-1 leading-relaxed">This email will be sent to all students enrolled in class {classInfo.class_code} for subject {subject}.</p>
+                    <p className="text-sm font-semibold text-[#0F172A]">Người Nhận</p>
+                    <p className="text-sm text-gray-600 mt-1 leading-relaxed">Email này sẽ được gửi đến tất cả học sinh đăng ký trong lớp {classInfo.class_code} cho môn học {subject}.</p>
                   </div>
                 </div>
               </div>
@@ -688,17 +688,17 @@ export default function ClassDetailPage() {
                 className="px-6 py-2.5 border-2 border-gray-300 text-[#0F172A] rounded-lg hover:bg-[#F1F5F9] transition-colors font-semibold focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2"
                 disabled={sendingEmail}
               >
-                Cancel
+                Hủy
               </button>
               <button
                 onClick={async () => {
                   if (!emailSubject.trim() || !emailMessage.trim()) {
-                    alert('Please fill in both subject and message');
+                    alert('Vui lòng điền đầy đủ tiêu đề và nội dung');
                     return;
                   }
                   
                   if (!subject) {
-                    alert('Subject information is missing');
+                    alert('Thiếu thông tin môn học');
                     return;
                   }
 
@@ -710,13 +710,13 @@ export default function ClassDetailPage() {
                       subject: emailSubject,
                       message: emailMessage
                     });
-                    alert('Email sent successfully!');
+                    alert('Gửi email thành công!');
                     setEmailDialogOpen(false);
                     setEmailSubject('');
                     setEmailMessage('');
                   } catch (error) {
                     console.error('Error sending email:', error);
-                    alert('Failed to send email. Please try again.');
+                    alert('Không thể gửi email. Vui lòng thử lại.');
                   } finally {
                     setSendingEmail(false);
                   }
@@ -727,12 +727,12 @@ export default function ClassDetailPage() {
                 {sendingEmail ? (
                   <>
                     <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                    <span>Sending...</span>
+                    <span>Đang gửi...</span>
                   </>
                 ) : (
                   <>
                     <Mail className="w-5 h-5" />
-                    <span>Send Email</span>
+                    <span>Gửi Email</span>
                   </>
                 )}
               </button>

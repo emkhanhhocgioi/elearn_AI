@@ -34,12 +34,13 @@ interface TestApiResponse {
   avg_score: string;
   participants: number;
   closeDate: string;
-  status: string;
+  status: string | { submitted: boolean; graded: boolean };
   createDate: string;
   __v: number;
   test_time: number;
   isSubmited: boolean;
   isSubmitedTime: string;
+  lessonID?: string;
 }
 
 // Interface for mapped test object
@@ -98,7 +99,7 @@ export default function StudentDashboard() {
       console.log('New notification received:', latestNotification);
       toast('Bạn có thông báo mới', {
         position: 'top-right',
-        duration: 4000,
+        duration: 3000,
         style: {
           background: '#2563EB',
           color: '#fff',
@@ -130,7 +131,7 @@ export default function StudentDashboard() {
 
     const debounceTimer = setTimeout(() => {
       searchTestAndLessons(searchQuery);
-    }, 5000);
+    }, 2000);
 
     return () => clearTimeout(debounceTimer);
   }, [searchQuery]);
@@ -290,18 +291,28 @@ export default function StudentDashboard() {
                   {searchResults.tests && searchResults.tests.length > 0 && (
                     <div className="p-3 border-t border-gray-100">
                       <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wide px-3 py-2">Bài kiểm tra</h4>
-                      {searchResults.tests.map((test: TestApiResponse) => (
-                        <div key={test._id} className="px-3 py-3 hover:bg-[#F1F5F9] rounded-lg cursor-pointer transition-colors">
+                      {searchResults.tests.map((test: TestApiResponse) => {
+                        const isSubmitted = typeof test.status === 'object' && test.status.submitted;
+                        const isGraded = typeof test.status === 'object' && test.status.graded;
+                        
+                        return (
+                        <div 
+                          key={test._id} 
+                          onClick={() => {
+                            if (isSubmitted) {
+                              router.push(`/student/test/grading/${test._id}`);
+                            } else {
+                              router.push(`/student/test/${test._id}`);
+                            }
+                          }}
+                          className="px-3 py-3 hover:bg-[#F1F5F9] rounded-lg cursor-pointer transition-colors"
+                        >
                           <div className="flex items-start justify-between">
                             <div className="flex-1">
                               <div className="text-sm font-medium text-[#0F172A]">{test.testtitle}</div>
                               <div className="text-xs text-gray-600 mt-1.5 leading-relaxed">
                                 <span className="inline-flex items-center gap-1">
                                   <span className="font-medium">{test.subject}</span>
-                                  <span>•</span>
-                                  <span>{test.test_time} phút</span>
-                                  <span>•</span>
-                                  <span>{test.participants} học sinh</span>
                                 </span>
                               </div>
                               <div className="text-xs text-gray-400 mt-1">
@@ -309,13 +320,17 @@ export default function StudentDashboard() {
                               </div>
                             </div>
                             <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${
-                              test.status === 'open' ? 'bg-green-50 text-green-700 border border-green-200' : 'bg-gray-100 text-gray-700 border border-gray-200'
+                              isGraded ? 'bg-blue-50 text-blue-700 border border-blue-200' :
+                              isSubmitted ? 'bg-yellow-50 text-yellow-700 border border-yellow-200' :
+                              test.status === 'open' ? 'bg-green-50 text-green-700 border border-green-200' : 
+                              'bg-gray-100 text-gray-700 border border-gray-200'
                             }`}>
-                              {test.status === 'open' ? 'Mở' : 'Đóng'}
+                              {isGraded ? 'Đã chấm' : isSubmitted ? 'Đã nộp' : test.status === 'open' ? 'Mở' : 'Đóng'}
                             </span>
                           </div>
                         </div>
-                      ))}
+                        );
+                      })}
                     </div>
                   )}
                   

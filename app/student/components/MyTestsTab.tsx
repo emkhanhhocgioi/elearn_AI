@@ -326,9 +326,6 @@ const MyTestsTab = () => {
               <tr>
                 <th className="px-6 py-4 text-left text-xs font-bold text-[#0F172A] uppercase tracking-wide">Tiêu đề</th>
                 <th className="px-6 py-4 text-left text-xs font-bold text-[#0F172A] uppercase tracking-wide">Môn học</th>
-                <th className="px-6 py-4 text-left text-xs font-bold text-[#0F172A] uppercase tracking-wide">Học viên</th>
-                <th className="px-6 py-4 text-left text-xs font-bold text-[#0F172A] uppercase tracking-wide">Trạng thái</th>
-                <th className="px-6 py-4 text-left text-xs font-bold text-[#0F172A] uppercase tracking-wide">Điểm TB</th>
                 <th className="px-6 py-4 text-left text-xs font-bold text-[#0F172A] uppercase tracking-wide">Hạn nộp</th>
                 <th className="px-6 py-4 text-left text-xs font-bold text-[#0F172A] uppercase tracking-wide">Thao tác</th>
               </tr>
@@ -363,23 +360,7 @@ const MyTestsTab = () => {
                     <td className="px-6 py-4">
                       <p className="text-sm text-gray-700 font-medium">{test.subject}</p>
                     </td>
-                    <td className="px-6 py-4">
-                      <p className="text-sm text-gray-600">{test.participants} học viên</p>
-                    </td>
-                    <td className="px-6 py-4">
-                      {getStatusBadge(test.status)}
-                    </td>
-                    <td className="px-6 py-4">
-                      <span className={`text-sm font-bold ${
-                        test.score ? (
-                          test.score >= 80 ? 'text-green-600' :
-                          test.score >= 60 ? 'text-yellow-600' :
-                          'text-red-600'
-                        ) : 'text-gray-400'
-                      }`}>
-                        {test.score ? `${test.score}%` : '-'}
-                      </span>
-                    </td>
+                 
                     <td className="px-6 py-4">
                       <p className={`text-sm font-medium ${test.daysUntilClose !== undefined ? getCloseDateColor(test.daysUntilClose) : 'text-gray-600'}`}>
                         {test.closeDate}

@@ -239,7 +239,7 @@ export default function TestReportsSection() {
           <div className="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center shadow-lg">
             <FileText className="w-6 h-6 text-white" />
           </div>
-          Class Test Reports
+          Báo Cáo Bài Kiểm Tra Lớp Học
         </h3>
         
         {/* Search and Controls */}
@@ -248,7 +248,7 @@ export default function TestReportsSection() {
             <Search className="w-5 h-5 absolute left-4 top-1/2 transform -translate-y-1/2 text-blue-500" />
             <input
               type="text"
-              placeholder="Search by class code, year, or teacher..."
+              placeholder="Tìm kiếm theo mã lớp, năm học hoặc giáo viên..."
               value={classSearch}
               onChange={(e) => setClassSearch(e.target.value)}
               className="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl text-sm outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-400 transition-all duration-300"
@@ -260,14 +260,14 @@ export default function TestReportsSection() {
         {loadingClasses ? (
           <div className="text-center py-16">
             <div className="inline-block animate-spin rounded-full h-16 w-16 border-4 border-blue-500 border-t-transparent mb-4"></div>
-            <p className="text-lg font-medium text-gray-600">Loading classes...</p>
+            <p className="text-lg font-medium text-gray-600">Đang tải danh sách lớp...</p>
           </div>
         ) : paginatedClasses.length === 0 ? (
           <div className="text-center py-16 bg-gray-50 rounded-xl">
             <div className="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <FileText className="w-10 h-10 text-blue-500" />
             </div>
-            <p className="text-lg font-semibold text-gray-600">No classes found</p>
+            <p className="text-lg font-semibold text-gray-600">Không tìm thấy lớp nào</p>
           </div>
         ) : (
           <>
@@ -280,7 +280,7 @@ export default function TestReportsSection() {
                       className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
                     >
                       <div className="flex items-center gap-1">
-                        Class Code
+                        Mã Lớp
                         {classSortField === 'class_code' && (
                           classSortOrder === 'asc' ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />
                         )}
@@ -291,18 +291,18 @@ export default function TestReportsSection() {
                       className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
                     >
                       <div className="flex items-center gap-1">
-                        Year
+                        Năm Học
                         {classSortField === 'class_year' && (
                           classSortOrder === 'asc' ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />
                         )}
                       </div>
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Teacher
+                      Giáo Viên
                     </th>
                         
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Actions
+                      Hành Động
                     </th>
                   </tr>
                 </thead>
@@ -326,7 +326,7 @@ export default function TestReportsSection() {
                           className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2.5 rounded-xl text-sm font-semibold flex items-center gap-2 transition-all duration-300 hover:scale-105 hover:shadow-lg"
                         >
                           <Eye className="w-5 h-5" />
-                          View Report
+                          Xem Báo Cáo
                         </button>
                       </td>
                     </tr>
@@ -338,7 +338,7 @@ export default function TestReportsSection() {
             {/* Pagination */}
             <div className="mt-6 flex items-center justify-between p-4 bg-gray-50 rounded-xl">
               <div className="text-sm font-medium text-gray-700">
-                Showing <span className="font-bold text-blue-600">{((classPage - 1) * classLimit) + 1}</span> to <span className="font-bold text-blue-600">{Math.min(classPage * classLimit, filteredClasses.length)}</span> of <span className="font-bold text-blue-600">{filteredClasses.length}</span> classes
+                Hiển thị <span className="font-bold text-blue-600">{((classPage - 1) * classLimit) + 1}</span> đến <span className="font-bold text-blue-600">{Math.min(classPage * classLimit, filteredClasses.length)}</span> trong <span className="font-bold text-blue-600">{filteredClasses.length}</span> lớp
               </div>
               <div className="flex gap-2">
                 <button
@@ -346,7 +346,7 @@ export default function TestReportsSection() {
                   disabled={classPage === 1}
                   className="px-4 py-2 border-2 border-gray-300 rounded-xl text-sm font-semibold disabled:opacity-50 disabled:cursor-not-allowed hover:bg-blue-50 hover:border-blue-300 transition-all duration-300 hover:scale-105"
                 >
-                  Previous
+                  Trước
                 </button>
                 <div className="flex gap-1">
                   {Array.from({ length: totalClassPages }, (_, i) => i + 1).map((page) => (
@@ -368,7 +368,7 @@ export default function TestReportsSection() {
                   disabled={classPage === totalClassPages}
                   className="px-4 py-2 border-2 border-gray-300 rounded-xl text-sm font-semibold disabled:opacity-50 disabled:cursor-not-allowed hover:bg-blue-50 hover:border-blue-300 transition-all duration-300 hover:scale-105"
                 >
-                  Next
+                  Tiếp
                 </button>
               </div>
             </div>
@@ -388,10 +388,10 @@ export default function TestReportsSection() {
                     className="flex items-center gap-2 hover:text-blue-600 transition-colors"
                   >
                     <ChevronLeft className="w-5 h-5" />
-                    Back to Tests List
+                    Quay Lại Danh Sách Bài Kiểm Tra
                   </button>
                 ) : (
-                  'Test Report Details'
+                  'Chi Tiết Báo Cáo Bài Kiểm Tra'
                 )}
               </h3>
               <button
@@ -409,7 +409,7 @@ export default function TestReportsSection() {
             {loadingTestReport ? (
               <div className="text-center py-12">
                 <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-                <p className="mt-2 text-gray-600">Loading test report...</p>
+                <p className="mt-2 text-gray-600">Đang tải báo cáo...</p>
               </div>
             ) : selectedTestReport?.error ? (
               <div className="text-center py-12 text-red-600">
@@ -422,33 +422,33 @@ export default function TestReportsSection() {
                   <>
                     <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                       <div className="p-4 bg-blue-50 rounded-lg">
-                        <p className="text-sm text-gray-600 mb-1">Total Attempts</p>
+                        <p className="text-sm text-gray-600 mb-1">Tổng Số Lượt Thử</p>
                         <p className="text-2xl font-bold text-blue-600">{selectedTestReport.summary?.totalAttempts || 0}</p>
                       </div>
                       <div className="p-4 bg-green-50 rounded-lg">
-                        <p className="text-sm text-gray-600 mb-1">Completed</p>
+                        <p className="text-sm text-gray-600 mb-1">Đã Hoàn Thành</p>
                         <p className="text-2xl font-bold text-green-600">{selectedTestReport.summary?.completedAttempts || 0}</p>
                       </div>
                       <div className="p-4 bg-purple-50 rounded-lg">
-                        <p className="text-sm text-gray-600 mb-1">Average Score</p>
+                        <p className="text-sm text-gray-600 mb-1">Điểm Trung Bình</p>
                         <p className="text-2xl font-bold text-purple-600">
                           {selectedTestReport.summary?.averageScore ? selectedTestReport.summary.averageScore.toFixed(2) : 'N/A'}
                         </p>
                       </div>
                       <div className="p-4 bg-yellow-50 rounded-lg">
-                        <p className="text-sm text-gray-600 mb-1">Highest Score</p>
+                        <p className="text-sm text-gray-600 mb-1">Điểm Cao Nhất</p>
                         <p className="text-2xl font-bold text-yellow-600">
                           {selectedTestReport.summary?.highestScore ? selectedTestReport.summary.highestScore.toFixed(2) : 'N/A'}
                         </p>
                       </div>
                       <div className="p-4 bg-red-50 rounded-lg">
-                        <p className="text-sm text-gray-600 mb-1">Lowest Score</p>
+                        <p className="text-sm text-gray-600 mb-1">Điểm Thấp Nhất</p>
                         <p className="text-2xl font-bold text-red-600">
                           {selectedTestReport.summary?.lowestScore ? selectedTestReport.summary.lowestScore.toFixed(2) : 'N/A'}
                         </p>
                       </div>
                       <div className="p-4 bg-orange-50 rounded-lg">
-                        <p className="text-sm text-gray-600 mb-1">Pass Rate</p>
+                        <p className="text-sm text-gray-600 mb-1">Tỉ Lệ Đạt</p>
                         <p className="text-2xl font-bold text-orange-600">
                           {selectedTestReport.summary?.passRate ? selectedTestReport.summary.passRate.toFixed(1) : '0'}%
                         </p>
@@ -458,7 +458,7 @@ export default function TestReportsSection() {
                     {/* Score Distribution */}
                     {selectedTestReport.scoreDistribution && selectedTestReport.scoreDistribution.length > 0 && (
                       <div>
-                        <h4 className="font-bold text-gray-900 mb-3">Score Distribution</h4>
+                        <h4 className="font-bold text-gray-900 mb-3">Phân Phối Điểm Số</h4>
                         <div className="grid grid-cols-5 gap-3">
                           {selectedTestReport.scoreDistribution.map((dist: ScoreDistribution, index: number) => (
                             <div key={index} className="p-3 border border-gray-200 rounded-lg text-center">
@@ -485,21 +485,21 @@ export default function TestReportsSection() {
                             className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-medium"
                           >
                             <Download className="w-4 h-4" />
-                            Export Excel
+                            Xuất Excel
                           </button>
                         )}
                       </div>
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
                         <div>
-                          <span className="text-gray-500">Subject:</span>
+                          <span className="text-gray-500">Môn học:</span>
                           <span className="ml-2 font-medium">{selectedTest.testSubject}</span>
                         </div>
                         <div>
-                          <span className="text-gray-500">Teacher:</span>
+                          <span className="text-gray-500">Giáo viên:</span>
                           <span className="ml-2 font-medium">{selectedTest.teacher?.name || 'N/A'}</span>
                         </div>
                         <div>
-                          <span className="text-gray-500">Status:</span>
+                          <span className="text-gray-500">Trạng thái:</span>
                           <span className={`ml-2 px-2 py-0.5 rounded text-xs font-medium ${
                             selectedTest.status === 'open' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
                           }`}>
@@ -507,7 +507,7 @@ export default function TestReportsSection() {
                           </span>
                         </div>
                         <div>
-                          <span className="text-gray-500">Results:</span>
+                          <span className="text-gray-500">Kết quả:</span>
                           <span className="ml-2 font-medium">{selectedTest.results?.length || 0}</span>
                         </div>
                       </div>
@@ -518,12 +518,12 @@ export default function TestReportsSection() {
                         <table className="w-full">
                           <thead className="bg-gray-50">
                             <tr>
-                              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Student</th>
+                              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Học Sinh</th>
                               <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Email</th>
-                              <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase">Score</th>
-                              <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase">AI Grade</th>
-                              <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase">Status</th>
-                              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Comments</th>
+                              <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase">Điểm</th>
+                              <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase">Điểm AI</th>
+                              <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase">Trạng Thái</th>
+                              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nhận Xét</th>
                             </tr>
                           </thead>
                           <tbody className="divide-y divide-gray-200">
@@ -543,11 +543,11 @@ export default function TestReportsSection() {
                                 <td className="px-4 py-3 text-center text-sm text-gray-600">{result.AIGrade}</td>
                                 <td className="px-4 py-3 text-center">
                                   {result.isgraded ? (
-                                    <span className="px-2 py-1 bg-green-100 text-green-700 rounded text-xs font-medium">Graded</span>
+                                    <span className="px-2 py-1 bg-green-100 text-green-700 rounded text-xs font-medium">Đã Chấm</span>
                                   ) : result.submit ? (
-                                    <span className="px-2 py-1 bg-yellow-100 text-yellow-700 rounded text-xs font-medium">Submitted</span>
+                                    <span className="px-2 py-1 bg-yellow-100 text-yellow-700 rounded text-xs font-medium">Đã Nộp</span>
                                   ) : (
-                                    <span className="px-2 py-1 bg-gray-100 text-gray-600 rounded text-xs font-medium">Pending</span>
+                                    <span className="px-2 py-1 bg-gray-100 text-gray-600 rounded text-xs font-medium">Chờ</span>
                                   )}
                                 </td>
                                 <td className="px-4 py-3 text-sm text-gray-500 max-w-xs truncate" title={result.teacherComments}>
@@ -561,7 +561,7 @@ export default function TestReportsSection() {
                     ) : (
                       <div className="text-center py-8 text-gray-500 bg-gray-50 rounded-lg">
                         <FileText className="w-12 h-12 mx-auto mb-3 opacity-50" />
-                        <p>No results available for this test</p>
+                        <p>Không có kết quả cho bài kiểm tra này</p>
                       </div>
                     )}
                   </div>
@@ -569,7 +569,7 @@ export default function TestReportsSection() {
                   /* Tests List View */
                   selectedTestReport.tests && selectedTestReport.tests.length > 0 && (
                     <div>
-                      <h4 className="font-bold text-gray-900 mb-3">Tests ({selectedTestReport.tests.length})</h4>
+                      <h4 className="font-bold text-gray-900 mb-3">Bài Kiểm Tra ({selectedTestReport.tests.length})</h4>
                       <div className="space-y-3">
                         {paginatedTests.map((test: TestData, index: number) => (
                           <div 
@@ -593,7 +593,7 @@ export default function TestReportsSection() {
                               <div className="flex items-center gap-3">
                                 <div className="text-right">
                                   <p className="text-2xl font-bold text-blue-600">{test.results?.length || 0}</p>
-                                  <p className="text-xs text-gray-500">results</p>
+                                  <p className="text-xs text-gray-500">kết quả</p>
                                 </div>
                                 <ChevronRight className="w-5 h-5 text-gray-400" />
                               </div>
@@ -606,7 +606,7 @@ export default function TestReportsSection() {
                       {totalTestPages > 1 && (
                         <div className="mt-4 flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                           <div className="text-sm text-gray-600">
-                            Showing {((testPage - 1) * testLimit) + 1} to {Math.min(testPage * testLimit, selectedTestReport.tests.length)} of {selectedTestReport.tests.length} tests
+                            Hiển thị {((testPage - 1) * testLimit) + 1} đến {Math.min(testPage * testLimit, selectedTestReport.tests.length)} trong {selectedTestReport.tests.length} bài kiểm tra
                           </div>
                           <div className="flex gap-2">
                             <button
@@ -648,7 +648,7 @@ export default function TestReportsSection() {
                 {(!selectedTestReport.tests || selectedTestReport.tests.length === 0) && !selectedTest && (
                   <div className="text-center py-8 text-gray-500">
                     <FileText className="w-12 h-12 mx-auto mb-3 opacity-50" />
-                    <p>No test data available for this class</p>
+                    <p>Không có dữ liệu bài kiểm tra cho lớp này</p>
                   </div>
                 )}
               </div>
@@ -663,7 +663,7 @@ export default function TestReportsSection() {
                 }}
                 className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors"
               >
-                Close
+                Đóng
               </button>
             </div>
           </div>
