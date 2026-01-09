@@ -313,7 +313,7 @@ const MyClassesTab = () => {
         <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -mr-32 -mt-32 animate-pulse"></div>
         <div className="absolute bottom-0 left-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -ml-32 -mb-32 animate-pulse" style={{animationDelay: '1s'}}></div>
         
-        <div className="relative z-10 flex items-start justify-between">
+        <div className="relative z-0 flex items-start justify-between">
           <div>
             <h1 className="text-4xl font-bold mb-3 flex items-center gap-3 animate-slide-in-left">
               <div className="p-2 bg-white/20 rounded-xl backdrop-blur-sm">
