@@ -90,18 +90,22 @@ export const editTestById = async (
       testtitle: string ,
       test_time: number,
       closeDate: string,
+      status?: string,
 ) => {
     try {
         const teacherToken = getAdminToken();
         if (!teacherToken) {
             throw new Error('Token not found in localStorage');
         }   
-        const updateData = {
+        const updateData: any = {
             testtitle: testtitle,
             lessonID: lessonID,
             test_time: test_time,
             closeDate: closeDate
         };
+        if (status) {
+            updateData.status = status;
+        }
         const res = await axios.put(`${API_URL}/api/teacher/tests/${testId}`, updateData, {
 
             headers: {

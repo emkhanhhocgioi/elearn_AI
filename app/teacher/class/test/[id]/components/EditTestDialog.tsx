@@ -49,6 +49,7 @@ export default function EditTestDialog({
     test_time: '',
     closeDate: '',
     lessonID: '',
+    status: 'open',
   });
 
   // Update form data when testDetail changes or dialog opens
@@ -60,6 +61,7 @@ export default function EditTestDialog({
         test_time: '',
         closeDate: testDetail.closeDate ? testDetail.closeDate.split('T')[0] : '',
         lessonID: '',
+        status: testDetail.status || 'open',
       });
       setSelectedLessonId('');
       setError('');
@@ -79,7 +81,7 @@ export default function EditTestDialog({
     }
   }, [testDetail, isOpen]);
 
-  const handleTestFormChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleTestFormChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setTestFormData((prev) => ({
       ...prev,
@@ -99,7 +101,8 @@ export default function EditTestDialog({
         selectedLessonId || testFormData.lessonID,
         testFormData.testtitle,
         Number(testFormData.test_time),
-        testFormData.closeDate
+        testFormData.closeDate,
+        testFormData.status
       );
       setSuccess('Cập nhật bài kiểm tra thành công!');
       setTimeout(() => {
@@ -255,6 +258,22 @@ export default function EditTestDialog({
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
                 required
               />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Trạng thái *
+              </label>
+              <select
+                name="status"
+                value={testFormData.status}
+                onChange={handleTestFormChange}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
+                required
+              >
+                <option value="open">Mở (Open)</option>
+                <option value="closed">Đóng (Closed)</option>
+              </select>
             </div>
 
             <div className="flex gap-3 pt-4">

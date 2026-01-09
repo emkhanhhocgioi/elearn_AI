@@ -131,14 +131,14 @@ export default function UserActivityReport() {
     <div>
       <div className="flex items-center justify-between mb-6">
         <h3 className="text-2xl font-bold text-gray-900 flex items-center gap-3">
-          <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl flex items-center justify-center shadow-lg">
+          <div className="w-12 h-12 bg-purple-600 rounded-xl flex items-center justify-center shadow-lg">
             <Activity className="w-6 h-6 text-white" />
           </div>
           User Activity Logs
         </h3>
         <button 
           onClick={handleExportCSV}
-          className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-6 py-3 rounded-xl flex items-center gap-2 hover:from-purple-700 hover:to-pink-700 transition-all duration-300 font-semibold hover:scale-105 shadow-lg hover:shadow-xl"
+          className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-xl flex items-center gap-2 transition-all duration-300 font-semibold hover:scale-105 shadow-lg hover:shadow-xl"
         >
           <Download className="w-5 h-5" />
           Export CSV
@@ -147,7 +147,7 @@ export default function UserActivityReport() {
 
       <div className="bg-white rounded-2xl p-8 shadow-xl border border-gray-100">
         {/* Filters */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8 p-6 bg-gradient-to-br from-gray-50 to-purple-50 rounded-xl border-2 border-purple-100">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8 p-6 bg-purple-50 rounded-xl border-2 border-purple-100">
           <div>
             <label className="block text-sm font-bold text-gray-900 mb-2">Role</label>
             <select
@@ -200,12 +200,12 @@ export default function UserActivityReport() {
             <p className="text-lg font-medium text-gray-600">Loading activities...</p>
           </div>
         ) : error ? (
-          <div className="text-center py-16 bg-gradient-to-br from-red-50 to-pink-50 rounded-xl">
+          <div className="text-center py-16 bg-red-50 rounded-xl">
             <p className="text-lg font-semibold text-red-600">Error: {error}</p>
           </div>
         ) : activities.length === 0 ? (
-          <div className="text-center py-16 bg-gradient-to-br from-gray-50 to-purple-50 rounded-xl">
-            <div className="w-20 h-20 bg-gradient-to-br from-purple-100 to-pink-100 rounded-full flex items-center justify-center mx-auto mb-4">
+          <div className="text-center py-16 bg-gray-50 rounded-xl">
+            <div className="w-20 h-20 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <Users className="w-10 h-10 text-purple-500" />
             </div>
             <p className="text-lg font-semibold text-gray-600">No activities found</p>
@@ -214,7 +214,7 @@ export default function UserActivityReport() {
           <>
             <div className="overflow-x-auto rounded-xl border-2 border-gray-100">
               <table className="w-full">
-                <thead className="bg-gradient-to-r from-purple-50 to-pink-50 border-b-2 border-purple-100">
+                <thead className="bg-purple-50 border-b-2 border-purple-100">
                   <tr>
                     <th className="px-4 py-4 text-left text-xs font-bold text-gray-900 uppercase tracking-wider">User</th>
                     <th className="px-4 py-4 text-left text-xs font-bold text-gray-900 uppercase tracking-wider">Role</th>
@@ -231,7 +231,7 @@ export default function UserActivityReport() {
                     const userEmail = user?.email || 'N/A';
                     
                     return (
-                      <tr key={activity._id} className="hover:bg-gradient-to-r hover:from-purple-50 hover:to-pink-50 transition-all duration-200">
+                      <tr key={activity._id} className="hover:bg-purple-50 transition-all duration-200">
                         <td className="px-4 py-4 whitespace-nowrap">
                           <div>
                             <div className="text-sm font-medium text-gray-900">{userName}</div>

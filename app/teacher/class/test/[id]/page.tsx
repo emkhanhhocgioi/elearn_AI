@@ -95,17 +95,17 @@ function TestDetailContent() {
   };
 
   const handleDeleteQuestion = async (questionId: string) => {
-    if (confirm('Are you sure you want to delete this question?')) {
+    if (confirm('Bạn có chắc chắn muốn xóa câu hỏi này?')) {
       try {
         setLoading(true);
         await deleteQuestionFromTest(questionId);
-        setSuccess('Question deleted successfully!');
+        setSuccess('Xóa câu hỏi thành công!');
         setTimeout(() => {
           setSuccess('');
           fetchTestData();
         }, 1500);
       } catch (err) {
-        setError('Failed to delete question');
+        setError('Không thể xóa câu hỏi');
         console.error(err);
       } finally {
         setLoading(false);
@@ -305,9 +305,9 @@ function TestDetailContent() {
           </div>
         ) : (
           <div className="px-6 py-12 text-center">
-            <p className="text-gray-500 text-lg">No questions added yet</p>
+            <p className="text-gray-500 text-lg">Chưa có câu hỏi nào</p>
             <p className="text-gray-400 text-sm mt-2">
-              Click "Add Question" to create the first question
+              Nhấn "Thêm 1 Câu" để tạo câu hỏi đầu tiên
             </p>
           </div>
         )}

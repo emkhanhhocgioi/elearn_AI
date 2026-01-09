@@ -146,14 +146,14 @@ const ScheduleTab = () => {
   return (
     <div className="space-y-6 animate-fade-in">
       {/* Header */}
-      <div className="bg-gradient-to-br from-white to-blue-50 rounded-2xl shadow-lg border-2 border-blue-100 p-6">
+      <div className="bg-white rounded-2xl shadow-lg border-2 border-blue-100 p-6">
         <div className="flex items-center justify-between mb-4">
           <div>
             <h2 className="text-3xl font-bold flex items-center gap-3">
-              <div className="p-2 bg-gradient-to-br from-blue-600 to-blue-700 rounded-xl shadow-lg">
+              <div className="p-2 bg-blue-600 rounded-xl shadow-lg">
                 <Calendar className="w-7 h-7 text-white" />
               </div>
-              <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Lịch Học</span>
+              <span className="text-blue-600">Lịch Học</span>
             </h2>
             {classInfo && (
               <p className="text-sm text-gray-600 mt-2 ml-14 flex items-center gap-2">
@@ -206,7 +206,7 @@ const ScheduleTab = () => {
         <div className="overflow-x-auto">
           <table className="w-full border-collapse min-w-[1000px]">
             <thead>
-              <tr className="bg-gradient-to-r from-blue-600 via-blue-700 to-purple-600">
+              <tr className="bg-blue-600">
                 <th className="px-4 py-3 text-left text-white font-semibold border-r border-blue-500 w-32">
                   <div className="flex items-center gap-2">
                     <Clock className="w-4 h-4" />
@@ -243,7 +243,7 @@ const ScheduleTab = () => {
                         className="px-2 py-2 border-r border-b border-gray-200 last:border-r-0"
                       >
                         {scheduleItem ? (
-                          <div className="bg-gradient-to-br from-yellow-50 to-yellow-100 border-l-4 border-yellow-400 rounded-lg p-3 hover:shadow-md transition-shadow cursor-pointer h-full">
+                          <div className="bg-yellow-50 border-l-4 border-yellow-400 rounded-lg p-3 hover:shadow-md transition-shadow cursor-pointer h-full">
                             <div className="space-y-1">
                               <div className="flex items-center gap-1">
                                 <BookOpen className="w-3.5 h-3.5 text-yellow-600 flex-shrink-0" />
@@ -285,7 +285,7 @@ const ScheduleTab = () => {
         <h3 className="text-sm font-semibold text-gray-700 mb-3">Ghi chú:</h3>
         <div className="flex flex-wrap gap-4 text-sm">
           <div className="flex items-center gap-2">
-            <div className="w-4 h-4 bg-gradient-to-br from-yellow-50 to-yellow-100 border-l-4 border-yellow-400 rounded"></div>
+            <div className="w-4 h-4 bg-yellow-50 border-l-4 border-yellow-400 rounded"></div>
             <span className="text-gray-600">Có lịch học</span>
           </div>
           <div className="flex items-center gap-2">

@@ -194,7 +194,7 @@ export default function ClassDetailPage() {
             >
               <div className="flex items-center gap-2">
                 <FileText className="w-5 h-5" />
-                <span>Tests ({tests.length})</span>
+                <span>Bài Tập ({tests.length})</span>
               </div>
             </button>
             <button
@@ -207,7 +207,7 @@ export default function ClassDetailPage() {
             >
               <div className="flex items-center gap-2">
                 <BookOpen className="w-5 h-5" />
-                <span>Lessons ({lessons.length})</span>
+                <span>Bài học ({lessons.length})</span>
               </div>
             </button>
           </div>

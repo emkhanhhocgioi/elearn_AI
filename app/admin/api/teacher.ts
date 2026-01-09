@@ -134,3 +134,22 @@ export const deleteTeacher = async (id: string) => {
     throw error;
   }
 };
+
+export const getSubjectClassTeachers = async (classId: string) => {
+  try {
+    const token = getAdminToken();
+    if (!token) throw new Error('Token not found');
+    const response = await axios.get(`${API_URL}/api/admin/class/${classId}/subject-teachers`, {
+      ...getAuthConfig(),
+      headers: {
+        ...getAuthConfig().headers,
+        "Content-Type": "application/json",
+      },
+    });
+    return response.data.data?.subjects || null;
+  }
+    catch (error) {
+    console.error("Error fetching subject class teachers:", error);
+    throw error;
+  }
+};

@@ -526,46 +526,7 @@ export default function ClassesTab() {
       </div>
 
       {/* Statistics Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-gradient-to-br from-purple-500 to-indigo-600 rounded-2xl p-6 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 transform">
-          <div className="flex items-center justify-between mb-3">
-            <h3 className="text-sm font-semibold text-purple-100 uppercase tracking-wide">Total Classes</h3>
-            <div className="w-10 h-10 bg-white bg-opacity-20 rounded-lg flex items-center justify-center">
-              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-              </svg>
-            </div>
-          </div>
-          <p className="text-4xl font-bold text-white">{classes.length}</p>
-          <p className="text-purple-100 text-sm mt-2">Active classes in system</p>
-        </div>
-        <div className="bg-gradient-to-br from-blue-500 to-cyan-600 rounded-2xl p-6 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 transform">
-          <div className="flex items-center justify-between mb-3">
-            <h3 className="text-sm font-semibold text-blue-100 uppercase tracking-wide">Total Students</h3>
-            <div className="w-10 h-10 bg-white bg-opacity-20 rounded-lg flex items-center justify-center">
-              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-              </svg>
-            </div>
-          </div>
-          <p className="text-4xl font-bold text-white">{classes.reduce((sum, cls) => sum + cls.class_student_count, 0)}</p>
-          <p className="text-blue-100 text-sm mt-2">Enrolled across all classes</p>
-        </div>
-        <div className="bg-gradient-to-br from-green-500 to-emerald-600 rounded-2xl p-6 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 transform">
-          <div className="flex items-center justify-between mb-3">
-            <h3 className="text-sm font-semibold text-green-100 uppercase tracking-wide">Avg. Class Grade</h3>
-            <div className="w-10 h-10 bg-white bg-opacity-20 rounded-lg flex items-center justify-center">
-              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-              </svg>
-            </div>
-          </div>
-          <p className="text-4xl font-bold text-white">
-            {classes.length > 0 ? (classes.reduce((sum, cls) => sum + cls.class_avarage_grade, 0) / classes.length).toFixed(1) : '0.0'}
-          </p>
-          <p className="text-green-100 text-sm mt-2">Overall class performance</p>
-        </div>
-      </div>
+   
 
       
     </div>

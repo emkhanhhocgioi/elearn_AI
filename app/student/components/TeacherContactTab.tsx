@@ -74,7 +74,7 @@ export default function TeacherContactTab() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-[#0F172A] to-[#2563EB] bg-clip-text text-transparent">Liên Hệ Giáo Viên</h1>
+          <h1 className="text-3xl font-bold text-gray-900">Liên Hệ Giáo Viên</h1>
           <p className="text-sm text-gray-600 mt-2 flex items-center gap-2">
             <User className="w-4 h-4 text-blue-600" />
             Kết nối với các giáo viên của bạn
@@ -83,7 +83,7 @@ export default function TeacherContactTab() {
       </div>
 
       {/* Search and Filter */}
-      <div className="bg-gradient-to-br from-white to-blue-50 rounded-2xl border-2 border-blue-100 p-5 shadow-lg">
+      <div className="bg-white rounded-2xl border-2 border-blue-100 p-5 shadow-lg">
         <div className="flex flex-col sm:flex-row gap-4">
           <div className="flex-1 relative">
             <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />

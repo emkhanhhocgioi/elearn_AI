@@ -46,7 +46,6 @@ interface SuggestedQuestion {
   question: string;
   answer: string;
   ai_score: number;
-  improvement_suggestions: string;
   createdAt: string;
 }
 
@@ -900,31 +899,24 @@ const MyClassesTab = () => {
                     <div className="bg-yellow-50 p-2 rounded-lg">
                       <Lightbulb className="w-5 h-5 text-yellow-600" />
                     </div>
-                    <span className="text-xs px-2 py-1 bg-blue-100 text-blue-600 rounded-full font-medium">
-                      Điểm AI: {question.ai_score}/10
-                    </span>
-                  </div>
-
-                  <h3 className="font-bold text-gray-900 mb-2 line-clamp-2">{question.question}</h3>
-                  
-                  <div className="bg-blue-50 p-3 rounded-lg mb-3 border border-blue-100 max-h-32 overflow-y-auto">
-                    <p className="text-xs text-blue-700 font-semibold mb-1">Gợi ý cải thiện:</p>
-                    <p className="text-sm text-gray-800 leading-relaxed">{question.improvement_suggestions}</p>
-                  </div>
-
-                  <div className="flex items-center justify-between text-xs text-gray-500 mb-3">
-                    <div className="flex items-center gap-1">
+                    <div className="flex items-center gap-1 text-xs text-gray-500">
                       <Clock className="w-4 h-4" />
                       <span>{new Date(question.createdAt).toLocaleDateString('vi-VN')}</span>
                     </div>
                   </div>
+
+                  <h3 className="font-bold text-gray-900 mb-3 line-clamp-2">{question.question}</h3>
+                  
+                 
 
                   <button 
                     onClick={() => {
                       setPracticeData({
                         subject: selectedDailySubject || 'Toán',
                         exercise_question: question.question,
-                        improve_suggestion: question.improvement_suggestions,                        source: 'recent_test',                      });
+                        improve_suggestion: question.answer,
+                       
+                      });
                       router.push('/student/practice');
                     }}
                     className="w-full bg-yellow-100 text-yellow-700 py-2 rounded-lg text-sm font-semibold hover:bg-yellow-200 transition-colors"

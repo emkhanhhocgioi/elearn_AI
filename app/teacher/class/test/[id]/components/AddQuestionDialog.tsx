@@ -250,7 +250,7 @@ export default function AddQuestionDialog({
         <div className="p-6">
           <div className="flex items-center justify-between mb-6">
             <h3 className="text-2xl font-bold text-gray-900">
-              {editingQuestion ? 'Edit Question' : 'Add New Question'}
+              {editingQuestion ? 'Chỉnh sửa Câu hỏi' : 'Thêm Câu hỏi Mới'}
             </h3>
             <button
               onClick={onClose}
@@ -279,13 +279,13 @@ export default function AddQuestionDialog({
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Question Text *
+                    Nội dung Câu hỏi *
                   </label>
                   <textarea
                     name="question"
                     value={formData.question}
                     onChange={handleInputChange}
-                    placeholder="Enter question text"
+                    placeholder="Nhập nội dung câu hỏi"
                     rows={4}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition"
                     required
@@ -295,7 +295,7 @@ export default function AddQuestionDialog({
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Question Type *
+                      Loại Câu hỏi *
                     </label>
                     <select
                       name="questionType"
@@ -303,15 +303,15 @@ export default function AddQuestionDialog({
                       onChange={handleInputChange}
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition"
                     >
-                      <option value="essay">Essay</option>
-                      <option value="file_upload">File Upload</option>
-                      <option value="choose_correct">Choose Correct</option>
+                      <option value="essay">Tự luận</option>
+                      <option value="file_upload">Tải file lên</option>
+                      <option value="choose_correct">Trắc nghiệm</option>
                     </select>
                   </div>
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Difficulty Level *
+                      Mức độ Khó *
                     </label>
                     <select
                       name="difficult"
@@ -319,16 +319,16 @@ export default function AddQuestionDialog({
                       onChange={handleInputChange}
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition"
                     >
-                      <option value="easy">Easy</option>
-                      <option value="medium">Medium</option>
-                      <option value="hard">Hard</option>
+                      <option value="easy">Dễ</option>
+                      <option value="medium">Trung bình</option>
+                      <option value="hard">Khó</option>
                     </select>
                   </div>
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Subject Question Type
+                    Loại Câu hỏi theo Môn học
                   </label>
                   <input
                     type="text"
@@ -342,7 +342,7 @@ export default function AddQuestionDialog({
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Grade Points *
+                    Điểm số *
                   </label>
                   <input
                     type="number"
@@ -357,13 +357,13 @@ export default function AddQuestionDialog({
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Solution/Explanation *
+                    Đáp án / Lời giải *
                   </label>
                   <textarea
                     name="solution"
                     value={formData.solution}
                     onChange={handleInputChange}
-                    placeholder="Enter detailed solution or explanation"
+                    placeholder="Nhập đáp án chi tiết hoặc lời giải"
                     rows={3}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition"
                     required
@@ -372,22 +372,22 @@ export default function AddQuestionDialog({
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Metadata (Optional)
+                    Metadata (Tùy chọn)
                   </label>
                   {!selectedFile ? (
                     <p className="text-xs text-gray-500 mb-1">
-                      You can provide additional metadata like topic or chapter. If you upload an image, this field will be disabled.
+                      Bạn có thể cung cấp thông tin bổ sung như chủ đề hoặc chương. Nếu tải ảnh lên, trường này sẽ bị vô hiệu hóa.
                     </p>
                   ) : (
                     <p className="text-xs text-gray-500 mt-1">
-                      Metadata input disabled when file is selected
+                      Metadata bị vô hiệu hóa khi đã chọn file
                     </p>
                   )}
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Upload Image (Optional)
+                    Tải ảnh lên (Tùy chọn)
                   </label>
                   <input
                     type="file"
@@ -401,13 +401,13 @@ export default function AddQuestionDialog({
                   {selectedFile && (
                     <div className="mt-4">
                       <div className="flex items-center justify-between mb-2">
-                        <p className="text-sm font-medium text-gray-700">Selected: {selectedFile.name}</p>
+                        <p className="text-sm font-medium text-gray-700">Đã chọn: {selectedFile.name}</p>
                         <button
                           type="button"
                           onClick={() => handleFileSelect(null)}
                           className="text-xs text-red-600 hover:text-red-700 font-medium"
                         >
-                          Remove
+                          Xóa
                         </button>
                       </div>
                       
@@ -446,14 +446,14 @@ export default function AddQuestionDialog({
                   <div>
                     <div className="flex items-center justify-between mb-4">
                       <label className="block text-sm font-medium text-gray-700">
-                        Options *
+                        Các lựa chọn *
                       </label>
                       <button
                         type="button"
                         onClick={addOption}
                         className="text-sm text-purple-600 hover:text-purple-700 font-medium"
                       >
-                        + Add Option
+                        + Thêm lựa chọn
                       </button>
                     </div>
                     <div className="space-y-2">
@@ -463,7 +463,7 @@ export default function AddQuestionDialog({
                             type="text"
                             value={option}
                             onChange={(e) => handleOptionChange(index, e.target.value)}
-                            placeholder={`Option ${index + 1}`}
+                            placeholder={`Lựa chọn ${index + 1}`}
                             className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition"
                           />
                           {formData.options.length > 1 && (
@@ -488,7 +488,7 @@ export default function AddQuestionDialog({
                     onClick={onClose}
                     className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition font-medium"
                   >
-                    Cancel
+                    Hủy
                   </button>
                   <button
                     type="submit"
@@ -496,7 +496,7 @@ export default function AddQuestionDialog({
                     className="flex-1 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                   >
                     <Save className="w-4 h-4" />
-                    {loading ? 'Saving...' : editingQuestion ? 'Update Question' : 'Add Question'}
+                    {loading ? 'Đang lưu...' : editingQuestion ? 'Cập nhật Câu hỏi' : 'Thêm Câu hỏi'}
                   </button>
                 </div>
               </form>
@@ -508,7 +508,7 @@ export default function AddQuestionDialog({
                 <div className="sticky top-6 bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg p-6 border border-purple-200">
                   <div className="flex items-center gap-2 mb-4">
                     <Sparkles className="w-6 h-6 text-purple-600" />
-                    <h4 className="text-lg font-bold text-gray-900">AI Generator</h4>
+                    <h4 className="text-lg font-bold text-gray-900">Tạo câu hỏi bằng AI</h4>
                   </div>
                   
                   <p className="text-sm text-gray-600 mb-4">

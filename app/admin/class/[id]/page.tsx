@@ -38,7 +38,7 @@ interface ClassDetail {
   class_code: string;
   class_subject: string;
   class_year: string;
-  class_student_count: number;
+  studentCount: number;
   class_avarage_grade: number;
   class_teacher: string;
   teacher_name?: string;
@@ -74,7 +74,7 @@ export default function ClassDetailPage() {
         class_code: apiData.class_code,
         class_subject: apiData.class_subject || 'Chưa xác định',
         class_year: apiData.class_year,
-        class_student_count: apiData.class_student_count,
+        studentCount: apiData.studentCount,
         class_avarage_grade: apiData.class_avarage_grade,
         class_teacher: apiData.class_teacher?._id,
         teacher_name: apiData.class_teacher?.name,
@@ -221,10 +221,7 @@ export default function ClassDetailPage() {
                 {classData.class_code}
               </h1>
               <div className="flex items-center gap-6 text-gray-600">
-                <div className="flex items-center gap-2">
-                  <BookOpen className="w-5 h-5 text-blue-600" />
-                  <span className="text-base">{classData.class_subject}</span>
-                </div>
+               
                 <div className="flex items-center gap-2">
                   <Calendar className="w-5 h-5 text-blue-600" />
                   <span className="text-base">{classData.class_year}</span>
@@ -244,7 +241,7 @@ export default function ClassDetailPage() {
       </div>
 
       {/* Statistics Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
         <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 bg-blue-50 rounded-lg flex items-center justify-center">
@@ -252,22 +249,12 @@ export default function ClassDetailPage() {
             </div>
             <div>
               <h3 className="text-sm font-medium text-gray-600">Số học sinh</h3>
-              <p className="text-2xl font-bold text-gray-900 mt-1">{classData.class_student_count}</p>
+              <p className="text-2xl font-bold text-gray-900 mt-1">{classData.studentCount}</p>
             </div>
           </div>
         </div>
 
-        <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 bg-green-50 rounded-lg flex items-center justify-center">
-              <TrendingUp className="w-6 h-6 text-green-600" />
-            </div>
-            <div>
-              <h3 className="text-sm font-medium text-gray-600">Điểm trung bình</h3>
-              <p className="text-2xl font-bold text-gray-900 mt-1">{classData.class_avarage_grade.toFixed(1)}</p>
-            </div>
-          </div>
-        </div>
+    
 
         <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
           <div className="flex items-center gap-4">
@@ -393,7 +380,7 @@ export default function ClassDetailPage() {
           </div>
           <div className="pb-4 border-b border-gray-100">
             <p className="text-sm font-medium text-gray-500 mb-2">Tổng số học sinh</p>
-            <p className="text-base font-semibold text-gray-900">{classData.class_student_count} học sinh</p>
+            <p className="text-base font-semibold text-gray-900">{classData.studentCount} học sinh</p>
           </div>
           <div className="pb-4 border-b border-gray-100">
             <p className="text-sm font-medium text-gray-500 mb-2">Trạng thái</p>
@@ -463,7 +450,7 @@ export default function ClassDetailPage() {
 
       {/* Teacher Selection Dialog */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+        <DialogContent className="max-w-[50vw] max-h-[85vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Chọn giáo viên cho môn {getSubjectDisplayName(selectedSubject)}</DialogTitle>
             <DialogDescription>

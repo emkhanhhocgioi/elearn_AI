@@ -129,12 +129,7 @@ export default function TeacherDashboard() {
         <header className="bg-white border-b border-gray-200 sticky top-0 z-10 shadow-sm">
           <div className="flex items-center justify-between px-4 lg:px-8 py-4">
             <div className="flex items-center gap-4 flex-1 max-w-2xl">
-              <Search className="text-gray-400 w-5 h-5" />
-              <input
-                type="text"
-                placeholder="Tìm kiếm bài giảng, lớp học, học sinh..."
-                className="flex-1 outline-none text-sm text-[#0F172A] placeholder:text-gray-400 focus:placeholder:text-gray-500 transition-colors"
-              />
+            
             </div>
             <div className="flex items-center gap-4">
               <button className="p-2 hover:bg-[#F1F5F9] rounded-lg transition-colors" aria-label="Thông báo">

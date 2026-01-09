@@ -238,7 +238,7 @@ export default function BatchQuestionsDialog({
         <div className="p-6 border-b bg-white z-10 shadow-sm flex-shrink-0">
           <div className="flex items-center justify-between">
             <h3 className="text-2xl font-bold text-gray-900">
-              Add Multiple Questions
+              Thêm nhiều Câu hỏi
             </h3>
             <button
               onClick={onClose}
@@ -257,35 +257,35 @@ export default function BatchQuestionsDialog({
             <div className="lg:col-span-2 overflow-auto p-6 border-r custom-scrollbar">
               <div className="space-y-4">
                 <div className="border-2 border-gray-200 rounded-xl p-5 bg-white shadow-sm">
-                  <h4 className="font-semibold text-lg text-gray-900 mb-4">Question Details</h4>
+                  <h4 className="font-semibold text-lg text-gray-900 mb-4">Chi tiết Câu hỏi</h4>
 
                   <div className="space-y-3">
                     <div className="grid grid-cols-3 gap-3">
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Type *</label>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Loại *</label>
                         <select
                           value={currentQuestion.questionType}
                           onChange={(e) => handleFieldChange('questionType', e.target.value)}
                           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
                         >
-                          <option value="essay">Essay</option>
-                          <option value="multiple_choice">Multiple Choice</option>
+                          <option value="essay">Tự luận</option>
+                          <option value="multiple_choice">Trắc nghiệm</option>
                         </select>
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Difficulty *</label>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Độ khó *</label>
                         <select
                           value={currentQuestion.difficult}
                           onChange={(e) => handleFieldChange('difficult', e.target.value)}
                           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
                         >
-                          <option value="easy">Easy</option>
-                          <option value="medium">Medium</option>
-                          <option value="hard">Hard</option>
+                          <option value="easy">Dễ</option>
+                          <option value="medium">Trung bình</option>
+                          <option value="hard">Khó</option>
                         </select>
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Grade Points *</label>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Điểm *</label>
                         <input
                           type="number"
                           value={currentQuestion.grade}
@@ -298,7 +298,7 @@ export default function BatchQuestionsDialog({
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Subject Question Type</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Loại Câu hỏi theo Môn học</label>
                       <input
                         type="text"
                         value={currentQuestion.subjectQuestionType}
@@ -309,25 +309,25 @@ export default function BatchQuestionsDialog({
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Question *</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Câu hỏi *</label>
                       <textarea
                         value={currentQuestion.question}
                         onChange={(e) => handleFieldChange('question', e.target.value)}
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
                         rows={4}
-                        placeholder="Enter your question here..."
+                        placeholder="Nhập câu hỏi của bạn..."
                         required
                       />
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Solution / Answer *</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Đáp án / Lời giải *</label>
                       <textarea
                         value={currentQuestion.solution}
                         onChange={(e) => handleFieldChange('solution', e.target.value)}
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
                         rows={4}
-                        placeholder="Enter the solution or correct answer..."
+                        placeholder="Nhập đáp án hoặc lời giải..."
                         required
                       />
                     </div>
@@ -335,7 +335,7 @@ export default function BatchQuestionsDialog({
                     {/* File Upload */}
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Image/File Attachment (Optional)
+                        Đính kèm Ảnh/File (Tùy chọn)
                       </label>
                       <input
                         type="file"
@@ -376,7 +376,7 @@ export default function BatchQuestionsDialog({
                     {/* Multiple Choice Options */}
                     {currentQuestion.questionType === 'multiple_choice' && (
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Answer Options *</label>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Các lựa chọn *</label>
                         <div className="space-y-2">
                           {currentQuestion.options.map((option, index) => (
                             <div key={index} className="flex gap-2">
@@ -385,7 +385,7 @@ export default function BatchQuestionsDialog({
                                 value={option}
                                 onChange={(e) => handleOptionChange(index, e.target.value)}
                                 className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
-                                placeholder={`Option ${index + 1}`}
+                                placeholder={`Lựa chọn ${index + 1}`}
                               />
                               {currentQuestion.options.length > 1 && (
                                 <button
@@ -404,7 +404,7 @@ export default function BatchQuestionsDialog({
                             className="text-sm text-blue-600 hover:text-blue-700 flex items-center gap-1"
                           >
                             <Plus className="w-4 h-4" />
-                            Add Option
+                            Thêm lựa chọn
                           </button>
                         </div>
                       </div>
@@ -419,7 +419,7 @@ export default function BatchQuestionsDialog({
                       className="w-full px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition flex items-center justify-center gap-2 font-medium"
                     >
                       <Check className="w-5 h-5" />
-                      Save Question to List
+                      Lưu Câu hỏi vào Danh sách
                     </button>
                   </div>
                 </div>
@@ -446,7 +446,7 @@ export default function BatchQuestionsDialog({
                   )}
 
                 <div className="flex items-center justify-between mb-4">
-                  <h4 className="text-lg font-bold text-gray-900">Saved Questions</h4>
+                  <h4 className="text-lg font-bold text-gray-900">Danh sách Câu hỏi</h4>
                   <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm font-semibold">
                     {savedQuestions.length}
                   </span>
@@ -459,8 +459,8 @@ export default function BatchQuestionsDialog({
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                       </svg>
                     </div>
-                    <p className="text-gray-500 text-sm">No questions added yet</p>
-                    <p className="text-gray-400 text-xs mt-1">Fill the form and click "Save Question to List"</p>
+                    <p className="text-gray-500 text-sm">Chưa có câu hỏi nào</p>
+                    <p className="text-gray-400 text-xs mt-1">Điền form và nhấn "Lưu Câu hỏi vào Danh sách"</p>
                   </div>
                 ) : (
                   <>
@@ -520,12 +520,12 @@ export default function BatchQuestionsDialog({
                         {loading ? (
                           <>
                             <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                            Saving...
+                            Đang lưu...
                           </>
                         ) : (
                           <>
                             <Save className="w-5 h-5" />
-                            Save All {savedQuestions.length} Question{savedQuestions.length > 1 ? 's' : ''}
+                            Lưu tất cả {savedQuestions.length} Câu hỏi
                           </>
                         )}
                       </button>
@@ -533,7 +533,7 @@ export default function BatchQuestionsDialog({
                         onClick={onClose}
                         className="w-full mt-2 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-100 transition font-medium"
                       >
-                        Cancel
+                        Hủy
                       </button>
                     </div>
                   </>

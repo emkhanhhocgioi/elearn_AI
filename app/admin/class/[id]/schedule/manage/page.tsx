@@ -17,7 +17,7 @@ import {
   ClassScheduleResponse,
   TimeSlot 
 } from '../../../../api/class';
-import { getAllTeachers, Teacher } from '../../../../api/teacher';
+import { getAllTeachers, Teacher, getSubjectClassTeachers } from '../../../../api/teacher';
 
 interface SubjectTeacher {
   _id?: string;
@@ -68,6 +68,7 @@ export default function ScheduleManagementPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [time_slot, set_time_slot] = useState<TimeSlot[]>([]);
   const [selectedCell, setSelectedCell] = useState<{ day: DayOfWeek; period: number } | null>(null);
+  const [subjectTeachersData, setSubjectTeachersData] = useState<SubjectTeachers | null>(null);
   // Form state
   const [formData, setFormData] = useState({
     subjectField: '',
@@ -83,17 +84,20 @@ export default function ScheduleManagementPage() {
   const fetchData = async () => {
     try {
       setIsLoading(true);
-      const [classRes, scheduleRes, teachersRes,time_slots] = await Promise.all([
+      const [classRes, scheduleRes, teachersRes, time_slots, subjectTeachersRes] = await Promise.all([
         getClassById(classId),
         getClassSchedule(classId).catch(() => null),
         getAllTeachers(),
-        getAllTimeSlots()
+        getAllTimeSlots(),
+        getSubjectClassTeachers(classId).catch(() => null)
       ]);
       console.log("schedule" , scheduleRes?.schedules)
+      console.log("subjectTeachers", subjectTeachersRes);
       set_time_slot(time_slots);
       setClassData(classRes);
       setSchedule(scheduleRes);
       setTeachers(teachersRes);
+      setSubjectTeachersData(subjectTeachersRes);
     } catch (error) {
       console.error('Error fetching data:', error);
     } finally {
@@ -165,15 +169,31 @@ export default function ScheduleManagementPage() {
   };
 
   const handleSubjectChange = (value: string) => {
-    setFormData(prev => ({ ...prev, subjectField: value }));
-    
-    // Auto-select teacher if subject has assigned teacher
+    // Auto-select teacher from subjectTeachersData
+    if (subjectTeachersData && subjectTeachersData[value]) {
+      const subjectTeacher = subjectTeachersData[value];
+      if (subjectTeacher?._id) {
+        setFormData(prev => ({ 
+          ...prev, 
+          subjectField: value,
+          teacherId: subjectTeacher._id! 
+        }));
+        return;
+      }
+    }
+    // Fallback to classData.subjectTeacher if subjectTeachersData not available
     if (classData?.subjectTeacher && classData.subjectTeacher[value]) {
       const subjectTeacher = classData.subjectTeacher[value];
       if (subjectTeacher?._id) {
-        setFormData(prev => ({ ...prev, teacherId: subjectTeacher._id! }));
+        setFormData(prev => ({ 
+          ...prev, 
+          subjectField: value,
+          teacherId: subjectTeacher._id! 
+        }));
+        return;
       }
     }
+    setFormData(prev => ({ ...prev, subjectField: value, teacherId: '' }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -187,8 +207,9 @@ export default function ScheduleManagementPage() {
     try {
       setIsSubmitting(true);
       
-      // Get subjectId from subjectTeacher
-      const subjectTeacher = classData?.subjectTeacher?.[formData.subjectField];
+      // Get subjectId from subjectTeachersData or classData
+      const teacherData = subjectTeachersData || classData?.subjectTeacher;
+      const subjectTeacher = teacherData?.[formData.subjectField];
       if (!subjectTeacher?._id) {
         alert('Không tìm thấy thông tin môn học');
         return;
@@ -203,7 +224,7 @@ export default function ScheduleManagementPage() {
       };
 
       await assignTeacherToTimeSlot(assignData);
-      alert('Thêm lịch dạy thành công!');
+
       setIsDialogOpen(false);
       fetchData(); // Refresh data
     } catch (error: any) {
@@ -215,9 +236,10 @@ export default function ScheduleManagementPage() {
   };
 
   const getAvailableSubjects = () => {
-    if (!classData?.subjectTeacher) return [];
+    const teacherData = subjectTeachersData || classData?.subjectTeacher;
+    if (!teacherData) return [];
     
-    return Object.entries(classData.subjectTeacher)
+    return Object.entries(teacherData)
       .filter(([key, value]) => key !== '_id' && key !== 'classid' && key !== '__v' && value !== null)
       .map(([key, value]) => ({
         key,
@@ -447,25 +469,26 @@ export default function ScheduleManagementPage() {
               </Select>
             </div>
 
-            {/* Teacher Selection */}
+            {/* Teacher Display - Auto-assigned from subject */}
             <div className="space-y-2">
               <Label htmlFor="teacher">Giáo viên *</Label>
-              <Select 
-                value={formData.teacherId} 
-                onValueChange={(value) => setFormData(prev => ({ ...prev, teacherId: value }))}
-                disabled={!formData.subjectField}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Chọn giáo viên" />
-                </SelectTrigger>
-                <SelectContent>
-                  {getFilteredTeachers().map(teacher => (
-                    <SelectItem key={teacher._id} value={teacher._id}>
-                      {teacher.name} - {teacher.subject}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              {formData.subjectField && formData.teacherId ? (
+                <div className="flex items-center gap-2 p-3 bg-green-50 border border-green-200 rounded-lg">
+                  <Users className="w-4 h-4 text-green-600" />
+                  <span className="text-green-700 font-medium">
+                    {(() => {
+                      const teacherData = subjectTeachersData || classData?.subjectTeacher;
+                      const teacher = teacherData?.[formData.subjectField];
+                      return teacher?.name || 'Đã chọn giáo viên';
+                    })()}
+                  </span>
+                  <span className="text-xs text-green-600 ml-auto">Tự động gán</span>
+                </div>
+              ) : (
+                <div className="p-3 bg-gray-50 border border-gray-200 rounded-lg text-gray-500 text-sm">
+                  Chọn môn học để tự động gán giáo viên
+                </div>
+              )}
             </div>
 
             {/* Time Slot Selection */}

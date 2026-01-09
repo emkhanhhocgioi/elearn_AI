@@ -388,12 +388,19 @@ const MyTestsTab = () => {
                     <td className="px-6 py-4">
                       <div className="flex flex-col gap-2">
                         {!test.isSubmited ? (
-                          <button 
-                            onClick={() => router.push(`/student/test/${test.id}`)}
-                            className="bg-[#2563EB] hover:bg-[#1d4ed8] text-white text-xs px-4 py-2 rounded-lg transition-all duration-200 shadow-sm focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:ring-offset-2 font-medium"
-                          > 
-                            Làm bài
-                          </button>
+                          test.status === 'Overdue' ? (
+                            <div className="flex items-center gap-2 bg-gray-100 px-4 py-2 rounded-lg">
+                              <AlertCircle className="w-4 h-4 text-gray-500" />
+                              <span className="text-xs text-gray-600 font-medium">Đã đóng</span>
+                            </div>
+                          ) : (
+                            <button 
+                              onClick={() => router.push(`/student/test/${test.id}`)}
+                              className="bg-[#2563EB] hover:bg-[#1d4ed8] text-white text-xs px-4 py-2 rounded-lg transition-all duration-200 shadow-sm focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:ring-offset-2 font-medium"
+                            > 
+                              Làm bài
+                            </button>
+                          )
                         ) : (
                           <>
                             <div className="flex items-center gap-2 bg-gray-100 px-4 py-2 rounded-lg">
