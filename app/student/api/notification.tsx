@@ -26,7 +26,7 @@ export const getStudentNotifications = async () => {
 };
 export const getUnreadNotificationCount = async () => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/api//student/notifications/unread-count`, getAuthConfig());  
+    const response = await axios.get(`${API_BASE_URL}/api/student/notifications/unread-count`, getAuthConfig());  
   
     return response.data;
   } catch (error) {
