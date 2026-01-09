@@ -1,7 +1,7 @@
 'use client';
 import { createContext, useContext, useEffect, useRef, useState, ReactNode, useCallback } from 'react';
 
-const WS_URL = 'ws://localhost:4000';
+const WS_URL = "wss://ai-webserver.onrender.com/";
 
 export interface Notification {
   _id: string;

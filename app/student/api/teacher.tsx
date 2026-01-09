@@ -1,6 +1,6 @@
 import axios from "axios";
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/api";
-const STUDENT_API_URL = `${API_BASE_URL}/student`;
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
+const STUDENT_API_URL = `${API_BASE_URL}/api/student`;
 
 const getStudentToken = () => {
   if (typeof window !== "undefined") {
