@@ -13,6 +13,7 @@ import {
   getClassSchedule, 
   assignTeacherToTimeSlot, 
   getAllTimeSlots,
+  deleteSchedule,
   AssignTeacherToTimeSlotData,
   ClassScheduleResponse,
   TimeSlot 
@@ -66,6 +67,7 @@ export default function ScheduleManagementPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isDeleting, setIsDeleting] = useState<string | null>(null);
   const [time_slot, set_time_slot] = useState<TimeSlot[]>([]);
   const [selectedCell, setSelectedCell] = useState<{ day: DayOfWeek; period: number } | null>(null);
   const [subjectTeachersData, setSubjectTeachersData] = useState<SubjectTeachers | null>(null);
@@ -235,6 +237,23 @@ export default function ScheduleManagementPage() {
     }
   };
 
+  const handleDeleteSchedule = async (scheduleId: string, subjectName: string) => {
+    if (!confirm(`Bạn có chắc chắn muốn xóa lịch dạy môn "${subjectName}"?`)) {
+      return;
+    }
+
+    try {
+      setIsDeleting(scheduleId);
+      await deleteSchedule(scheduleId);
+      fetchData(); // Refresh data after deletion
+    } catch (error: any) {
+      console.error('Error deleting schedule:', error);
+      alert(error.response?.data?.message || 'Có lỗi xảy ra khi xóa lịch dạy');
+    } finally {
+      setIsDeleting(null);
+    }
+  };
+
   const getAvailableSubjects = () => {
     const teacherData = subjectTeachersData || classData?.subjectTeacher;
     if (!teacherData) return [];
@@ -384,9 +403,14 @@ export default function ScheduleManagementPage() {
                                   size="sm"
                                   variant="ghost"
                                   className="mt-1 h-7 w-7 p-0 text-red-500 hover:bg-red-50 hover:text-red-700 border border-transparent hover:border-red-200"
-                                  onClick={() => alert('Chức năng xóa đang phát triển')}
+                                  onClick={() => handleDeleteSchedule(scheduleItem.scheduleId, scheduleItem.subject || 'N/A')}
+                                  disabled={isDeleting === scheduleItem.scheduleId}
                                 >
-                                  <Trash2 className="w-3.5 h-3.5" />
+                                  {isDeleting === scheduleItem.scheduleId ? (
+                                    <div className="w-3.5 h-3.5 border-2 border-red-500 border-t-transparent rounded-full animate-spin" />
+                                  ) : (
+                                    <Trash2 className="w-3.5 h-3.5" />
+                                  )}
                                 </Button>
                               </div>
                             ) : (

@@ -354,3 +354,24 @@ export const getAllTimeSlots = async (): Promise<TimeSlot[]> => {
         throw error;
     }
 }
+
+// Delete a schedule
+export const deleteSchedule = async (scheduleId: string): Promise<{ success: boolean; message: string }> => {
+    try {
+        const token = getAdminToken();
+        if (!token) throw new Error('Token not found');
+        
+        const res = await axios.delete(`${API_URL}/api/admin/schedule/delete/${scheduleId}`, {
+            ...getAuthConfig(),
+            headers: {
+                ...getAuthConfig().headers,
+                'Content-Type': 'application/json'
+            }
+        });
+        
+        return res.data;
+    } catch (error) {
+        console.error("Error deleting schedule:", error);
+        throw error;
+    }
+}
